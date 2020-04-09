@@ -9,4 +9,28 @@
 |5xx|Server Error(服务端错误状态码）|服务器处理请求出错|
 
 ## 1xx信息
-- 100 Continue:表明到目前
+- 100 Continue:表明到目前为止都很正常，客户端可以继续发送请求或者忽略这个响应
+
+## 2xx信息
+- 200 ok
+- 204 No Content:请求已经成功处理，但是返回的响应报文不包含实体的主体部分，一般在只需要从客户端往服务器发送信息，而不需要返回数据时使用。
+- 206 Partial Content:表示客户端进行了范围请求，响应报文包含由Content-Range指定范围的实体内容。
+
+## 3xx重定向
+- 301 Moved Permanently:永久性重定向
+- 302 Found:临时性重定向
+- 303 See Other:和302有着相同的功能，但是303明确要求客户端应该采用GET方法获取资源。
+- 注：虽然 HTTP 协议规定 301、302 状态下重定向时不允许把 POST 方法改成 GET 方法，但是大多数浏览器都会在 301、302 和 303 状态下的重定向把 POST 方法改成 GET 方法。
+- 304 Not Modified:如果请求报文首部包含一些条件，例如：If-Match，If-Modified-Since，If-None-Match，If-Range，If-Unmodified-Since，如果不满足条件，则服务器会返回 304 状态码。
+- 307 Temporary Redirect ：临时重定向，与 302 的含义类似，但是 307 要求浏览器不会把重定向请求的 POST 方法改成 GET 方法。
+
+## 4xx客户端错误
+- 400 Bad Request ：请求报文中存在语法错误。
+- 401 Unauthorized ：该状态码表示发送的请求需要有认证信息（BASIC 认证、DIGEST 认证）。如果之前已进行过一次请求，则表示用户认证失败。
+- 403 Forbidden ：请求被拒绝。
+- 404 Not Found
+
+## 5xx服务器错误
+- 500 Internal Server Error:服务器正在执行请求时发生错误
+- 503 Service Unavailable:服务器暂时处于超负载或正在进行停机维护，现在无法处理请求
+
