@@ -10,12 +10,12 @@ MVCC 不能解决幻影读问题，Next-Key Locks 就是为了解决这个问题
 
 ## Gap Locks
 锁定索引之间的间隙，但是不包含索引本身。例如当一个事务执行以下语句，其它事务就不能在 t.c 中插入 15。
-```
+```SQL
 SELECT c FROM t WHERE c BETWEEN 10 and 20 FOR UPDATE;
 ```
 ## Next-Key Locks
 它是 Record Locks 和 Gap Locks 的结合，不仅锁定一个记录上的索引，也锁定索引之间的间隙。它锁定一个前开后闭区间，例如一个索引包含以下值：10, 11, 13, and 20，那么就需要锁定以下区间：
-```
+```SQL
 (-∞, 10]
 (10, 11]
 (11, 13]
