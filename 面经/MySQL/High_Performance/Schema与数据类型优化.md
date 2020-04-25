@@ -42,3 +42,5 @@ CHAR的适合情况：CHAR适合存储很短的字符串，或者所有值都接
 BLOB和TEXT都是为存储很大的数据而设计的字符串数据类型，分别采用二进制和字符方式存储。
 
 它们分别属于两组不同的数据类型家族：字符类型是TINYTEXT,SMALLTEXT,TEXT,MEDIUMTEXT,LONGTEXT,对应的二进制类型是TINYBLOB,SMALLBLOB,BLOB,MEDIUMBLOB,LONGBLOB。BLOB是SMALLBLOB的同义词，TEXT是SMALLTEXT的同义词。
+
+当BLOB和TEXT值太大时，InnoDB会使用专门的"外部“存储区域来进行存储，此时每个值在行内需要1~4个字节存储一个指针，然后在外部存储区域存储实际的值。
