@@ -44,3 +44,22 @@ BLOB和TEXT都是为存储很大的数据而设计的字符串数据类型，分
 它们分别属于两组不同的数据类型家族：字符类型是TINYTEXT,SMALLTEXT,TEXT,MEDIUMTEXT,LONGTEXT,对应的二进制类型是TINYBLOB,SMALLBLOB,BLOB,MEDIUMBLOB,LONGBLOB。BLOB是SMALLBLOB的同义词，TEXT是SMALLTEXT的同义词。
 
 当BLOB和TEXT值太大时，InnoDB会使用专门的"外部“存储区域来进行存储，此时每个值在行内需要1~4个字节存储一个指针，然后在外部存储区域存储实际的值。
+
+BLOB和TEXT家族之间仅有的不同是BLOB类型存储的是二进制数据，没有排序规则或字符集，而TEXT类型有字符集和排序规则。
+
+MySQL对BLOB和TEXT列进行排序与其他类型是不同的：它只对每个列的最前max_sort_length字节而不是整个字符串做排序。
+
+### 使用枚举（ENUM)代替字符串类型
+枚举列可以把一些不重复的字符串存储成一个预定义的集合。
+枚举字段是按照内部存储的整数而不是定义的字符串来进行排序的。
+枚举最不好的地方就是，字符串列表时固定的，添加或删除字符串必须使用ALTER TABLE。对于未来可能改变的字符串，不应该使用枚举。
+ENUM列和ENUM列之间关联比ENUM和VARCHAR列关联查询快很多。
+转换列为枚举型可以使表的大小缩小1/3。
+
+### 日期和时间类型
+DATETIME
+    - 这个类型能保存大范围的值，从1001年到9999年，精度为秒。
+TIMESTAMP
+    - 使用4个字节存储，范围比DATETIME小很多，存储范围为1970年到2038年。TIMESTAMP显示的值依赖于时区。
+MySQL提供了FROM_UNIXTIME()函数把UNIX时间戳转换为日期，并提供了UNIX_TIMESTAMP()函数把日期转换为Unix时间戳。
+
