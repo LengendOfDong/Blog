@@ -45,3 +45,18 @@
 当重建缓存表和汇总表时，通常需要保证数据在操作时依然可用。这就需要通过使用”影子表“来实现，”影子表“指的是一张在真实表”背后“创建的表。当完成了建表操作
  后，可以通过一个原子的重命名操作切换影子表和原表。
  
+## 加快ALTER TABLE操作的速度
+对常见的场景，能使用的技巧只有两种：一种是先在一台不提供服务的机器上执行ALTER TABLE操作，然后和提供服务的主库进行切换；另外一种技巧是”影子拷贝“。
+
+影子拷贝的技巧是用要求的表结构创建一张和源表无关的新表，然后通过重命名和删除操作来交换两张表。
+
+不是所有的ALTER TABLE操作都会引起表重建。所有的MODIFY COLUMN操作都将导致表重建。
+```SQL
+mysql>ALTER TABLE sakila.film MODIFY COLUMN rental_duration TINYINT(3) NOT NULL DEFAULT 5;
+```
+另外一种方法时通过ALTER COLUMN操作来改变列的默认值：
+```SQL
+mysql>ALTER TABLE sakila.film ALTER COLUMN rental_duration SET DEFAULT 5;
+```
+这个语句会直接修改.frm文件而不涉及表数据，所以这个操作是非常快的。
+
