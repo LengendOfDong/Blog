@@ -71,3 +71,5 @@ mysql>ALTER TABLE sakila.film ALTER COLUMN rental_duration SET DEFAULT 5;
 - 小心使用ENUM和SET。虽然它们用起来很方便，但是不要滥用，否则有时候会变成陷阱。最好避免使用BIT。
 
 范式是好的，但是有的时候反范式也是必需的，并且能够带来好处。
+
+ALTER TABLE是令人痛苦的操作，因为在大部分的情况下，它都会锁表并且重建整张表。对大部分场景，必须使用其他更常规的方法，例如在备机执行ALTER TABLE并完成后再把它切换为主库。
