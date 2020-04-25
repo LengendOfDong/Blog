@@ -62,4 +62,33 @@ DATETIME
 TIMESTAMP
     - 使用4个字节存储，范围比DATETIME小很多，存储范围为1970年到2038年。TIMESTAMP显示的值依赖于时区。
 MySQL提供了FROM_UNIXTIME()函数把UNIX时间戳转换为日期，并提供了UNIX_TIMESTAMP()函数把日期转换为Unix时间戳。
+通常应该尽量使用TIMESTAMP，因为它比DATETIME空间效率高。
+
+### 位数据类型
+MySQL有少数几种类型使用紧凑的位存储类型。所有这些位类型，不管底层存储格式和处理方式如何，从技术上来说都是字符串类型。
+BIT:存储一个值为b'00111001'(二进制等于57)到BIT(8)的列进行检索，得到的内容是字符码为57的字符串（MySQL把BIT当做字符串类型，而不是数字类型），也就是ASCII码为57的字符”9“，但在数字上下文场景中，得到的是数字57。
+
+也就是说，在MySQL中，默认将BIT识别为字符串类型，所以存入一串数字，默认会是对应的ASCII码的字符，而只有明确是数字的时候，才会将这串数字转换为相应的整数。
+
+使用包装位来保存权限的访问控制列表（ACL）。每个位或者SET元素代表一个值，例如CAN_READ,CAN_WRITE或者CAN_DELETE。如果使用SET列，可以让MySQL在列定义里存储位到值的映射关系；如果使用整数列，则可以在应用代码里存储这个对应关系。
+
+使用SET列时的查询:
+```SQL
+mysql> create table acl(perms SET('can_read','can_write','can_delete') not null);
+mysql> insert into acl(perms) values('can_read,can_delete');
+mysql> select perms from acl where FIND_IN_SET('CAN_READ',perms);
+```
+
+使用整数来存储：
+```SQL
+mysql> SET @CAN_READ := 1 <<0 ,
+    -> @CAN_WRITE := 1 << 1,
+    -> @CAN_DELETE := 1 << 2;
+mysql> create table acl2(
+    -> perms tinyint unsigned not null default 0
+    -> );
+# 此处是使用位与的方式，返回所有有CAN_READ的记录，即CAN_READ位为1的记录。
+mysql> SELECT PERMS FROM ACL2 WHERE PERMS & @CAN_READ; 
+```
+
 
