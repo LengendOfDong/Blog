@@ -38,3 +38,7 @@ CHAR类型是定长的，当存储CHAR值时，MySQL会删除所有的末尾空�
 
 CHAR的适合情况：CHAR适合存储很短的字符串，或者所有值都接近同一个长度。定长的CHAR在变更时不容易产生碎片。对于非常短的列，CHAR的效率也比VARCHAR更好。VARCHAR还需要额外的直接进行记录长度。
 
+### BLOB和TEXT类型
+BLOB和TEXT都是为存储很大的数据而设计的字符串数据类型，分别采用二进制和字符方式存储。
+
+它们分别属于两组不同的数据类型家族：字符类型是TINYTEXT,SMALLTEXT,TEXT,MEDIUMTEXT,LONGTEXT,对应的二进制类型是TINYBLOB,SMALLBLOB,BLOB,MEDIUMBLOB,LONGBLOB。BLOB是SMALLBLOB的同义词，TEXT是SMALLTEXT的同义词。
