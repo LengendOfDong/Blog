@@ -15,3 +15,21 @@ Redis Stream有一个消息链表，所有加入的消息都会串起来，每�
 
 pending_list变量在Redis官方被称为PEL，也就是Pending Entries List,这是一个核心的数据结构，它用来确保客户端至少消费了消息一次，而不会在网络传输中中途丢失了而没有被处理。
 
+## 增删改查
+- xadd: 向Stream追加消息
+- xdel: 从Stream中删除消息，这里的删除仅仅是设置标志位，不影响消息总长度。
+- xrange: 获取Stream中的消息列表，会自动过滤已经删除的消息。
+- xlen: 获取Stream消息长度。
+- del: 删除整个Stream消息列表中的所有消息。
+
+## 独立消费
+xread可以将Stream当成普通的消息队列（list）来使用。
+
+## 创建消费组
+Stream通过xgroup create创建消费组，创建消费组需要提供起始消息ID来初始化last_delivered_id变量。
+
+## 消费
+Stream提供了xreadgroup 指令可以进行消费组的组内消费，需要提供消费组名称、消费者名称和起始消息ID。
+
+当客户端读到新消息后对应的消息ID就会进入消费者的PEL（正在处理的消息）结构里，客户端处理完毕后使用xack指令通知服务器，本条消息已经处理完毕，该消息ID就会从PEL中移除。
+
