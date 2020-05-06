@@ -42,3 +42,5 @@ Redis是一个Key-Value类型的内存数据库，和memcached有点像，整个
 3).Master调用BGREWRITEAOF重写AOF文件，AOF在重写的时候会占大量的CPU和内存资源，导致服务load过高，出现短暂服务暂停现象。
 
 4). Redis主从复制的性能问题，为了主从复制的速度和连接的稳定性，Slave和Master最好在同一个局域网内
+
+
