@@ -71,3 +71,17 @@ ZRANGE user_scores 0 10 WITHSCORES
 Agora Games 就是一个很好的例子，用 Ruby 实现的，它的排行榜就是使用 Redis 来存储数据的，你可以在这里看到。
 - 发布/订阅
 最后（但肯定不是最不重要的）是 Redis 的发布/订阅功能。发布/订阅的使用场景确实非常多。我已看见人们在社交网络连接中使用，还可作为基于发布/订阅的脚本触发器，甚至用 Redis 的发布/订阅功能来建立聊天系统！
+
+## Redis 支持的 Java 客户端都有哪些？官方推荐用哪个？
+Redisson、Jedis、lettuce 等等，官方推荐使用 Redisson。
+
+## Redis 和 Redisson 有什么关系？
+Redisson 是一个高级的分布式协调 Redis 客服端，能帮助用户在分布式环境中轻松实现一些 Java 的对
+象 (Bloom filter, BitSet, Set, SetMultimap, ScoredSortedSet, SortedSet, Map, ConcurrentMap,
+List, ListMultimap, Queue, BlockingQueue, Deque, BlockingDeque, Semaphore, Lock,
+ReadWriteLock, AtomicLong, CountDownLatch, Publish / Subscribe, HyperLogLog)。
+
+## Jedis 与 Redisson 对比有什么优缺点？
+Jedis 是 Redis 的 Java 实现的客户端，其 API 提供了比较全面的 Redis 命令的支持；Redisson 实现了分布式和可扩展的 Java 数据结构，和 Jedis 相比，功能较为简单，不支持字符串操作，
+不支持排序、事务、管道、分区等 Redis 特性。Redisson 的宗旨是促进使用者对 Redis 的关注分离，从
+而让使用者能够将精力更集中地放在处理业务逻辑上。
