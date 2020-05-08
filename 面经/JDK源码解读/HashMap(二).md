@@ -14,7 +14,12 @@
  * normal use are not overpopulated, checking for existence of
  * tree bins may be delayed in the course of table methods.
  * 
- * 
+ * 该映射通常用作装箱（存储桶）的哈希表，但当桶太大时，它们会转换为TreeNode，
+ * 每个的结构都类似于java.util.TreeMap中的结构。 
+ * 大多数方法尝试使用普通的桶，但是在适用时中继到TreeNode方法（只需通过检查节点的实例）。
+ * TreeNodes的bin可以像其他任何遍历一样使用，但在数目众多时还支持更快的查找。
+ * 但是，由于正常使用中的绝大多数桶都不是众多的，因此在使用表方法的过程中可能会延迟检查是否存在树节点。
+ *
  * Tree bins (i.e., bins whose elements are all TreeNodes) are
  * ordered primarily by hashCode, but in the case of ties, if two
  * elements are of the same "class C implements Comparable<C>",
@@ -32,7 +37,15 @@
  * precautions. But the only known cases stem from poor user
  * programming practices that are already so slow that this makes
  * little difference.)
- *
+ * 
+ * 树形桶（即元素都是TreeNode的桶）主要由hashCode进行排序，但在并列的情况下，如果
+ * 两个元素具有相同的”class C implements Comparable<C>“的情况，然后使用其compareTo
+ * 方法进行排序。我们通过反射保守地检查泛型类型以进行验证这一点，参见方法comparableClassFor).
+ * 增加的复杂性的树形桶是值得的，无论key具有不同哈希值或者是有序的，都提供最坏情况的O(logn),
+ * 因此，在以下情况下性能会正常降低hashCode（）方法的偶然或恶意使用返回分布不均的值，
+ * 以及许多键共享一个hashCode，只要它们也可比。(如果以上两种情况均不适用，我们可能会浪费约与不使用时相比，
+ * 时间和空间的两倍预防措施。 但是唯一已知的案例是由于用户不佳已经很慢的编程实践，这使得差别不大。）
+ * 
  * Because TreeNodes are about twice the size of regular nodes, we
  * use them only when bins contain enough nodes to warrant use
  * (see TREEIFY_THRESHOLD). And when they become too small (due to
@@ -46,7 +59,7 @@
  * resizing granularity. Ignoring variance, the expected
  * occurrences of list size k are (exp(-0.5) * pow(0.5, k) /
  * factorial(k)). The first values are:
- *
+ * 
  * 0:    0.60653066
  * 1:    0.30326533
  * 2:    0.07581633
