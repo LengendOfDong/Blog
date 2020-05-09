@@ -26,6 +26,19 @@ public HashMap(int initialCapacity, float loadFactor) {
 ```java
 this.threshold = tableSizeFor(initialCapacity);
 ```
+这个threshold的作用是什么呢？
+```java
+/**
+ * The next size value at which to resize (capacity * load factor).
+ * 下一次调整大小的阈值(容量乘以加载因子)
+ * @serial
+ */
+// (The javadoc description is true upon serialization.
+// Additionally, if the table array has not been allocated, this
+// field holds the initial array capacity, or zero signifying
+// DEFAULT_INITIAL_CAPACITY.)
+int threshold;
+```
 
 tableSizeFor的代码如下：
 ```java
@@ -66,3 +79,4 @@ int n = cap - 1;
 
 ## 总结
 tableSizeFor方法的功能是返回大于输入参数且最近的2的整数次幂的数。比如10，则返回16。
+threshold这个阈值在HashMap初始化的时候是通过tableSizeFor方法获取到值。当HashMap中放入元素之后，大小变成容量乘以加载因子。
