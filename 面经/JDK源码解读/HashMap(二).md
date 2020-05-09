@@ -60,6 +60,12 @@
  * occurrences of list size k are (exp(-0.5) * pow(0.5, k) /
  * factorial(k)). The first values are:
  * 
+ * 因为树形节点是普通节点的两倍大小，所以只当树形桶包含足够的节点来保证使用时，我们才使用它们。（查看TREEIFY_THRESHOLD）
+ * 并且当它们变得非常小（由于移除或者重组），它们被转变回普通的桶。在使用很好分布的hashCode的情况下，树形桶是很好使用的。
+ * 理想情况下，在默认调整大小的阈值0.75的随机hashCode下，桶中节点遵循带有平均约为0.5的参数的泊松分布，尽管由于调整粒度而
+ * 差异很大(http://en.wikipedia.org/wiki  /Poisson_distribution)。
+ * 忽略掉差异，列表大小k的期望出现k 遵循 (exp(-0.5) * pow(0.5, k) / factorial(k))，第一个值是：
+ * 
  * 0:    0.60653066
  * 1:    0.30326533
  * 2:    0.07581633
@@ -69,20 +75,27 @@
  * 6:    0.00001316
  * 7:    0.00000094
  * 8:    0.00000006
- * more: less than 1 in ten million
+ * more: less than 1 in ten million  更多： 小于千万分之一
  *
  * The root of a tree bin is normally its first node.  However,
  * sometimes (currently only upon Iterator.remove), the root might
  * be elsewhere, but can be recovered following parent links
  * (method TreeNode.root()).
  *
+ * 树形桶的根节点通常是它的第一个节点，然而，有时（通常仅发生在Iterator.remove）
+ * 根节点也许会在别的什么地方，但都能够被紧接着的父连接给覆盖到。（使用TreeNode.root方法）
+ * 
  * All applicable internal methods accept a hash code as an
  * argument (as normally supplied from a public method), allowing
  * them to call each other without recomputing user hashCodes.
  * Most internal methods also accept a "tab" argument, that is
  * normally the current table, but may be a new or old one when
  * resizing or converting.
- *
+ * 
+ * 所有可使用的内部方法接收一个hash码作为一个参数（通常由公共方法提供），允许它们调用
+ * 对方而不是重新计算hash码。大多数内部方法总接受一个”标签“参数，通常是当前表，但当重新调整
+ * 大小或者转换时，可能是一个旧的或者新的表。
+ * 
  * When bin lists are treeified, split, or untreeified, we keep
  * them in the same relative access/traversal order (i.e., field
  * Node.next) to better preserve locality, and to slightly
@@ -91,6 +104,9 @@
  * total ordering (or as close as is required here) across
  * rebalancings, we compare classes and identityHashCodes as
  * tie-breakers.
+ * 
+ * 当桶列表被树形化，分割，或者未被树形化时，我们将它们保持在相同的相对访问/遍历顺序
+ *（例如字段Node.next）中，以更好地保留局部性，并略微简化调用迭代器的拆分和遍历的处理
  *
  * The use and transitions among plain vs tree modes is
  * complicated by the existence of subclass LinkedHashMap. See
@@ -100,7 +116,13 @@
  * requires that a map instance be passed to some utility methods
  * that may create new nodes.)
  *
+ * 子类LinkedHashMap的存在使普通模式与树模式之间的使用和转换变得复杂。 请参阅下面的定义为在插入，
+ * 删除和访问时调用的钩子方法，这些挂钩方法使LinkedHashMap内部能够以其他方式独立于这些机制。 
+ *（这还要求将地图实例传递给一些可能创建新节点的实用程序方法。）
+ *
  * The concurrent-programming-like SSA-based coding style helps
  * avoid aliasing errors amid all of the twisty pointer operations.
+ * 
+ * 类似于并发编程的基于SSA的编码样式有助于 避免在所有曲折的指针操作中出现混叠错误。
  */
 ```
