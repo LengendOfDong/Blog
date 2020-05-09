@@ -77,6 +77,35 @@ int n = cap - 1;
 ```
 这句的意义是，当cap正好为2的整数次幂时，返回自身。例如，二进制1000，十进制数值为8。如果不对它减1而直接操作，将得到答案10000，即16。显然不是结果。减1后二进制为111，再进行操作则会得到原来的数值1000，即8。
 
+再来看看第二个HashMap初始化方法
+```java
+/**
+ * Constructs an empty <tt>HashMap</tt> with the default initial capacity
+ * (16) and the default load factor (0.75).
+ */
+public HashMap() {
+    this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
+}
+```
+这个方法都是使用的默认值，加载因子0.75，初始容量为16.
+
+第三个HashMap初始化方法
+```java
+ /**
+    * Constructs a new <tt>HashMap</tt> with the same mappings as the
+    * specified <tt>Map</tt>.  The <tt>HashMap</tt> is created with
+    * default load factor (0.75) and an initial capacity sufficient to
+    * hold the mappings in the specified <tt>Map</tt>.
+    * 
+    * @param   m the map whose mappings are to be placed in this map
+    * @throws  NullPointerException if the specified map is null
+    */
+    public HashMap(Map<? extends K, ? extends V> m) {
+    this.loadFactor = DEFAULT_LOAD_FACTOR;
+    putMapEntries(m, false);
+    }
+```
+
 ## 总结
 tableSizeFor方法的功能是返回大于输入参数且最近的2的整数次幂的数。比如10，则返回16。
 threshold这个阈值在HashMap初始化的时候是通过tableSizeFor方法获取到值。当HashMap中放入元素之后，大小变成容量乘以加载因子。
