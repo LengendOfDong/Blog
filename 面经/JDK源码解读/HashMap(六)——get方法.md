@@ -71,7 +71,7 @@ final Node<K,V> getNode(int hash, Object key) {
 }
 ```
 
-下面看下红黑树如何进行检索的，传入的参数是key的hash值和key自身
+下面看下红黑树如何进行检索的，传入的参数是key的hash值和key自身，通过二叉搜索树的方式进行遍历：
 ```java
 /**
  * Calls find for root node.
