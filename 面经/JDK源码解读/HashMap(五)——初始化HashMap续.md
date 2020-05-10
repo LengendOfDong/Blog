@@ -181,17 +181,23 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
          }
 
          TreeNode<K,V> xp = p;
+         //dir小于等于0说明是应该放在p节点的左边，dir大于0说明应该放在p节点的右边
          if ((p = (dir <= 0) ? p.left : p.right) == null) {
              Node<K,V> xpn = xp.next;
+             //新建节点
              TreeNode<K,V> x = map.newTreeNode(h, k, v, xpn);
+             //根据dir的正负，判断是应该将新增节点接在左边还是右边。
              if (dir <= 0)
                  xp.left = x;
              else
                  xp.right = x;
+             //更新xp的属性，将xp节点指向x节点，使xp成为x的父节点
              xp.next = x;
              x.parent = x.prev = xp;
+             //如果原本p节点下有节点，需要将此节点接在新增节点下
              if (xpn != null)
                  ((TreeNode<K,V>)xpn).prev = x;
+             //插入节点后进行二叉树的平衡操作
              moveRootToFront(tab, balanceInsertion(root, x));
              return null;
          }
