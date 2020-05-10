@@ -70,3 +70,55 @@ final Node<K,V> getNode(int hash, Object key) {
     return null;
 }
 ```
+
+下面看下红黑树如何进行检索的，传入的参数是key的hash值和key自身
+```java
+/**
+ * Calls find for root node.
+ */
+final TreeNode<K,V> getTreeNode(int h, Object k) {
+    return ((parent != null) ? root() : this).find(h, k, null);
+}
+
+/**
+* Finds the node starting at root p with the given hash and key.
+* The kc argument caches comparableClassFor(key) upon first use
+* comparing keys.
+* 
+* 通过给定的hash和key从根节点p开始查找节点。
+*/
+final TreeNode<K,V> find(int h, Object k, Class<?> kc) {
+TreeNode<K,V> p = this;
+do {
+    int ph, dir; K pk;
+    //p节点的左孩子是pl,右孩子是pr
+    TreeNode<K,V> pl = p.left, pr = p.right, q;
+    //p节点的hash值大于要检索的hash值，则说明此hash值应该在p节点的左子树，因为左子树的
+    //hash值会偏小些，要检索的hash值只能在左子树的范围内，同样道理，右子树也是一样。
+    if ((ph = p.hash) > h)
+        p = pl;
+    else if (ph < h)
+        p = pr;
+    //在循环检索的过程中，如果存在同一个key时，则返回此时的红黑树节点。
+    else if ((pk = p.key) == k || (k != null && k.equals(pk)))
+        return p;
+    //左子树为空，则进行右子树的遍历。
+    else if (pl == null)
+        p = pr;
+    //右子树为空，则进行左子树的遍历
+    else if (pr == null)
+        p = pl;
+    //若k是可比较的并且k.compareTo(pk) 返回结果不为０可进入下面elseif 
+    else if ((kc != null ||
+              (kc = comparableClassFor(k)) != null) &&
+             (dir = compareComparables(kc, k, pk)) != 0)
+        p = (dir < 0) ? pl : pr;
+    /*若 k 是不可比较的　或者k.compareTo(pk) 返回结果为０则在整棵树中进行查找，先找右子树，右子树没有再找左子树*/
+    else if ((q = pr.find(h, k, kc)) != null)
+        return q;
+    else
+        p = pl;
+} while (p != null);
+return null;
+}
+```
