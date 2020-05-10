@@ -86,7 +86,7 @@ public class MyIterator {
         Iterator iterator = set.iterator();
         while (iterator.hasNext()){
             System.out.println(iterator.next());
-            map.remove(1);
+            set.remove(1);
         }
     }
 }
@@ -133,6 +133,43 @@ final Node<K,V> nextNode() {
 ```
 modCount这个值是用来判断有没有进行增删改这样的操作的，只要进行了这样的操作，modCount就会自增1。在测试代码中进行了
 **map.remove()** 的操作，modCount自然发生了变化，所以抛出了**ConcurrentModificationException** 异常。
+
+## Iterator的remove方法
+同样实现了上面测试代码的功能，移除key为1的元素，但是下面这段代码没有报错
+```java
+public class MyIterator {
+    public static void main(String[] args){
+        Map  map = new HashMap();
+        map.put(1, 2);
+        map.put(2,3);
+        map.put(3,4);
+
+        Set set = map.keySet();
+        Iterator iterator = set.iterator();
+        while (iterator.hasNext()){
+	    Object next = iterator.next();
+            if((int)next == 1){
+                iterator.remove();
+	    }
+        }
+    }
+}
+```
+主要就出现在iterator.remove()与set.remove(1)的区别：
+```java
+public final void remove() {
+    Node<K,V> p = current;
+    if (p == null)
+	throw new IllegalStateException();
+    if (modCount != expectedModCount)
+	throw new ConcurrentModificationException();
+    current = null;
+    K key = p.key;
+    removeNode(hash(key), key, null, false, false);
+    expectedModCount = modCount;
+}
+```
+可以看到最后一句**expectedModCount = modCount;** ，在删除完之后，对expectedModCount进行了同步修改，所以每次比较modCount和expectedModCount，都不会抛出异常了。
 
 ## ForEach方法
 jdk1.8中新增了ForEach方法，此方法是Iterable接口的，KeySet通过继承实现获得。
