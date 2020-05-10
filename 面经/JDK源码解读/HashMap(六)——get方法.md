@@ -33,7 +33,7 @@ public V get(Object key) {
 }
 ```
 
-get方法调用getNode方法进行判断：
+get方法调用getNode方法进行判断，注意（n - 1）& hash = hash % n：
 ```java
 /**
  * Implements Map.get and related methods
@@ -44,14 +44,21 @@ get方法调用getNode方法进行判断：
  */
 final Node<K,V> getNode(int hash, Object key) {
     Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
+    //表不为空，并且key的hash值对表长进行取模所的值作为下标进行数组检索
+    //检索的值不为空，说明有至少一个值对应。
     if ((tab = table) != null && (n = tab.length) > 0 &&
         (first = tab[(n - 1) & hash]) != null) {
+        //节点的hash值和检索key的hash值相同，并且key是同一个地址或者值相等，则表明是同一个key
+        //返回对应的节点
         if (first.hash == hash && // always check first node
             ((k = first.key) == key || (key != null && key.equals(k))))
             return first;
+        //如果节点有后续节点
         if ((e = first.next) != null) {
+            //后续节点为红黑树节点，则通过hash和key获取红黑树节点返回
             if (first instanceof TreeNode)
                 return ((TreeNode<K,V>)first).getTreeNode(hash, key);
+            //否则循环遍历链表，途中如果有相同key存在，则直接返回，如果链表遍历结束都没有则返回null
             do {
                 if (e.hash == hash &&
                     ((k = e.key) == key || (key != null && key.equals(k))))
@@ -59,6 +66,7 @@ final Node<K,V> getNode(int hash, Object key) {
             } while ((e = e.next) != null);
         }
     }
+    //检索不到对应的映射
     return null;
 }
 ```
