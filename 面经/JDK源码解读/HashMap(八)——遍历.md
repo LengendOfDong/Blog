@@ -1,5 +1,5 @@
 # KeySet
-keySet方法用来获取key的集合
+keySet方法用来获取key的集合,日常使用方式都是使用iterator()方法获取迭代器遍历。
 ```java
 /**
    * Returns a {@link Set} view of the keys contained in this map.
@@ -134,3 +134,28 @@ final Node<K,V> nextNode() {
 modCount这个值是用来判断有没有进行增删改这样的操作的，只要进行了这样的操作，modCount就会自增1。在测试代码中进行了
 **map.remove()** 的操作，modCount自然发生了变化，所以抛出了**ConcurrentModificationException** 异常。
 
+## ForEach方法
+jdk1.8中新增了ForEach方法，此方法是Iterable接口的，KeySet通过继承实现获得。
+```java
+public final void forEach(Consumer<? super K> action) {
+  Node<K,V>[] tab;
+  if (action == null)
+      throw new NullPointerException();
+  if (size > 0 && (tab = table) != null) {
+      //用于记录修改
+      int mc = modCount;
+      for (int i = 0; i < tab.length; ++i) {
+	  //遍历每一条目，条目的起点是数组上的节点
+	  for (Node<K,V> e = tab[i]; e != null; e = e.next)
+	      action.accept(e.key);
+      }
+      //modCount和之前的值不同，说明进行了修改
+      if (modCount != mc)
+	  throw new ConcurrentModificationException();
+  }
+}
+```
+使用起来很方便，代码很简洁，比如打印map中的key:
+```java
+map.keySet().forEach(e -> System.out.println(" key = " + e));
+```
