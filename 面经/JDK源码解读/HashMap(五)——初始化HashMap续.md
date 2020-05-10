@@ -203,4 +203,19 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
          }
      }
  }
+ 
+//当节点有相同的hashCode时，但是没有实现comparable接口，或者实现的有问题，需要
+//使用内存地址来进行比较。
+static int tieBreakOrder(Object a, Object b) {
+     int d;
+     //System.identityHashCode()实际是利用对象 a,b 的内存地址进行比较
+     if (a == null || b == null ||
+         (d = a.getClass().getName().
+          compareTo(b.getClass().getName())) == 0)
+         d = (System.identityHashCode(a) <= System.identityHashCode(b) ?
+              -1 : 1);
+     return d;
+ }
 ```
+
+
