@@ -117,36 +117,51 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
              //只有旧值为空的时候才进行覆盖,其他情况都是直接进行覆盖
              if (!onlyIfAbsent || oldValue == null)
                  e.value = value;
+             //如果是LinkedHashMap还需要进行后续操作
              afterNodeAccess(e);
+             //返回原有的旧值（类似被新值挤出的值，作为返回值返回）
              return oldValue;
          }
      }
+     //这个主要在生成迭代器的时候使用，记录HashMap结构变更的次数
      ++modCount;
+     //判断当前的大小增加1，并与扩容阈值进行判断，如果大于阈值则进行扩容操作
      if (++size > threshold)
          resize();
+     //如果是LinkedHashMap还需要在节点插入之后进行其他操作
      afterNodeInsertion(evict);
      return null;
  }
 ```
 
-调用红黑树节点插入方法：putTreeVal
+在初始化过程中，如果链表长度为8的时候，开始将链表转换成红黑树，之后插入新的节点时，需要调用红黑树节点插入方法：putTreeVal
 ```java
 /**
   * Tree version of putVal.
+  * 红黑树版本的插入值
   */
  final TreeNode<K,V> putTreeVal(HashMap<K,V> map, Node<K,V>[] tab,
                                 int h, K k, V v) {
      Class<?> kc = null;
      boolean searched = false;
+     //如果父节点不为空，则获取父节点作为根节点，否则自己作为根节点
      TreeNode<K,V> root = (parent != null) ? root() : this;
      for (TreeNode<K,V> p = root;;) {
          int dir, ph; K pk;
+         //节点的hash值大于h表明在p节点的右边
          if ((ph = p.hash) > h)
              dir = -1;
+         //节点的hash值小于h表明在p节点的左边
          else if (ph < h)
              dir = 1;
+         //是否为同一个key，是的话直接返回
          else if ((pk = p.key) == k || (k != null && k.equals(pk)))
              return p;
+         //hash值相同但key不同，此时需要判断
+         /*要进入下面这个else if,代表有以下几个含义:
+           1、当前节点与待插入节点　key不同,　hash 值相同
+      　　　2、ｋ是不可比较的，即ｋ并未实现comparable<K>接口（若 k 实现了comparable<K>　接口，comparableClassFor（k）返回的是ｋ的　class,而不是　null）或者　compareComparables(kc, k, pk)　返回值为 0(pk 为空　或者　按照 k.compareTo(pk) 返回值为0，
+返回值为0可能是由于ｋ的compareTo 方法实现不当引起的)*/
          else if ((kc == null &&
                    (kc = comparableClassFor(k)) == null) ||
                   (dir = compareComparables(kc, k, pk)) == 0) {
