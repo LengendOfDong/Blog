@@ -165,6 +165,8 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
          else if ((kc == null &&
                    (kc = comparableClassFor(k)) == null) ||
                   (dir = compareComparables(kc, k, pk)) == 0) {
+             //在以当前节点为根的整个树上搜索是否存在待插入节点（只会搜索一次）
+             //在它的左子树和右子树中遍历寻找。
              if (!searched) {
                  TreeNode<K,V> q, ch;
                  searched = true;
@@ -174,6 +176,7 @@ final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
                       (q = ch.find(h, k, kc)) != null))
                      return q;
              }
+             // 既然ｋ是不可比较的，那我自己指定一个比较方式
              dir = tieBreakOrder(k, pk);
          }
 
