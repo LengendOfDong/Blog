@@ -27,12 +27,12 @@ final Node<K,V>[] resize() {
             threshold = Integer.MAX_VALUE;
             return oldTab;
         }
-        //新容量为旧表的两倍
+        //原容量大于0，新容量为原容量的两倍，新阈值为原阈值的两倍
         else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
                  oldCap >= DEFAULT_INITIAL_CAPACITY)
             newThr = oldThr << 1; // double threshold
     }
-    //新容量使用旧的阈值
+    //原容量为0，新容量使用旧的阈值
     else if (oldThr > 0) // initial capacity was placed in threshold
         newCap = oldThr;
     //旧门限值和旧容量都为0，使用默认初始容量为新的容量，初始容量乘以加载因子作为新的阈值
@@ -40,7 +40,7 @@ final Node<K,V>[] resize() {
         newCap = DEFAULT_INITIAL_CAPACITY;
         newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
     }
-    //如果新阈值为空
+    //如果新阈值为空，此情况针对原容量为0的情况。
     if (newThr == 0) {
         float ft = (float)newCap * loadFactor;
         //新容量和加载因子的乘积小于最大容量，并且新容量也小于最大容量，则乘积为新的阈值
