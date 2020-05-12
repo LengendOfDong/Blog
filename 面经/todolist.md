@@ -2,6 +2,7 @@
 比如ReentrantLock,ThreadPoolExecutor,ConcurrentHashMap,HashMap等这些类的源码
 
 # Spring源码和SpringBoot源码
+Spring生命周期
 
 # 数据结构与算法（每日）
 单项进行练习，如动态规划，深搜，广搜，贪心，排序，查找，并查集等
@@ -13,9 +14,20 @@
 # MyBatis源码可能需要看下
 
 # Redis
+Redis缓存回收机制
+Redis准备同步
+Redis哨兵机制
 
 # ZooKeeper
 
 # Kafka
 
 # 消息队列
+
+# Netty与RPC
+
+# 系统设计
+- 秒杀系统
+- 广告推送
+- 排队系统
+- 红包系统
