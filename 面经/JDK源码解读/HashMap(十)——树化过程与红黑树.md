@@ -40,6 +40,7 @@
          */
         final void treeify(Node<K,V>[] tab) {
             TreeNode<K,V> root = null;
+            //x是当前节点，
             for (TreeNode<K,V> x = this, next; x != null; x = next) {
                 next = (TreeNode<K,V>)x.next;
                 x.left = x.right = null;
