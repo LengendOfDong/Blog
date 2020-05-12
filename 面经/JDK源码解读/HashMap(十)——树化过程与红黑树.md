@@ -54,13 +54,19 @@
                     K k = x.key;
                     int h = x.hash;
                     Class<?> kc = null;
+                    //循环遍历，进行二叉搜索树的插入
                     for (TreeNode<K,V> p = root;;) {
+                    //p指向遍历中的当前节点，x为待插入节点，k是x的key,h是x的hash值，ph是p的hash
+                    //dir用来指示x节点与p的比较，-1表示比p小，1表示比p大，不存在相等情况，因为
+                    //HashMap中是不存在两个key完全一致的情况。
                         int dir, ph;
                         K pk = p.key;
                         if ((ph = p.hash) > h)
                             dir = -1;
                         else if (ph < h)
                             dir = 1;
+                        //如果hash相等，那么判断k是否实现了comparable接口，如果实现了comparable接口就
+                        //使用compareTo进行比较，如果仍旧相等或者没有实现comparable接口，则在tieBreakOrder中比较。
                         else if ((kc == null &&
                                   (kc = comparableClassFor(k)) == null) ||
                                  (dir = compareComparables(kc, k, pk)) == 0)
@@ -73,12 +79,14 @@
                                 xp.left = x;
                             else
                                 xp.right = x;
+                                //进入插入平衡处理
                             root = balanceInsertion(root, x);
                             break;
                         }
                     }
                 }
             }
+            //确保给定节点是桶中的第一个元素
             moveRootToFront(tab, root);
         }
 ```
