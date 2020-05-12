@@ -21,12 +21,13 @@ final Node<K,V>[] resize() {
     int oldThr = threshold;
     int newCap, newThr = 0;
     if (oldCap > 0) {
-        //如果原容量大于默认最大容量
+        //如果原容量大于默认最大容量，则修改阈值为最大，并直接返回，不进行扩容
         if (oldCap >= MAXIMUM_CAPACITY) {
             //门限值设为Integer.MAX_VALUE
             threshold = Integer.MAX_VALUE;
             return oldTab;
         }
+        //新容量为旧表的两倍
         else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
                  oldCap >= DEFAULT_INITIAL_CAPACITY)
             newThr = oldThr << 1; // double threshold
