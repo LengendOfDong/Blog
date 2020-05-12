@@ -10,6 +10,7 @@ Spring生命周期
 
 # MySQL
 索引，InnoDB引擎和MyISAM引擎
+数据库调优
 
 # MyBatis源码可能需要看下
 
@@ -19,12 +20,20 @@ Redis准备同步
 Redis哨兵机制
 
 # ZooKeeper
+zookeeper锁是如何实现的
 
 # Kafka
 
 # 消息队列
 
 # Netty与RPC
+
+# 分布式缓存
+分布式缓存redis原理
+分布式缓存读写不一致问题
+
+# 多线程并发
+
 
 # 系统设计
 - 秒杀系统
