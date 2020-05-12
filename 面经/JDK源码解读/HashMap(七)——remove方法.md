@@ -198,3 +198,98 @@ Map通过指定的key来删除映射
                 moveRootToFront(tab, r);
         }
 ```
+
+红黑树删除需要进行平衡删除
+```java
+static <K,V> TreeNode<K,V> balanceDeletion(TreeNode<K,V> root,
+                                                   TreeNode<K,V> x) {
+            for (TreeNode<K,V> xp, xpl, xpr;;)  {
+                if (x == null || x == root)
+                    return root;
+                else if ((xp = x.parent) == null) {
+                    x.red = false;
+                    return x;
+                }
+                else if (x.red) {
+                    x.red = false;
+                    return root;
+                }
+                else if ((xpl = xp.left) == x) {
+                    if ((xpr = xp.right) != null && xpr.red) {
+                        xpr.red = false;
+                        xp.red = true;
+                        root = rotateLeft(root, xp);
+                        xpr = (xp = x.parent) == null ? null : xp.right;
+                    }
+                    if (xpr == null)
+                        x = xp;
+                    else {
+                        TreeNode<K,V> sl = xpr.left, sr = xpr.right;
+                        if ((sr == null || !sr.red) &&
+                            (sl == null || !sl.red)) {
+                            xpr.red = true;
+                            x = xp;
+                        }
+                        else {
+                            if (sr == null || !sr.red) {
+                                if (sl != null)
+                                    sl.red = false;
+                                xpr.red = true;
+                                root = rotateRight(root, xpr);
+                                xpr = (xp = x.parent) == null ?
+                                    null : xp.right;
+                            }
+                            if (xpr != null) {
+                                xpr.red = (xp == null) ? false : xp.red;
+                                if ((sr = xpr.right) != null)
+                                    sr.red = false;
+                            }
+                            if (xp != null) {
+                                xp.red = false;
+                                root = rotateLeft(root, xp);
+                            }
+                            x = root;
+                        }
+                    }
+                }
+                else { // symmetric
+                    if (xpl != null && xpl.red) {
+                        xpl.red = false;
+                        xp.red = true;
+                        root = rotateRight(root, xp);
+                        xpl = (xp = x.parent) == null ? null : xp.left;
+                    }
+                    if (xpl == null)
+                        x = xp;
+                    else {
+                        TreeNode<K,V> sl = xpl.left, sr = xpl.right;
+                        if ((sl == null || !sl.red) &&
+                            (sr == null || !sr.red)) {
+                            xpl.red = true;
+                            x = xp;
+                        }
+                        else {
+                            if (sl == null || !sl.red) {
+                                if (sr != null)
+                                    sr.red = false;
+                                xpl.red = true;
+                                root = rotateLeft(root, xpl);
+                                xpl = (xp = x.parent) == null ?
+                                    null : xp.left;
+                            }
+                            if (xpl != null) {
+                                xpl.red = (xp == null) ? false : xp.red;
+                                if ((sl = xpl.left) != null)
+                                    sl.red = false;
+                            }
+                            if (xp != null) {
+                                xp.red = false;
+                                root = rotateRight(root, xp);
+                            }
+                            x = root;
+                        }
+                    }
+                }
+            }
+        }
+```
