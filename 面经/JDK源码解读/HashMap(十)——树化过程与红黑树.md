@@ -90,3 +90,34 @@
             moveRootToFront(tab, root);
         }
 ```
+moveRootToFront这个函数是将root节点移动到桶中的第一个元素，也就是链表的首节点，这样做是因为判断桶中元素类型的时候会对链表进行遍历，将根节点移动到链表前端可以确保类型判断时不会出现错误。
+```java
+/**
+ * 把给定节点设为桶中的第一个元素
+ */        
+    static <K,V> void moveRootToFront(Node<K,V>[] tab, TreeNode<K,V> root) {
+            int n;
+            if (root != null && tab != null && (n = tab.length) > 0) {
+                int index = (n - 1) & root.hash;
+                //first指向链表第一个节点
+                TreeNode<K,V> first = (TreeNode<K,V>)tab[index];
+                if (root != first) {
+                    //如果root不是第一个节点，则将root放到第一个首节点位置
+                    Node<K,V> rn;
+                    tab[index] = root;
+                    TreeNode<K,V> rp = root.prev;
+                    if ((rn = root.next) != null)
+                        ((TreeNode<K,V>)rn).prev = rp;
+                    if (rp != null)
+                        rp.next = rn;
+                    if (first != null)
+                        first.prev = root;
+                    root.next = first;
+                    root.prev = null;
+                }
+                //这里是防御性编程，校验更改后的结构是否满足红黑树和双链表的特性
+                //因为HashMap并没有做并发安全处理，可能在并发场景中意外破坏了结构
+                assert checkInvariants(root);
+            }
+        }
+```
