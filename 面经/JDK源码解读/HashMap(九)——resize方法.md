@@ -89,6 +89,7 @@ final Node<K,V>[] resize() {
                             hiTail = e;
                         }
                     } while ((e = next) != null);
+                    //将loHead保留对应位置，如旧表的位置为j=0，则保留的新表的位置也为0，另一部分保存的位置为0+oldCap。
                     if (loTail != null) {
                         loTail.next = null;
                         newTab[j] = loHead;
