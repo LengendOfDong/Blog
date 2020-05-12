@@ -40,10 +40,11 @@
          */
         final void treeify(Node<K,V>[] tab) {
             TreeNode<K,V> root = null;
-            //x是当前节点，
+            //x是当前节点，next是后继
             for (TreeNode<K,V> x = this, next; x != null; x = next) {
                 next = (TreeNode<K,V>)x.next;
                 x.left = x.right = null;
+                //如果根节点为null,把当前节点设置为根节点
                 if (root == null) {
                     x.parent = null;
                     x.red = false;
