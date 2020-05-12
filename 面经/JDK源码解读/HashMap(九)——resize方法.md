@@ -65,11 +65,14 @@ final Node<K,V>[] resize() {
                     ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                 //如果该节点是链表头节点
                 else { // preserve order
+                    
                     Node<K,V> loHead = null, loTail = null;
                     Node<K,V> hiHead = null, hiTail = null;
                     Node<K,V> next;
+                    //通过循环，可以将原来的链表分成
                     do {
                         next = e.next;
+                        //取hash值的最高位，如果为0，则将节点给loHead,后续通过loTail进行递增
                         if ((e.hash & oldCap) == 0) {
                             if (loTail == null)
                                 loHead = e;
@@ -77,6 +80,7 @@ final Node<K,V>[] resize() {
                                 loTail.next = e;
                             loTail = e;
                         }
+                        //取hash值的最高位，如果不为0，则将节点给hiHead,后续通过hiTail进行递增
                         else {
                             if (hiTail == null)
                                 hiHead = e;
