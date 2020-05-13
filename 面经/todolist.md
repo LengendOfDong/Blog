@@ -2,7 +2,6 @@
 比如ReentrantLock,ThreadPoolExecutor,ConcurrentHashMap,HashMap等这些类的源码
 
 # Java基础SE
-- [NIO的实现原理](https://blog.csdn.net/charjay_lin/article/details/81810922)
 HashMap，HashSet,LinkedHashMap以及ConcurrentHashMap
 hashcode与equals方法的区别
 RuntimeException Exception Error
@@ -74,6 +73,7 @@ Kafka日志压缩和删除
 消息队列的基本特性
 
 # Netty与RPC
+NIO原理
 
 # 分布式缓存
 分布式缓存redis原理
