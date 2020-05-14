@@ -26,3 +26,7 @@ SocketChannel socketChannel = serverSocketChannel.accept();
 // 将socketChannel设置为非阻塞工作模式
 socketChannel.configureBlocking(false);
 ```
+
+读操作：就是将数据从Channel读到Buffer中，进行后续处理。channel.read(buf)
+
+写操作：就是将数据从Buffer中写到Channel中，channel.write(buf)
