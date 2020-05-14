@@ -87,4 +87,48 @@ register 方法的第二个 int 型参数（使用二进制的标记位）用于
 
         对应 00010000，接受 TCP 连接
 
+我们可以同时监听一个 Channel 中的发生的多个事件，比如我们要监听 ACCEPT 和 READ 事件，那么指定参数为二进制的 00010001 即十进制数值 17 即可。
+
+注册方法返回值是 SelectionKey 实例，它包含了 Channel 和 Selector 信息，也包括了一个叫做 Interest Set 的信息，即我们设置的我们感兴趣的正在监听的事件集合。
+
+- 调用 select() 方法获取通道信息。用于判断是否有我们感兴趣的事件已经发生了。
+
+Selector 的操作就是以上 3 步，这里来一个简单的示例，大家看一下就好了。之后在介绍非阻塞 IO 的时候，会演示一份可执行的示例代码。
+
+```java
+Selector selector = Selector.open();
+
+channel.configureBlocking(false);
+
+SelectionKey key = channel.register(selector, SelectionKey.OP_READ);
+
+while(true) {
+  // 判断是否有事件准备好
+  int readyChannels = selector.select();
+  if(readyChannels == 0) continue;
+
+  // 遍历
+  Set<SelectionKey> selectedKeys = selector.selectedKeys();
+  Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
+  while(keyIterator.hasNext()) {
+    SelectionKey key = keyIterator.next();
+
+    if(key.isAcceptable()) {
+        // a connection was accepted by a ServerSocketChannel.
+
+    } else if (key.isConnectable()) {
+        // a connection was established with a remote server.
+
+    } else if (key.isReadable()) {
+        // a channel is ready for reading
+
+    } else if (key.isWritable()) {
+        // a channel is ready for writing
+    }
+
+    keyIterator.remove();
+  }
+}
+
+```
 
