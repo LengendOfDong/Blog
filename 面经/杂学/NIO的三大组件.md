@@ -28,6 +28,10 @@ Channel组件：
 
 Channel经常翻译为通道，类似于IO中的流，用于读和写入。它与前面介绍的Buffer打交道，读操作的时候将Channel中的数据填充到Buffer中，而写操作时将Buffer中的数据写入到Channel中。
 
+![Channel读操作](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/img/Channel%E8%AF%BB%E6%93%8D%E4%BD%9C.png)
+
+![Channel写操作](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/img/Channel%E5%86%99%E6%93%8D%E4%BD%9C.png)
+
 ServerSocketChannel的应用
 ```java
 //通过ServerSocketChannel创建channel通道
