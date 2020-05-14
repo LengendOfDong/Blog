@@ -1,6 +1,12 @@
 # NIO的三大组件
 NIO的三大组件：Buffer,Channel,Selector
 
+Buffer组件：
+
+一个Buffer本质上是内存中的一块，我们可以将数据写入这块内存，之后从这块内存获取数据。
+
+核心是ByteBuffer，
+
 Channel组件：
 - FileChannecl:文件通道，用于文件的读和写
 - DatagramChannel:用于UDP连接的接收和发送
