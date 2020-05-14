@@ -2,19 +2,19 @@
 
 1.这一步其实是当我们刚开始初始化这个buffer数组的时候，开始默认是这样的
 
-![NIO1](/Users/apple/WorkSpace/Blog/面经/杂学/img/NIO1.png)
+![NIO1](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/img/NIO1.png)
 
 2. 但是当你往buffer数组中开始写入的时候几个字节的时候就会变成下面的图，position会移动你数据的结束的下一个位置，这个时候你需要把buffer中的数据写到channel管道中，所以此时我们就需要用这个buffer.flip();方法
 
-   ![NIO2](/Users/apple/WorkSpace/Blog/面经/杂学/img/NIO2.png)
+   ![NIO2](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/img/NIO2.png)
 
 3. 当你调用完2中的方法时，这个时候就会变成下面的图了，这样的话其实就可以知道你刚刚写到buffer中的数据是在position---->limit之间，然后下一步调用clear（）
 
-![nio3](/Users/apple/WorkSpace/Blog/面经/杂学/img/NIO3.png)
+![nio3](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/img/NIO3.png)
 
 4、这时底层操作系统就可以从缓冲区中正确读取这 5 个字节数据发送出去了。在下一次写数据之前我们在调一下 clear() 方法。缓冲区的索引状态又回到初始位置。（其实这一步有点像IO中的把转运字节数组 char[] buf = new char[1024]; 不足1024字节的部分给强制刷新出去的意思） 
 
-![NIO4](/Users/apple/WorkSpace/Blog/面经/杂学/img/NIO1.png)
+![NIO4](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/img/NIO1.png)
 
 NIO的工作流程步骤：
 
