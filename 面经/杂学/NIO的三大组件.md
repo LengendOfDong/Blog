@@ -132,3 +132,27 @@ while(true) {
 
 ```
 
+对于 Selector，我们还需要非常熟悉以下几个方法：
+
+    select()
+
+    调用此方法，会将上次 select 之后的准备好的 channel 对应的 SelectionKey 复制到 selected set 中。如果没有任何通道准备好，这个方法会阻塞，直到至少有一个通道准备好。
+
+    selectNow()
+
+    功能和 select 一样，区别在于如果没有准备好的通道，那么此方法会立即返回 0。
+
+    select(long timeout)
+
+    看了前面两个，这个应该很好理解了，如果没有通道准备好，此方法会等待一会
+
+    wakeup()
+
+    这个方法是用来唤醒等待在 select() 和 select(timeout) 上的线程的。如果 wakeup() 先被调用，此时没有线程在 select 上阻塞，那么之后的一个 select() 或 select(timeout) 会立即返回，而不会阻塞，当然，它只会作用一次。
+
+## 小结
+Buffer和数组差不多，它有position、limit、capacity几个重要属性。put()一下数据、flip()切换到读模式、然后用get()获取数据、clear()一下清空数据、重新回到put()写入数据。
+
+Channel基本上只和Buffer打交道，最重要的接口就是channel.read(buf)和channel.write(buf)
+
+Selector用于实现非阻塞IO。
