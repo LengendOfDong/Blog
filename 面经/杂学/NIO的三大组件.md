@@ -1,5 +1,5 @@
 # NIO的三大组件
-NIO的三大组件：Buffer,Channel,Selector
+NIO的三大组件：Buffer、Channel、Selector
 
 ## Buffer组件
 
@@ -156,3 +156,6 @@ Buffer和数组差不多，它有position、limit、capacity几个重要属性�
 Channel基本上只和Buffer打交道，最重要的接口就是channel.read(buf)和channel.write(buf)
 
 Selector用于实现非阻塞IO。
+
+## Reference
+参考资料：https://www.javadoop.com/post/java-nio
