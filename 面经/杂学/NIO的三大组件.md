@@ -5,9 +5,22 @@ Buffer组件：
 
 一个Buffer本质上是内存中的一块，我们可以将数据写入这块内存，之后从这块内存获取数据。
 
-核心是ByteBuffer，
+![Buffer](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/img/Buffer%E7%9A%84%E5%88%86%E7%B1%BB.png)
+
+核心是最后的ByteBuffer，前面的一大串类只是包装了一下它而已，我们使用最多的通常也是ByteBuffer。
+
+我们应该将Buffer理解为一个数组，IntBuffer、CharBuffer、DoubleBuffer等分别对应int[]、char[]、double[]等。
+
+MappedByteBuffer用于实现内存映射文件。
+
+操作Buffer和操作数组、类集差不多，只不过大部分时候我们都把它放到了NIO的场景里面来使用而已。
 
 Channel组件：
+
+所有的NIO操作都始于通道，通道是数据来源或数据写入的目的地，主要地，我们将关心java.nio包中实现的以下几个Channel：
+
+![Channel的分类](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/img/Channel%E7%9A%84%E5%88%86%E7%B1%BB.png)
+
 - FileChannecl:文件通道，用于文件的读和写
 - DatagramChannel:用于UDP连接的接收和发送
 - SocketChannel:把它理解为TCP连接通道，简单理解就是TCP客户端
