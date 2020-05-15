@@ -4,7 +4,7 @@
 # Java基础SE
 - [hashcode与equals区别与关系](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/hashcode%E4%B8%8Eequals%E6%96%B9%E6%B3%95%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB.md)
 - [RuntimeException、Exception、Error和Throwable](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/RuntimeException%E3%80%81Exception%E3%80%81Error%E5%92%8CThrowable.md)
-- []
+- [如何使用异常处理机制](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.md)
 
 注解的使用
 
