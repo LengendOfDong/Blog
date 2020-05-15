@@ -37,7 +37,9 @@ public class ExceptionTest {
     }
 }
 ```
-在上面代码中，先说下0为除数的情况：
+在上面代码中，有两个知识点：
+
+先说下0为除数的情况：
 
 如果除数为int型的0时，就查看被除数是否是int型的0，如果被除数是int型的0,将会抛出ArithmeticException,如果不是int而是double,就像例子中的f，则返回NaN
 
@@ -48,3 +50,30 @@ public class ExceptionTest {
 程序员应该捕获的是”检查型异常“，当看到某个方法声明中可能抛出某个检查型异常，那么作为调用方必须考虑如何处理这个异常，否则编译器就是给出错误提示。
 
 将上例中的注释去掉，则会抛出”空指针异常“，此时由于程序并没有catch到这个异常，所以整个程序将会终止。
+
+最后，说下Error，其实Error也是可以捕获的，也就是说，Throwable类都可以捕获，不管是Error还是Exception,但是我们通常只对检查型异常进行捕获。
+
+```java
+public class ExceptionTest {
+    public static void main(String[] args){
+        try{
+            double a = 0.0;
+            double c = 0;
+            double b = 0.0 / a;
+            double d = 0 / c;
+            System.out.println(b);
+            System.out.println(d);
+            throw new Error("123");
+        }catch (Error e){
+            System.out.println(e.getMessage());
+        }
+        System.out.println("12344");
+    }
+}
+
+输出：
+NaN
+NaN
+123
+12344
+```
