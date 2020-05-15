@@ -5,14 +5,16 @@
 - [hashcode与equals区别与关系](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/hashcode%E4%B8%8Eequals%E6%96%B9%E6%B3%95%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB.md)
 - [RuntimeException、Exception、Error和Throwable](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/RuntimeException%E3%80%81Exception%E3%80%81Error%E5%92%8CThrowable.md)
 - [如何使用异常处理机制](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6.md)
-
-注解的使用
-
-基本数据类型
-
-五种常见的网络IO模型
+- [注解的使用]()
+- 五种常见的网络IO模型
 
 反射应用，private static final
+hashMap与hashtable的区别
+concurrenthashmap与hashtable的区别
+IO多路复用模型中的select，poll，epoll的区别
+
+# 框架
+shiro框架的原理
 
 # 网络协议
 TCP与UDP区别
@@ -21,6 +23,7 @@ TCP网络包分片与重组
 三次握手与四次挥手，状态转换
 SSL握手协议使用的加密算法，非对称加密的缺点
 XSS和CSRF介绍
+http的响应与请求的结构
 
 # Spring源码和SpringBoot源码
 Spring生命周期
@@ -65,6 +68,7 @@ redis线程模型
 redis的数据过期方式
 redis持久化方式
 缓存雪崩，缓存穿透，缓存击穿
+redis主从分布
 
 # ZooKeeper
 zookeeper锁是如何实现的
@@ -107,6 +111,8 @@ JVM调优参数
 Full GC.Minor GC
 对象的栈上分配（JIT编译器）
 逃逸分析
+垃圾回收算法
+JVM加载类的过程
 
 # 系统设计
 - 秒杀系统
@@ -118,7 +124,7 @@ Full GC.Minor GC
 
 # 综合题目
 扫微信二维码经历了什么
-发送一个请求到返回之间经历了什么
+发送一个请求到返回之间经历了什么（在浏览器上输入url后的过程）
 
 # 工具方面
 git rebase命令发生了什么
