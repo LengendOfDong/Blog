@@ -12,6 +12,9 @@
 hashMap与hashtable的区别
 concurrenthashmap与hashtable的区别
 IO多路复用模型中的select，poll，epoll的区别
+拉链法中链表过长时变形为红黑树有什么优缺点?
+HashMap 的并发不安全体现在哪
+HashMap 在扩容时, 对读写操作有什么特殊处理
 
 # 框架
 shiro框架的原理
@@ -50,6 +53,8 @@ Paxos算法与ZAB协议
 
 # 数据库设计
 分库分表如何操作
+某一个业务中现在需要生成全局唯一的递增 ID, 并发量非常大, 怎么做 （UUID）
+头条的文章的评论量非常大, 比如说一篇热门文章就有几百万的评论, 设计一个后端服务, 实现评论的时序展示与分页
 
 # MySQL
 数据库索引原理
@@ -65,6 +70,8 @@ MySQL隔离级别
 索引结构，回表和最左前缀原则
 间隙锁、幻读、MVCC
 MySQL in的原理，如何优化
+B+树和二叉树有什么区别和优劣
+MySQL 的聚簇索引和非聚簇索引有什么区别
 
 # MyBatis
 MyBatis中#和$符号的区别
@@ -91,6 +98,8 @@ zookeeper锁是如何实现的
 Kafka主题，分区和日志文件的关系
 Kafka日志压缩和删除
 Kafka如何保证消息有序
+Kafka 的消费者如何做消息去重
+介绍一下 Kafka 的 ConsumerGroup 
 
 # 消息队列
 消息队列的基本特性
