@@ -77,3 +77,41 @@ NaN
 123
 12344
 ```
+
+# 处理Exception
+catch到Exception之后，有两种方式，要么自己处理，要么抛出。
+```java
+public class ExceptionTest {
+    public static void main(String[] args){
+        try{
+            new ExceptionTest().count();
+            System.out.println("7898");
+        }catch (CommonException e){
+            System.out.println(e.getMessage());
+        }
+        System.out.println("12344");
+    }
+
+    private void count() throws CommonException {
+        try {
+            int e = 0;
+            int f = 0 / e;
+            System.out.println(f);
+        }catch (ArithmeticException e){
+            throw new CommonException(e.getMessage(), e);
+        }
+        System.out.println("2345");
+    }
+}
+输出：
+/ by zero
+12344
+```
+上例中，catch方法捕获到异常后，就进行了异常转换，将其转换成了另一个通用异常，这种方式在异常统一的时候经常使用，方便管理。count方法自己不处理，就进行了抛出，如果不声明throws就会报错，需要在签名上声明才行。
+
+main方法在catch到异常之后进行了处理，此时就不需要在方法签名上声明throws。
+
+从输出来看，没有打印"2345",说明throw就如同return,直接返回了，但是打印了“12344”，说明catch异常处理之后，方法会继续进行,然而“7898”也没有打印，说明try块中的代码将会直接跳过，程序只会继续执行catch之后的代码。
+
+
+
