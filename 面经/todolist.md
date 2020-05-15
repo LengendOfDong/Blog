@@ -20,7 +20,7 @@ shiro框架的原理
 TCP与UDP区别
 TCP可靠性如何保证
 TCP网络包分片与重组
-三次握手与四次挥手，状态转换
+三次握手与四次挥手，状态转换，TIME_WAIT
 SSL握手协议使用的加密算法，非对称加密的缺点
 XSS和CSRF介绍
 http的响应与请求的结构
@@ -36,8 +36,13 @@ Spring的事务实现方式
 如何自定义实现SpringBoot中的Starter
 
 # 数据结构与算法（每日）
+雪花算法的原理
+Paxos算法
 单项进行练习，如动态规划，深搜，广搜，贪心，排序，查找，并查集等
 练习并进行总结规律
+
+# 数据库设计
+分库分表如何操作
 
 # MySQL
 数据库索引原理
@@ -52,6 +57,7 @@ MySQL隔离级别
 日志模块：undo log/redo log/binlog
 索引结构，回表和最左前缀原则
 间隙锁、幻读、MVCC
+MySQL in的原理，如何优化
 
 # MyBatis
 MyBatis中#和$符号的区别
@@ -85,9 +91,10 @@ Kafka日志压缩和删除
 - [NIO和IO的关系，通道与缓冲区](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/NIO%E5%92%8CIO%E7%9A%84%E5%85%B3%E7%B3%BB%EF%BC%8C%E9%80%9A%E9%81%93%E4%B8%8E%E7%BC%93%E5%86%B2%E5%8C%BA.md)
 - [NIO的三大组件](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/NIO%E7%9A%84%E4%B8%89%E5%A4%A7%E7%BB%84%E4%BB%B6.md)
 
-# 分布式缓存
+# 分布式
 分布式缓存redis原理
 分布式缓存读写不一致问题
+分布式事务的几种形式
 
 # 多线程并发
 线程池有哪些类型
