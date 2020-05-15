@@ -1,0 +1,11 @@
+# RuntimeException、Exception、Error和Throwable
+Throwable类是Java语言中所有错误或异常的超类，它的两个子类是Error和Exception
+
+Error是Throwable的子类，用于指示合理的应用程序不应该试图捕获的严重问题。大多数这样的错误时异常条件。虽然ThreadDeath错误是一个”正规“条件，但它也是Error 的子类，因为大多数应用程序都不应该试图捕获它。在执行该方法期间，无需在其 throws 子句中声明可能抛出但是未能捕获的 Error 的任何子类，因为这些错误可能是再也不会发生的异常条件
+
+Exception类及其子类是Throwable的一种形式，它指出了合理的应用程序想要捕获的条件。
+
+RuntimeException是那些可能在Java虚拟机正常运行期间抛出的异常的超类，可能在执行方法期间但未被捕获的RuntimeException的任何子类都无需在throws子句中进行声明。它是Exception的子类。
+
+方法重写时：在子类中一个重写的方法只能抛出父类中声明过的异常或者异常的子类。
+
