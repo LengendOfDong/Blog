@@ -82,6 +82,7 @@ redis的数据过期方式
 redis持久化方式
 缓存雪崩，缓存穿透，缓存击穿
 redis主从分布
+Redis为什么这么快
 
 # ZooKeeper
 zookeeper锁是如何实现的
@@ -89,6 +90,7 @@ zookeeper锁是如何实现的
 # Kafka
 Kafka主题，分区和日志文件的关系
 Kafka日志压缩和删除
+Kafka如何保证消息有序
 
 # 消息队列
 消息队列的基本特性
@@ -115,6 +117,7 @@ ReentrantLock与AQS
 ThreadLocal实现原理
 ConcurrentHashMap分段锁原理
 wait和sleep的区别
+进程同步的方式
 
 # JVM
 JVM内存模型，内存区域划分
@@ -142,6 +145,7 @@ JVM加载类的过程
 # 综合题目
 扫微信二维码经历了什么
 发送一个请求到返回之间经历了什么（在浏览器上输入url后的过程）
+公司内部的RPC框架
 
 # 工具方面
 git rebase命令发生了什么
@@ -149,3 +153,8 @@ maven打包配置依赖
 
 # 加分
 了解GO语言
+
+# hr
+为啥离职，怎么想的
+怎么和团队的人沟通，和成员出现冲突时怎么解决。
+期望薪资
