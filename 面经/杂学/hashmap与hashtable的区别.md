@@ -3,6 +3,7 @@
 Hashtable继承自Dictionary类，而HashMap继承自AbstractMap类。但二者都实现了Map接口。
       
 2、线程安全性不同
+
 javadoc中关于hashmap的一段描述如下：此实现不是同步的。如果多个线程同时访问一个哈希映射，而其中至少一个线程从结构上修改了该映射，则它必须保持外部同步。
 
 Hashtable 中的方法是Synchronize的，而HashMap中的方法在缺省情况下是非Synchronize的。在多线程并发的环境下，可以直接使用Hashtable，不需要自己为它的方法实现同步，但使用HashMap时就必须要自己增加同步处理。（结构上的修改是指添加或删除一个或多个映射关系的任何操作；仅改变与实例已经包含的键关联的值不是结构上的修改。）这一般通过对自然封装该映射的对象进行同步操作来完成。如果不存在这样的对象，则应该使用 Collections.synchronizedMap 方法来“包装”该映射。最好在创建时完成这一操作，以防止对映射进行意外的非同步访问，如下所示：
@@ -14,6 +15,7 @@ Hashtable 线程安全很好理解，因为它每个方法中都加入了Synchro
 HashMap底层是一个Entry数组，当发生hash冲突的时候，hashmap是采用链表的方式来解决的，在对应的数组位置存放链表的头结点。对链表而言，新加入的节点会从头结点加入。
       
 3、是否提供contains方法
+
 HashMap把Hashtable的contains方法去掉了，改成containsValue和containsKey，因为contains方法容易让人引起误解。
 
 Hashtable则保留了contains，containsValue和containsKey三个方法，其中contains和containsValue功能相同。
@@ -109,6 +111,7 @@ Hashtable的Containskey方法与ContainsValue的源码：
 ```
 
 4、key和value是否允许null值
+
 其中key和value都是对象，并且不能包含重复key，但可以包含重复的value。
 
 通过上面的ContainsKey方法和ContainsValue的源码我们可以很明显的看出：
