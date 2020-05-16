@@ -56,6 +56,11 @@ public @interface Retention
 
 只有元注释类型直接用于注释时，Target元注释才有效。如果元注释类型用作另一种注释类型的成员，则无效。
 
+```java
+public enum RetentionPolicy extends Enum<RetentionPolicy>
+```
+
+
 - CLASS
 编译器将把注释记录在类文件中，但在运行时 VM 不需要保留注释。
 - RUNTIME
