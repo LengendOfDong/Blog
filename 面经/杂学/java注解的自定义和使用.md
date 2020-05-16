@@ -6,20 +6,23 @@ jdk1.5版本内置了三种标准的注解：
 
 Java还提供了4种注解，专门负责新注解的创建：
 - @Target:
-> 表示该注解可以用于什么地方，可能的ElementType参数有：
->> CONSTRUCTOR：构造器的声明
+```
+ 表示该注解可以用于什么地方，可能的ElementType参数有：
+ 
+ CONSTRUCTOR：构造器的声明
 
->> FIELD：域声明（包括enum实例）
+ FIELD：域声明（包括enum实例）
 
->> LOCAL_VARIABLE：局部变量声明
+ LOCAL_VARIABLE：局部变量声明
 
->> METHOD：方法声明
+ METHOD：方法声明
 
->> PACKAGE：包声明
+ PACKAGE：包声明
 
->> PARAMETER：参数声明
+ PARAMETER：参数声明
 
->> TYPE：类、接口（包括注解类型）或enum声明
+ TYPE：类、接口（包括注解类型）或enum声明
+```
 
 
 
