@@ -27,6 +27,9 @@ blocking IO的特点就是在IO执行的两个阶段（等待数据和拷贝数�
 - HTTP Server 3.0:select模型，一个socket连接就是一个所谓的文件描述符（File Descriptor即fd,是一个整数），使用一个进程来表示对它的读写操作，实在是浪费。每个socket都有fd编号，每次HTTP Server和操作系统之间传递fd_set，去查询socket有没有数据，需要动态地维护这个集合，进行socket的增加或者减少。操作系统内核对需要处理的socket进行了标记，HTTP Server在检查每个socket后，对于有标记的进行处理，调用read操作，将数据从内核拷贝到用户进程。可见HTTP Server在查询的时候是在阻塞的，同时在处理socket的时候也是阻塞的。
 - HTTP Server 4.0：epoll模型，select模型每次最多处理1024个socket,并且需要遍历这么多socket fd，只为了找到哪些需要处理。epoll模型可以先给操作系统内核传递一份需要监控的socket fd集合。操作系统内核只返回需要处理的fd,此时仅需要处理操作系统发来的socket。
 
+## 非阻塞IO和异步IO
+非阻塞IO和异步IO的区别还是很明显的，在非阻塞IO中，虽然进程大部分时间都不会被block,但是它仍然要求进程去主动的check，并且当数据准备完成以后，也需要进程主动的再次调用recvfrom来将数据拷贝到用户内存。而异步IO则完全不同，它就像是用户进程将整个IO操作交给了他人（kernel）完成，然后他人做完后发信号通知。在此期间，用户进程不需要去检查IO操作的状态，也不需要主动的去拷贝数据。
+
 参考文档：
 
 https://www.cnblogs.com/findumars/p/6361627.html
