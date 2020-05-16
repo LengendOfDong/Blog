@@ -15,7 +15,8 @@ HashMap 的并发不安全体现在哪
 HashMap 在扩容时, 对读写操作有什么特殊处理
 
 # Linux
-进程间通信的方式
+- [进程间通信的方式](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.md)
+
 进程同步的方式
 
 # 框架
