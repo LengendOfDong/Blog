@@ -45,6 +45,26 @@ RUNTIME：VM将在运行期间保留注解，因此可以通过反射机制读�
 允许子类继承父类中的注解
 ```
 
+# 注解的作用范围：
+```java
+@Documented
+@Retention(value=RUNTIME)
+@Target(value=ANNOTATION_TYPE)
+public @interface Retention
+```
+指示注释类型的注释要保留多久。如果注释类型声明中不存在 Retention 注释，则保留策略默认为 RetentionPolicy.CLASS。
+
+只有元注释类型直接用于注释时，Target元注释才有效。如果元注释类型用作另一种注释类型的成员，则无效。
+
+- CLASS
+编译器将把注释记录在类文件中，但在运行时 VM 不需要保留注释。
+- RUNTIME
+编译器将把注释记录在类文件中，在运行时 VM 将保留注释，因此可以反射性地读取。
+- SOURCE
+编译器要丢弃的注释。
+@Retention注解可以在定义注解时为编译程序提供注解的保留策略。
+
+
 
 
 
