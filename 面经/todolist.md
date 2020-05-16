@@ -14,6 +14,10 @@ concurrenthashmap与hashtable的区别
 HashMap 的并发不安全体现在哪
 HashMap 在扩容时, 对读写操作有什么特殊处理
 
+# Linux
+进程间通信的方式
+进程同步的方式
+
 # 框架
 shiro框架的原理
 
@@ -124,7 +128,6 @@ ReentrantLock与AQS
 ThreadLocal实现原理
 ConcurrentHashMap分段锁原理
 wait和sleep的区别
-进程同步的方式
 
 # JVM
 JVM内存模型，内存区域划分
