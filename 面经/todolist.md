@@ -10,8 +10,8 @@
 - [hashMap与hashtable的区别](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB.md)
 concurrenthashmap与hashtable的区别
 - [select,poll,epoll的区别](https://github.com/LengendOfDong/Blog/edit/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/select,poll,epoll%E7%9A%84%E5%8C%BA%E5%88%AB.md)
-拉链法中链表过长时变形为红黑树有什么优缺点?
-HashMap 的并发不安全体现在哪
+- [为什么使用红黑树而不使用AVL树](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/AVL%E6%A0%91%E5%92%8C%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%8C%BA%E5%88%AB.md)
+- [HashMap 的并发不安全体现在哪](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/HashMap%E7%9A%84%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%AE%89%E5%85%A8.md)
 HashMap 在扩容时, 对读写操作有什么特殊处理
 
 # 操作系统
