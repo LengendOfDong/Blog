@@ -14,10 +14,10 @@ concurrenthashmap与hashtable的区别
 HashMap 的并发不安全体现在哪
 HashMap 在扩容时, 对读写操作有什么特殊处理
 
-# Linux
+# 操作系统
 - [进程间通信的方式](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.md)
-
-进程同步的方式
+- [进程同步的方式](https://github.com/LengendOfDong/Blog/edit/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E8%BF%9B%E7%A8%8B%E5%90%8C%E6%AD%A5%E7%9A%84%E6%96%B9%E5%BC%8F.md)
+- [线程同步与互斥的区别与联系](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E4%B8%8E%E4%BA%92%E6%96%A5%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB.md)
 
 # 框架
 shiro框架的原理
