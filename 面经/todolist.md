@@ -12,7 +12,8 @@ concurrenthashmap与hashtable的区别
 - [select,poll,epoll的区别](https://github.com/LengendOfDong/Blog/edit/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/select,poll,epoll%E7%9A%84%E5%8C%BA%E5%88%AB.md)
 - [为什么使用红黑树而不使用AVL树](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/AVL%E6%A0%91%E5%92%8C%E7%BA%A2%E9%BB%91%E6%A0%91%E7%9A%84%E5%8C%BA%E5%88%AB.md)
 - [HashMap 的并发不安全体现在哪](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/HashMap%E7%9A%84%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%AE%89%E5%85%A8.md)
-HashMap 在扩容时, 对读写操作有什么特殊处理
+- HashMap 在扩容时读写操作
+  - 以参考rehash的做法。逐步迁移数据到一个新的hash表，然后最终的时候，数据全部转移到新表。删除旧表
 
 # 操作系统
 - [进程间通信的方式](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.md)
