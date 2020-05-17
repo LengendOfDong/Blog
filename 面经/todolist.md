@@ -157,8 +157,8 @@ JVM加载类的过程
 - 点餐系统
 
 # 综合题目
-扫微信二维码经历了什么
-发送一个请求到返回之间经历了什么（在浏览器上输入url后的过程）
+- [扫微信二维码经历了什么](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E5%BE%AE%E4%BF%A1%E4%BA%8C%E7%BB%B4%E7%A0%81%E6%89%AB%E7%A0%81%E8%BF%87%E7%A8%8B.md)
+- [在浏览器上输入url后的过程](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E4%BB%8E%E5%8F%91%E9%80%81%E5%88%B0%E8%BF%94%E5%9B%9E%E9%83%BD%E7%BB%8F%E5%8E%86%E4%BA%86%E4%BB%80%E4%B9%88.md)
 公司内部的RPC框架
 
 # 工具方面
