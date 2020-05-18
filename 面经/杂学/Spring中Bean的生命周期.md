@@ -42,6 +42,10 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
    }
    }
 ```
+于销毁，是在容器关闭时调用的，详见ConfigurableApplicationContext#close()
+
+## 常用扩展点
+
 
 ## 设置对象属性（依赖注入）
 
