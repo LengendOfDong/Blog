@@ -66,5 +66,5 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 - isSingletonCurrentlyInCreation()判断当前单例bean是否正在创建中，也就是没有初始化完成（比如A的构造器依赖了B对象所以得先去创建B对象，或者在A的populateBean过程中依赖了B对象，得先去创建B对象，这时的A就是处于创建中的状态）
 - allowEarlyReference是否允许从SingletonFactories中通过getObject拿到对象。
 
-分析getSingleton()的整个过程，Spring首先从一级缓存singletonObjects中获取。如果获取不到，并且对象正在创建中，就再从二级缓存early
+分析getSingleton()的整个过程，Spring首先从一级缓存singletonObjects中获取。如果获取不到，并且对象正在创建中，就再从二级缓存earlySingletonObjects中获取。如果还是获取不到
 
