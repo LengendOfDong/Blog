@@ -68,3 +68,5 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 
 分析getSingleton()的整个过程，Spring首先从一级缓存singletonObjects中获取。如果获取不到，并且对象正在创建中，就再从二级缓存earlySingletonObjects中获取。如果还是获取不到
 
+## Reference
+https://zhuanlan.zhihu.com/p/84267654
