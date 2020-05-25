@@ -29,17 +29,17 @@ shiro框架的原理
 TCP网络包分片与重组
 - [TCP三次握手与四次挥手](https://github.com/LengendOfDong/Blog/edit/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/TCP%E8%BF%9E%E6%8E%A5.md)
 - [TCP的TIME_WAIT状态](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/TCP%E7%9A%84TIME_WAIT%E7%8A%B6%E6%80%81.md)
-- [SSL握手协议使用的加密算法]
-- [非对称加密的缺点]
-XSS和CSRF介绍
+- [SSL握手协议使用的加密算法](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/SSL%E7%89%88%E6%9C%AC%E4%B8%AD%E6%89%80%E7%94%A8%E5%88%B0%E7%9A%84%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95.md)
+- [对称加密与非对称加密的优缺点](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E4%B8%8E%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9.md)
+- [XSS和CSRF介绍]
 http的响应与请求的结构
 TCP拥塞控制，UDP拥塞控制
 
 # Spring源码和SpringBoot源码
 - [Spring生命周期](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.md)
-Spring循环依赖
-Spring IOC
-Spring AOP
+- [Spring循环依赖](https://github.com/LengendOfDong/Blog/edit/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/Spring%E7%9A%84%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96.md)
+- [Spring IOC](https://www.cnblogs.com/chenssy/p/9576769.html)
+- [Spring AOP](https://www.zhihu.com/question/23641679)
 SpringBoot启动方式和配置顺序
 SpringMVC和Spring父子容器的关系
 Spring的事务实现方式
