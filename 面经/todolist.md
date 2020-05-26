@@ -14,6 +14,11 @@ concurrenthashmap与hashtable的区别
 - [HashMap 的并发不安全体现在哪](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/HashMap%E7%9A%84%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%AE%89%E5%85%A8.md)
 - HashMap 在扩容时读写操作
   - 以参考rehash的做法。逐步迁移数据到一个新的hash表，然后最终的时候，数据全部转移到新表。删除旧表
+- poll()方法和remove()方法的区别
+  - poll和remove都是从队列中取出一个元素，不过队列为空时，poll返回空，而remove会抛异常
+  
+# 源码部分
+
 
 # 操作系统
 - [进程间通信的方式](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.md)
@@ -40,11 +45,12 @@ TCP拥塞控制，UDP拥塞控制
 - [Spring循环依赖](https://github.com/LengendOfDong/Blog/edit/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/Spring%E7%9A%84%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96.md)
 - [Spring IOC](https://www.cnblogs.com/chenssy/p/9576769.html)
 - [Spring AOP](https://www.zhihu.com/question/23641679)
-SpringBoot启动方式和配置顺序
+- [SpringBoot启动方式和配置顺序]
 SpringMVC和Spring父子容器的关系
 Spring的事务实现方式
 如何自定义实现SpringBoot中的Starter
 spring响应请求的全流程
+Spring多线程调度器
 
 # 数据结构与算法（每日）
 最大堆和最小堆
