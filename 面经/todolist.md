@@ -16,6 +16,7 @@ concurrenthashmap与hashtable的区别
   - 以参考rehash的做法。逐步迁移数据到一个新的hash表，然后最终的时候，数据全部转移到新表。删除旧表
 - poll()方法和remove()方法的区别
   - poll和remove都是从队列中取出一个元素，不过队列为空时，poll返回空，而remove会抛异常
+- [linkedList与ArrayList的区别](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/ArrayList%E4%B8%8ELinkedList%E7%9A%84%E5%8C%BA%E5%88%AB.md)
   
 # 源码部分
 
