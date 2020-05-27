@@ -1,3 +1,6 @@
+# 简介
+CopyOnWriteArrayList是ArrayList的线程安全版本，内部也是通过数组实现，每次对数组的修改都完全拷贝一份新的数组来修改，修改完了再替换掉老数组，这样保证了只阻塞写操作，不阻塞读操作，实现读写分离。
+
 # 总结
 
 （1）CopyOnWriteArrayList使用ReentrantLock重入锁加锁，保证线程安全；
