@@ -22,6 +22,9 @@ concurrenthashmap与hashtable的区别
 - [LinkedList](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/LinkedList.md)
 - [HashMap](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/HashMap.md)
 - [史上最全Java集合](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E5%8F%B2%E4%B8%8A%E6%9C%80%E5%85%A8Java%E9%9B%86%E5%90%88%E5%9B%BE.md)
+- [LinkedHashMap](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/LinkedHashMap.md)
+- [WeakHashMap](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/WeakHashMap.md)
+- []
   
 # 源码部分
 
