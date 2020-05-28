@@ -27,5 +27,8 @@ HashMap采用key/value存储结构，每个key对应唯一的value，查询和�
 
 （8）HashMap查找添加元素的时间复杂度都为O(1)；
 
+## 相关面试题
+https://mp.weixin.qq.com/s?__biz=MjM5NzMyMjAwMA==&mid=2651487383&idx=1&sn=01b76cc546364e31394a3f03e3988366&chksm=bd2510e88a5299feb6cf2435d131d2af22e43b2c77184d3c77cd0fa17bf814d8d9c3b6a4eb31&xtrack=1&scene=0&subscene=92&sessionid=1590020740&clicktime=1590020764&enterid=1590020764&ascene=7&devicetype=android-29&version=27000e39&nettype=WIFI&abtest_cookie=AAACAA%3D%3D&lang=zh_CN&exportkey=AcAEJWpBb0lr9LxXp4VirtU%3D&pass_ticket=eC0UP38kInc6fK7YaZIs8mVioGCrPrvRKaSUuQLQl41GJssjMKzQc5x9F6JfB5%2Bq&wx_header=1
+
 ## Reference
 http://cmsblogs.com/?p=4731
