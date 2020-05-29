@@ -91,5 +91,7 @@ public static void main(String[] args) {
 
 比如，上述的Entry是一个弱引用，它引用的对象是key，当key被回收时，Entry会被放到queue中。
 
+https://blog.csdn.net/junjunba2689/article/details/80601729
+
 ## Reference
 http://cmsblogs.com/?p=4735
