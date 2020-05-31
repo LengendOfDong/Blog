@@ -17,3 +17,15 @@ LinkedHashSet |	有 |	否 |	LinkedHashMap| 	无 |	插入顺序|
 TreeSet |	有 |	否 |	NavigableMap |	NavigableSet |	自然顺序|
 CopyOnWriteArraySet |	有 |	是 |	CopyOnWriteArrayList |	无 |	插入顺序，读写分离|
 ConcurrentSkipListSet| 	有 |	是 |	ConcurrentNavigableMap 	|NavigableSet| 	自然顺序|
+
+从中我们可以发现一些规律：
+
+（1）除了HashSet其它Set都是有序的；
+
+（2）实现了NavigableSet或者SortedSet接口的都是自然顺序的；
+
+（3）使用并发安全的集合实现的Set也是并发安全的；
+
+（4）TreeSet虽然不是全部都是使用的TreeMap实现的，但其实都是跟TreeMap相关的（TreeMap的子Map中组合了TreeMap）；
+
+（5）ConcurrentSkipListSet虽然不是全部都是使用的ConcurrentSkipListMap实现的，但其实都是跟ConcurrentSkipListMap相关的（ConcurrentSkipListeMap的子Map中组合了ConcurrentSkipListMap）；
