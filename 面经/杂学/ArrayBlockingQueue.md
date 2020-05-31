@@ -133,3 +133,111 @@ private void enqueue(E x) {
 （4）offer(e, timeout, unit)时如果队列满了则等待一段时间后如果队列依然满就返回false；
 
 （5）利用放指针循环使用数组来存储元素；
+
+## 出队
+出队有四个方法，它们分别为remove(),poll()、take()、poll(long timeout,TimeUnit unit)它们有什么区别？
+```java
+public E remove() {
+    // 调用poll()方法出队
+    E x = poll();
+    if (x != null)
+        // 如果有元素出队就返回这个元素
+        return x;
+    else
+        // 如果没有元素出队就抛出异常
+        throw new NoSuchElementException();
+}
+
+public E poll() {
+    final ReentrantLock lock = this.lock;
+    // 加锁
+    lock.lock();
+    try {
+        // 如果队列没有元素则返回null，否则出队
+        return (count == 0) ? null : dequeue();
+    } finally {
+        lock.unlock();
+    }
+}
+
+public E take() throws InterruptedException {
+    final ReentrantLock lock = this.lock;
+    // 加锁
+    lock.lockInterruptibly();
+    try {
+        // 如果队列无元素，则阻塞等待在条件notEmpty上
+        while (count == 0)
+            notEmpty.await();
+        // 有元素了再出队
+        return dequeue();
+    } finally {
+        // 解锁
+        lock.unlock();
+    }
+}
+
+public E poll(long timeout, TimeUnit unit) throws InterruptedException {
+    long nanos = unit.toNanos(timeout);
+    final ReentrantLock lock = this.lock;
+    // 加锁
+    lock.lockInterruptibly();
+    try {
+        // 如果队列无元素，则阻塞等待nanos纳秒
+        // 如果下一次这个线程获得了锁但队列依然无元素且已超时就返回null
+        while (count == 0) {
+            if (nanos <= 0)
+                return null;
+            nanos = notEmpty.awaitNanos(nanos);
+        }
+        return dequeue();
+    } finally {
+        lock.unlock();
+    }
+}
+
+private E dequeue() {
+    final Object[] items = this.items;
+    @SuppressWarnings("unchecked")
+    // 取取指针位置的元素
+    E x = (E) items[takeIndex];
+    // 把取指针位置设为null
+    items[takeIndex] = null;
+    // 取指针前移，如果数组到头了就返回数组前端循环利用
+    if (++takeIndex == items.length)
+        takeIndex = 0;
+    // 元素数量减1
+    count--;
+    if (itrs != null)
+        itrs.elementDequeued();
+    // 唤醒notFull条件
+    notFull.signal();
+    return x;
+}
+```
+（1）remove()时如果队列为空则抛出异常；
+
+（2）poll()时如果队列为空则返回null；
+
+（3）take()时如果队列为空则阻塞等待在条件notEmpty上；
+
+（4）poll(timeout, unit)时如果队列为空则阻塞等待一段时间后如果还为空就返回null；
+
+（5）利用取指针循环从数组中取元素；
+
+# 总结
+（1）ArrayBlockingQueue不需要扩容，因为是初始化时指定容量，并循环利用数组；
+
+（2）ArrayBlockingQueue利用takeIndex和putIndex循环利用数组；
+
+（3）入队和出队各定义了四组方法为满足不同的用途；
+
+（4）利用重入锁和两个条件保证并发安全；
+
+- 论BlockingQueue中的那些方法
+BlockingQueue是所有阻塞队列的顶级接口，它里面定义了一批方法，它们有什么区别？
+
+|操作 |抛出异常 |	返回特定值 |	阻塞 |超时|
+|:-|:-|:-|:-|:-|
+|入队 |add(e)| offer(e)——false| 	put(e)| 	offer(e, timeout, unit)|
+|出队 |	remove()| 	poll()——null |	take() |	poll(timeout, unit)|
+|检查 |	element()| 	peek()——null |	- |	-|
