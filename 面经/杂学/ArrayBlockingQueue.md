@@ -241,3 +241,11 @@ BlockingQueue是所有阻塞队列的顶级接口，它里面定义了一批方�
 |入队 |add(e)| offer(e)——false| 	put(e)| 	offer(e, timeout, unit)|
 |出队 |	remove()| 	poll()——null |	take() |	poll(timeout, unit)|
 |检查 |	element()| 	peek()——null |	- |	-|
+
+- ArrayBlockingQueue有哪些缺点呢？
+
+a）队列长度固定且必须在初始化时指定，所以使用之前一定要慎重考虑好容量；
+
+b）如果消费速度跟不上入队速度，则会导致提供者线程一直阻塞，且越阻塞越多，非常危险；
+
+c）只使用了一个锁来控制入队出队，效率较低，那是不是可以借助分段的思想把入队出队分裂成两个锁呢？且听下回分解。
