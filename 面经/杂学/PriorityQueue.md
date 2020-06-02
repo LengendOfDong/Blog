@@ -26,6 +26,7 @@
 （4）modCount，修改次数，有这个属性表示PriorityQueue也是fast-fail的；
 
 入队：
+
 入队有两个方法，add(E e)和offer(E e)，两者是一致的，add(E e)也是调用的offer(E e)
 ```java
 public boolean add(E e) {
@@ -139,6 +140,7 @@ private static int hugeCapacity(int minCapacity) {
 （2）当数组比较大的时候每次扩容只增加一半的容量；
 
 出队：
+
 出队有两个方法，remove()和poll()，remove()也是调用的poll()，只是没有元素的时候抛出异常。
 ```java
 public E remove() {
@@ -224,6 +226,7 @@ private void siftDownComparable(int k, E x) {
 （6）这就是堆中的删除堆顶元素；
 
 取队首元素：
+
 取队首元素有两个方法，element()和peek()，element()也是调用的peek(),只是没取到元素时抛出异常。
 ```java
 public E element() {
@@ -242,14 +245,21 @@ public E peek() {
 （3）如果没有元素就返回null，element()抛出异常；
 
 # 总结
+
 （1）PriorityQueue是一个小顶堆。
+
 （2）PriorityQueue是非线程安全的。
+
 （3）PriorityQueue不是有序的，只有堆顶存储着最小元素
+
 （4）入队就是堆的插入元素的实现。
+
 （5）出队就是堆的删除元素的实现。
 
 - 论Queue中的那些方法？
+
 Queue是所有队列的顶级接口，它里面定义了一批方法。
+
 |操作|抛出异常|返回特定值|
 |:-|:-|:-|
 |入队|add(e)|offer(e)——false|
@@ -257,4 +267,5 @@ Queue是所有队列的顶级接口，它里面定义了一批方法。
 |检查|element()|peek()——null|
 
 - 为什么PriorityQueue中的add(e)方法没有做异常检查呢？
+
 因为PriorityQueue是无限增长的队列，元素不够用就会扩容，所以添加元素不会失败。
