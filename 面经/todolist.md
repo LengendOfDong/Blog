@@ -34,7 +34,8 @@ concurrenthashmap与hashtable的区别
 - [ConcurrentSkipListSet](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/ConcurrentSkipListSet.md)
 - [ArrayBlockingQueue](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/ArrayBlockingQueue.md)
 - [PriorityQueue](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/PriorityQueue.md)
-- []()
+- [LinkedBlockingQueue](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/LinkedBlockingQueue.md)
+- [SynchronousQueue](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/SynchronousQueue.md)
 # 源码部分
 
 
