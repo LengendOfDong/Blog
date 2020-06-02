@@ -33,7 +33,8 @@ concurrenthashmap与hashtable的区别
 - [CopyOnWriteArraySet](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/CopyOnWriteArraySet.md)
 - [ConcurrentSkipListSet](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/ConcurrentSkipListSet.md)
 - [ArrayBlockingQueue](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/ArrayBlockingQueue.md)
-- [PriorityQueue]()
+- [PriorityQueue](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/PriorityQueue.md)
+- []()
 # 源码部分
 
 
