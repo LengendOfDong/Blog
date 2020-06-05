@@ -14,3 +14,6 @@ LinkedTransferQueue使用了一个叫做dual data structure的数据结构，或
 
 取元素时也是先跟队列头节点对比，如果头节点是数据节点，就让他们匹配，如果头节点是非数据节点，就生成一个非数据节点放在队列尾端（入队）。
 
+用图形来表示就是下面这样：
+![dual queue](https://github.com/LengendOfDong/Blog/blob/master/img/dual-queue.png)
+
