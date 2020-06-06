@@ -130,3 +130,68 @@ take()方法稍微要复杂一些：
 
 （7）解锁；
 
+# 使用方法
+```java
+public class DelayQueueTest {
+    public static void main(String[] args){
+        DelayQueue<Message>  queue = new DelayQueue<>();
+
+        long now = System.currentTimeMillis();
+
+        //启动一个线程从队列中取元素
+        new Thread(() -> {
+            while(true){
+                try {
+                    System.out.println(queue.take().deadline - now);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        //添加5个元素到队列中
+        queue.add(new Message(now + 5000));
+        queue.add(new Message(now + 8000));
+        queue.add(new Message(now + 1000));
+        queue.add(new Message(now + 2000));
+        queue.add(new Message(now + 7000));
+    }
+
+
+}
+
+
+class Message implements Delayed{
+
+    long deadline;
+
+    public Message(long deadline){
+        this.deadline = deadline;
+    }
+
+    @Override
+    public long getDelay(TimeUnit unit) {
+        return deadline - System.currentTimeMillis();
+    }
+
+    @Override
+    public int compareTo(Delayed o) {
+        return (int)(getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(deadline);
+    }
+}
+```
+越早到期的元素越先出队。
+
+# 总结
+（1）DelayQueue是阻塞队列；
+
+（2）DelayQueue内部存储结构使用优先级队列；
+
+（3）DelayQueue使用重入锁和条件来控制并发安全；
+
+（4）DelayQueue常用于定时任务；
