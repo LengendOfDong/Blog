@@ -80,4 +80,91 @@ volatile只保证可见性，不保证原子性，比如 volatile修改的变量
 （19）ConcurrentHashMap中不能存储key或value为null的元素；
 
 # 值得学习的技术
-ConcurrentH
+ConcurrentHashMap中有哪些值得学习的技术？
+
+- CAS + 自旋，乐观锁的思想，减少线程上下文切换的时间；
+- 分段锁的思想，减少同一把锁争用带来的低效问题。
+- CounterCell,分段存储元素个数，减少多线程同时更新一个字段带来的低效
+- @sun.misc.Contended（CounterCell上的注解），避免伪共享
+- 多线程协同进行扩容
+
+# 不能解决的问题
+ConcurrentHashMap不能解决什么问题呢？
+
+请看下面的例子：
+```java
+private static final Map<Integer, Integer> map = new ConcurrentHashMap<>();
+
+public void unsafeUpdate(Integer key, Integer value) {
+    Integer oldValue = map.get(key);
+    if (oldValue == null) {
+        map.put(key, value);
+    }
+}
+```
+这里如果有多个线程同时调用unsafeUpdate()这个方法，ConcurrentHashMap还能保证线程安全吗？
+
+答案是不能。因为get()之后if之前可能有其它线程已经put()了这个元素，这时候再put()就把那个线程put()的元素覆盖了。
+
+那怎么修改呢？
+
+答案也很简单，使用putIfAbsent()方法，它会保证元素不存在时才插入元素，如下：
+```java
+public void safeUpdate(Integer key, Integer value) {
+    map.putIfAbsent(key, value);
+}
+```
+那么，如果上面oldValue不是跟null比较，而是跟一个特定的值比如1进行比较怎么办？也就是下面这样：
+```java
+public void unsafeUpdate(Integer key, Integer value) {
+    Integer oldValue = map.get(key);
+    if (oldValue == 1) {
+        map.put(key, value);
+    }
+}
+```
+这样的话就没办法使用putIfAbsent()方法了。
+
+其实，ConcurrentHashMap还提供了另一个方法叫replace(K key, V oldValue, V newValue)可以解决这个问题。
+
+replace(K key, V oldValue, V newValue)这个方法可不能乱用，如果传入的newValue是null，则会删除元素。
+```java
+public void safeUpdate(Integer key, Integer value) {
+    map.replace(key, 1, value);
+}
+```
+那么，如果if之后不是简单的put()操作，而是还有其它业务操作，之后才是put()，比如下面这样，这该怎么办呢？
+```java
+public void unsafeUpdate(Integer key, Integer value) {
+    Integer oldValue = map.get(key);
+    if (oldValue == 1) {
+        System.out.println(System.currentTimeMillis());
+        /**
+         * 其它业务操作
+         */
+        System.out.println(System.currentTimeMillis());
+
+        map.put(key, value);
+    }
+}
+```
+这时候就没办法使用ConcurrentHashMap提供的方法了，只能业务自己来保证线程安全了，比如下面这样：
+```java
+public void safeUpdate(Integer key, Integer value) {
+    synchronized (map) {
+        Integer oldValue = map.get(key);
+        if (oldValue == null) {
+            System.out.println(System.currentTimeMillis());
+            /**
+             * 其它业务操作
+             */
+            System.out.println(System.currentTimeMillis());
+
+            map.put(key, value);
+        }
+    }
+}
+```
+这样虽然不太友好，但是最起码能保证业务逻辑是正确的。
+
+当然，这里使用ConcurrentHashMap的意义也就不大了，可以换成普通的HashMap了。
