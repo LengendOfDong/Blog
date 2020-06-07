@@ -22,8 +22,11 @@ synchronized用的锁是存在Java对象头里的。Hotspot虚拟机的对象头
 
 ## Mark word
 Mark Word用于存储对象自身的运行时数据，如哈希码（HashCode）、GC分代年龄、锁状态标志、线程持有的锁、偏向线程ID、偏向时间戳等等。Java对象头一般占有两个机器码（在32虚拟机中，1个机器码等于4字节，也就是32bit）,但是如果对象是数组类型，则需要三个机器码，因为JVM虚拟机可以通过Java对象的元数据信息确定Java对象的大小，但是无法从数组的元数据来确认数组的大小，所以用一块来记录数组长度。下图是Java对象头的存储结构（32位虚拟机）：
+
 ![Java对象头存储结构](https://github.com/LengendOfDong/Blog/blob/master/img/Java%E5%AF%B9%E8%B1%A1%E5%A4%B4%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png)
+
 对象头信息是与对象自身定义的数据无关的额外存储成本，但是考虑到虚拟机的空间效率，Mark Word被设计成一个非固定的数据结构以便在极小的空间内存存储尽量多的数据，它会根据对象的状态复用自己的存储空间，也就是说，Mark Word会随着程序的运行发生变化，变化状态如下（32位虚拟机）：
+
 ![Java对象头复用](https://github.com/LengendOfDong/Blog/blob/master/img/Java%E5%AF%B9%E8%B1%A1%E5%A4%B4%E5%A4%8D%E7%94%A8.png)
 
 ## Monitor
