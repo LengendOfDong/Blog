@@ -42,10 +42,7 @@ concurrenthashmap与hashtable的区别
 - [DelayQueue](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/DelayQueue.md)
 - [ArrayDeque](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/ArrayDequeue.md)
 - [ConcurrentSkipListMap](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/ConcurrentSkipListMap.md)
-
-
-# 源码部分
-
+- [ConcurrentHashMap](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/ConcurrentHashMap.md)
 
 # 操作系统
 - [进程间通信的方式](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.md)
@@ -158,6 +155,7 @@ Kafka 的消费者如何做消息去重
 CAP理论，分区容错性的意义
 
 # 多线程并发
+- [深入分析synchronized的实现原理](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90synchronized%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86.md)
 线程池有哪些类型
 线程池的构造函数及其含义
 如何确定线程池中的线程的个数
