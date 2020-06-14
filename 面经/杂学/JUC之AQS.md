@@ -1,0 +1,4 @@
+# AQS
+AQS,AbstractQueuedSynchronizer，即队列同步器。它是构建锁或者其他同步组件的基础框架（如ReentrantLock,ReentrantReadWriteLock.Semaphore等），JUC并发包的作者期望它能够成为实现大部分同步需求的基础。
+
+它是JUC并发包中的核心基础组件。AQS解决了实现同步器时涉及的大量细节问题，例如获取同步状态、FIFO同步队列。
