@@ -15,3 +15,5 @@ public final void acquire(int arg) {
             selfInterrupt();
     }
 ```
+![AQS同步状态获取](https://github.com/LengendOfDong/Blog/blob/master/img/AQS%E7%8B%AC%E5%8D%A0%E5%BC%8F%E5%90%8C%E6%AD%A5%E7%8A%B6%E6%80%81%E8%8E%B7%E5%8F%96.png)
+
