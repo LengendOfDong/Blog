@@ -34,3 +34,48 @@ if (shouldParkAfterFailedAcquire(p, node) &&
 - 如果前驱节点非SIGNAL，非CANNELLED，则通过CAS的方式将其前驱节点设置为SIGNAL,返回false
 
 如果shouldParkAfterFailedAcquire(Node pred, Node node)方法返回true,则调用parkAndCheckInterrupt方法阻塞当前线程：
+```java
+  private final boolean parkAndCheckInterrupt() {
+        LockSupport.park(this);
+        return Thread.interrupted();
+    }
+```
+
+parkAndCheckInterrupt()方法主要是把当前线程挂起，从而阻塞住线程的调用栈，同时返回当前线程的中断状态。其内部则是调用LockSupport工具类的park()方法来阻塞该方法。当线程释放同步状态后，则需要唤醒该线程的后继节点：
+```java
+ public final boolean release(int arg) {
+        if (tryRelease(arg)) {
+            Node h = head;
+            if (h != null && h.waitStatus != 0)
+                //唤醒后继节点
+                unparkSuccessor(h);
+            return true;
+        }
+        return false;
+    }
+```
+调用unparkSuccessor(Node node)唤醒后继节点：
+```java
+ private void unparkSuccessor(Node node) {
+        //当前节点状态
+        int ws = node.waitStatus;
+        //当前状态 < 0 则设置为 0
+        if (ws < 0)
+            compareAndSetWaitStatus(node, ws, 0);
+
+        //当前节点的后继节点
+        Node s = node.next;
+        //后继节点为null或者其状态 > 0 (超时或者被中断了)
+        if (s == null || s.waitStatus > 0) {
+            s = null;
+            //从tail节点来找可用节点
+            for (Node t = tail; t != null && t != node; t = t.prev)
+                if (t.waitStatus <= 0)
+                    s = t;
+        }
+        //唤醒后继节点
+        if (s != null)
+            LockSupport.unpark(s.thread);
+    }
+```
+可能会存在当前线程的后继节点为null,超时、被中断的情况，
