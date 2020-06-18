@@ -80,4 +80,9 @@ parkAndCheckInterrupt()方法主要是把当前线程挂起，从而阻塞住线
 ```
 可能会存在当前线程的后继节点为null,超时、被中断的情况，如果遇到这种情况，则需要跳过该节点.采用tail回溯办法找到第一个可用的线程。最后调用LockSupport的unpark(Thread thread)方法唤醒该线程。
 
+# LockSupport
+当需要阻塞或者唤醒一个线程的时候，AQS都是使用LockSupport这个工具类来完成的。
 
+>LockSupport是用来创建锁和其他同步类的基本线程阻塞原语
+
+每个使用LockSupport的线程都会与一个许可关联，如果该许可可用，并且可在进程中使用，则调用park()将会立即返回，否则可能阻塞。如果许可尚不可用，则可以调用unpark使其可用。
