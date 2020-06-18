@@ -78,4 +78,6 @@ parkAndCheckInterrupt()方法主要是把当前线程挂起，从而阻塞住线
             LockSupport.unpark(s.thread);
     }
 ```
-可能会存在当前线程的后继节点为null,超时、被中断的情况，
+可能会存在当前线程的后继节点为null,超时、被中断的情况，如果遇到这种情况，则需要跳过该节点.采用tail回溯办法找到第一个可用的线程。最后调用LockSupport的unpark(Thread thread)方法唤醒该线程。
+
+
