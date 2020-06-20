@@ -98,3 +98,23 @@ protected final boolean tryAcquire(int acquires) {
         return true;
     }
 ```
+该方法和ReentrantLock的tryAcquire(int arg)大致一样，在判断重入时增加了一项条件：读锁是否存在。因为要确保写锁的操作对读锁是可见的，如果在存在读锁的情况下允许获取写锁，那么那些已经获取读锁的其他线程可能就无法感知当前写线程的操作。因此只有等读锁完全释放后，写锁才能够被当前线程所获取，一旦写锁获取了，所有其他读、写线程均会被阻塞。
+
+## 写锁的释放
+获取了写锁用完了则需要释放，WriteLock提供了unlock()方法释放写锁：
+```java
+public void unlock() {
+        sync.release(1);
+    }
+
+    public final boolean release(int arg) {
+        if (tryRelease(arg)) {
+            Node h = head;
+            if (h != null && h.waitStatus != 0)
+                unparkSuccessor(h);
+            return true;
+        }
+        return false;
+    }
+```
+写锁的释放最终还是会调用AQS的模板方法release(int arg)方法，该方法首先调用tryRelease(int arg)尝试释放锁，tryRelease(int arg)
