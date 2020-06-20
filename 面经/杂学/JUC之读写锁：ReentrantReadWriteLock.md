@@ -260,3 +260,52 @@ fullTryAcquireShared(Thread current)会根据“是否需要阻塞等待”，�
 
 ## 读锁的释放
 与写锁相同，读锁也提供了unlock(）释放读锁：
+```java
+public void unlock() {
+            sync.releaseShared(1);
+        }
+```
+unlcok()方法内部使用Sync的releaseShared(int arg)方法，该方法定义在AQS中： 
+```java
+ public final boolean releaseShared(int arg) {
+        if (tryReleaseShared(arg)) {
+            doReleaseShared();
+            return true;
+        }
+        return false;
+    }
+```
+调用tryReleaseShared(int arg)尝试释放读锁，该方法定义在读写锁的Sync内部类中： 
+```java
+protected final boolean tryReleaseShared(int unused) {
+        Thread current = Thread.currentThread();
+        //如果想要释放锁的线程为第一个获取锁的线程
+        if (firstReader == current) {
+            //仅获取了一次，则需要将firstReader 设置null，否则 firstReaderHoldCount - 1
+            if (firstReaderHoldCount == 1)
+                firstReader = null;
+            else
+                firstReaderHoldCount--;
+        }
+        //获取rh对象，并更新“当前线程获取锁的信息”
+        else {
+            HoldCounter rh = cachedHoldCounter;
+            if (rh == null || rh.tid != getThreadId(current))
+                rh = readHolds.get();
+            int count = rh.count;
+            if (count <= 1) {
+                readHolds.remove();
+                if (count <= 0)
+                    throw unmatchedUnlockException();
+            }
+            --rh.count;
+        }
+        //CAS更新同步状态
+        for (;;) {
+            int c = getState();
+            int nextc = c - SHARED_UNIT;
+            if (compareAndSetState(c, nextc))
+                return nextc == 0;
+        }
+    }
+```
