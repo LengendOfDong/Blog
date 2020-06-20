@@ -194,3 +194,69 @@ tryAcqurireShared(int arg)尝试获取读同步状态，该方法主要用于获
         return fullTryAcquireShared(current);
     }
 ```
+读锁获取的过程相对于独占锁而言会稍微复杂点，整个过程如下：
+- 因为存在锁降级情况，如果存在写锁且锁的持有者不是当前线程则直接返回失败，否则继续
+- 依据公平性原则，判断读锁是否需要阻塞，读锁持有线程数小于最大值（65535），且设置锁状态成功，执行以下代码，并返回1。如果不满足该条件，执行fullTryAcquireShared().
+
+```java
+final int fullTryAcquireShared(Thread current) {
+        HoldCounter rh = null;
+        for (;;) {
+            int c = getState();
+            //锁降级
+            if (exclusiveCount(c) != 0) {
+                if (getExclusiveOwnerThread() != current)
+                    return -1;
+            }
+            //读锁需要阻塞
+            else if (readerShouldBlock()) {
+                //列头为当前线程
+                if (firstReader == current) {
+                }
+                //HoldCounter后面讲解
+                else {
+                    if (rh == null) {
+                        rh = cachedHoldCounter;
+                        if (rh == null || rh.tid != getThreadId(current)) {
+                            rh = readHolds.get();
+                            if (rh.count == 0)
+                                readHolds.remove();
+                        }
+                    }
+                    if (rh.count == 0)
+                        return -1;
+                }
+            }
+            //读锁超出最大范围
+            if (sharedCount(c) == MAX_COUNT)
+                throw new Error("Maximum lock count exceeded");
+            //CAS设置读锁成功
+            if (compareAndSetState(c, c + SHARED_UNIT)) {
+                //如果是第1次获取“读取锁”，则更新firstReader和firstReaderHoldCount
+                if (sharedCount(c) == 0) {
+                    firstReader = current;
+                    firstReaderHoldCount = 1;
+                }
+                //如果想要获取锁的线程(current)是第1个获取锁(firstReader)的线程,则将firstReaderHoldCount+1
+                else if (firstReader == current) {
+                    firstReaderHoldCount++;
+                } else {
+                    if (rh == null)
+                        rh = cachedHoldCounter;
+                    if (rh == null || rh.tid != getThreadId(current))
+                        rh = readHolds.get();
+                    else if (rh.count == 0)
+                        readHolds.set(rh);
+                    //更新线程的获取“读取锁”的共享计数
+                    rh.count++;
+                    cachedHoldCounter = rh; // cache for release
+                }
+                return 1;
+            }
+        }
+    }
+```
+fullTryAcquireShared(Thread current)会根据“是否需要阻塞等待”，“读取锁的共享计数是否超过限制”等等进行处理。如果不需要阻塞等待，并且锁的共享计数没有超过限制，则通过CAS尝试获取锁，并返回1 
+
+## 读锁的释放
+与写锁相同，读锁也提供了unlock(）释放读锁：
