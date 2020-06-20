@@ -68,3 +68,33 @@ static final int SHARED_SHIFT   = 16;
 写锁就是一个支持可重入的排他锁。
 
 ## 写锁的获取
+写锁的获取最终会调用tryAcquire(int arg)，该方法在内部类Sync中实现：
+```java
+protected final boolean tryAcquire(int acquires) {
+        Thread current = Thread.currentThread();
+        //当前锁个数
+        int c = getState();
+        //写锁
+        int w = exclusiveCount(c);
+        if (c != 0) {
+            //c != 0 && w == 0 表示存在读锁
+            //当前线程不是已经获取写锁的线程
+            //要么占用的线程是读线程，要么占用的线程是写线程但不是当前线程
+            if (w == 0 || current != getExclusiveOwnerThread())
+                return false;
+            //超出最大范围，已经不能再加锁
+            if (w + exclusiveCount(acquires) > MAX_COUNT)
+                throw new Error("Maximum lock count exceeded");
+            //走到这里，表示是写线程并且没有超出范围
+            setState(c + acquires);
+            return true;
+        }
+        //是否需要阻塞
+        if (writerShouldBlock() ||
+                !compareAndSetState(c, c + acquires))
+            return false;
+        //设置获取锁的线程为当前线程
+        setExclusiveOwnerThread(current);
+        return true;
+    }
+```
