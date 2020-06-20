@@ -143,3 +143,54 @@ public void lock() {
             sync.acquireShared(1);
         }
 ```
+Sync的acquireShared(int arg)定义在AQS中：
+```java
+public final void acquireShared(int arg) {
+        if (tryAcquireShared(arg) < 0)
+            doAcquireShared(arg);
+    }
+```
+tryAcqurireShared(int arg)尝试获取读同步状态，该方法主要用于获取共享式同步状态，获取成功返回 >= 0的返回结果，否则返回 < 0 的返回结果。
+```java
+ protected final int tryAcquireShared(int unused) {
+        //当前线程
+        Thread current = Thread.currentThread();
+        int c = getState();
+        //exclusiveCount(c)计算写锁
+        //如果存在写锁，且锁的持有者不是当前线程，直接返回-1
+        //存在锁降级问题，后续阐述
+        if (exclusiveCount(c) != 0 &&
+                getExclusiveOwnerThread() != current)
+            return -1;
+        //读锁
+        int r = sharedCount(c);
+
+        /*
+         * readerShouldBlock():读锁是否需要等待（公平锁原则）
+         * r < MAX_COUNT：持有线程小于最大数（65535）
+         * compareAndSetState(c, c + SHARED_UNIT)：设置读取锁状态
+         */
+        if (!readerShouldBlock() &&
+                r < MAX_COUNT &&
+                compareAndSetState(c, c + SHARED_UNIT)) {
+            /*
+             * holdCount部分后面讲解
+             */
+            if (r == 0) {
+                firstReader = current;
+                firstReaderHoldCount = 1;
+            } else if (firstReader == current) {
+                firstReaderHoldCount++;
+            } else {
+                HoldCounter rh = cachedHoldCounter;
+                if (rh == null || rh.tid != getThreadId(current))
+                    cachedHoldCounter = rh = readHolds.get();
+                else if (rh.count == 0)
+                    readHolds.set(rh);
+                rh.count++;
+            }
+            return 1;
+        }
+        return fullTryAcquireShared(current);
+    }
+```
