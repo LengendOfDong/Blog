@@ -159,6 +159,8 @@ CAP理论，分区容错性的意义
 - [深入分析volatile的实现原理](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90volatile%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86.md)
 - [Java内存模型之happens-before](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B9%8Bhappens-before.md)
 - [JUC之AQS](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/JUC%E4%B9%8BAQS.md)
+- [JUC之AQS：阻塞和唤醒线程](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/JUC%E4%B9%8BAQS%EF%BC%9A%E9%98%BB%E5%A1%9E%E5%92%8C%E5%94%A4%E9%86%92%E7%BA%BF%E7%A8%8B.md)
+- [JUC之重入锁：ReentrantLock](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/JUC%E4%B9%8B%E9%87%8D%E5%85%A5%E9%94%81%EF%BC%9AReentrantLock.md)
 线程池有哪些类型
 线程池的构造函数及其含义
 如何确定线程池中的线程的个数
