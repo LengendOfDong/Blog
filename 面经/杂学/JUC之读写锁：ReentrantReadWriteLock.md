@@ -309,3 +309,70 @@ protected final boolean tryReleaseShared(int unused) {
         }
     }
 ```
+
+## HoldCounter
+在读锁获取锁和释放锁的过程中，我们一直都可以看到一个变量rh(HoldCounter),该变量在读锁中扮演着非常重要的作用。我们了解读锁的内在机制其实就是一个共享锁，为了更好理解HoldCounter,我们暂且认为它不是一个锁的概率，而相当于一个计数器。一次共享锁的操作就相当于在该计数器的操作。获取共享锁，则该计数器加1，释放共享锁，该计数器减一。只有当线程获取共享锁后才能对共享锁进行释放、重入操作。所以HoldCounter的作用就是当前线程持有共享锁的数量，这个数量必须要与线程绑定在一起，否则操作其他线程锁就会抛出异常。
+```java
+static final class HoldCounter {
+            int count = 0;
+            final long tid = getThreadId(Thread.currentThread());
+        }
+```
+HoldCounter 定义非常简单，就是一个计数器count 和线程 id tid 两个变量。按照这个意思我们看到HoldCounter 是需要和某给线程进行绑定了，我们知道如果要将一个对象和线程绑定仅仅有tid是不够的，而且从上面的代码我们可以看到HoldCounter 仅仅只是记录了tid，根本起不到绑定线程的作用。那么怎么实现呢？答案是ThreadLocal，定义如下： 
+```java
+static final class ThreadLocalHoldCounter
+            extends ThreadLocal<HoldCounter> {
+            public HoldCounter initialValue() {
+                return new HoldCounter();
+            }
+        }
+```
+这样HoldCounter就和线程进行绑定了。所以，HoldCounter是一个计数器，而ThreadLocalHoldCounter则是线程绑定的计数器。
+
+为什么HoldCounter要绑定线程id呢？因为这样在释放锁的时候才知道ReadWriteLock里面缓存的上一个读取线程是否是当前线程。
+
+为什么HoldCounter绑定线程id而不是绑定线程对象呢？这样做是避免HoldCounter和ThreadLocal互相绑定而GC难以释放它们（尽管GC能够智能地发现这种引用而回收它们，但是这需要一定的代价），所以这样做是为了GC快速回收对象。
+
+```java
+ else if (firstReader == current) {
+                    firstReaderHoldCount++;
+                } else {
+                    if (rh == null)
+                        rh = cachedHoldCounter;
+                    if (rh == null || rh.tid != getThreadId(current))
+                        rh = readHolds.get();
+                    else if (rh.count == 0)
+                        readHolds.set(rh);
+                    rh.count++;
+                    cachedHoldCounter = rh; // cache for release
+                }
+```
+这段代码涉及了几个变量：firstReader/firstReaderHoldCount/cachedHoldCounter。
+```java
+private transient Thread firstReader = null;
+private transient int firstReaderHoldCount;
+private transient HoldCounter cachedHoldCounter;
+```
+firstReader是第一个获取读锁的线程，firstReaderHoldCount为第一个获取读锁的重入数，cachedHoldCounter为HoldCounter的缓存。
+```java
+//如果获取读锁的线程为第一次获取读锁的线程，则firstReaderHoldCount重入数 + 1
+    else if (firstReader == current) {
+        firstReaderHoldCount++;
+    } else {
+        //非firstReader计数
+        if (rh == null)
+            rh = cachedHoldCounter;
+        //rh == null 或者 rh.tid != current.getId()，需要获取rh
+        if (rh == null || rh.tid != getThreadId(current))
+            rh = readHolds.get();
+            //加入到readHolds中
+        else if (rh.count == 0)
+            readHolds.set(rh);
+        //计数+1
+        rh.count++;
+        cachedHoldCounter = rh; // cache for release
+    }
+```
+
+## 锁降级
+读写锁有一个特性就是锁降级，锁降级就意味着写锁是可以降级为读锁的，但是需要遵循先获取写锁、获取读锁在释放写锁的次序。
