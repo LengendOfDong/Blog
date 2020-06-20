@@ -7,3 +7,55 @@ Condition是一种广义上的条件队列。他为线程提供了一种更为�
 # Condition的实现
 获取一个Condition必须要通过Lock的newCondition()方法。该方法定义在接口Lock下面，返回的结果是绑定到此Lock实例的新Condition实例。
 
+## 等待队列
+每个Condition对象包含着一个FIFO队列，该队列是Condition对象通知、等待功能的关键。在队列中每个节点都包含着一个线程引用，该线程就是在该Condition对象上等待的线程。
+```java
+public class ConditionObject implements Condition, java.io.Serializable {
+    private static final long serialVersionUID = 1173984872572414699L;
+
+    //头节点
+    private transient Node firstWaiter;
+    //尾节点
+    private transient Node lastWaiter;
+
+    public ConditionObject() {
+    }
+
+    /** 省略方法 **/
+}
+```
+## 等待
+调用Condition的await()方法会使当前线程进入等待状态，同时会加入到Condition等待队列同时释放锁。当从await()方法返回时，当前线程一定是获取了Condition相关连的锁。
+```java
+public final void await() throws InterruptedException {
+        // 当前线程中断
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        //当前线程加入等待队列
+        Node node = addConditionWaiter();
+        //释放锁
+        long savedState = fullyRelease(node);
+        int interruptMode = 0;
+        /**
+         * 检测此节点的线程是否在同步队上，如果不在，则说明该线程还不具备竞争锁的资格，则继续等待
+         * 直到检测到此节点在同步队列上
+         */
+        while (!isOnSyncQueue(node)) {
+            //线程挂起
+            LockSupport.park(this);
+            //如果已经中断了，则退出
+            if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
+                break;
+        }
+        //竞争同步状态
+        if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
+            interruptMode = REINTERRUPT;
+        //清理下条件队列中的不是在等待条件的节点
+        if (node.nextWaiter != null) // clean up if cancelled
+            unlinkCancelledWaiters();
+        if (interruptMode != 0)
+            reportInterruptAfterWait(interruptMode);
+    }
+```
+此段代码的逻辑是：首先将当前线程新建一个节点同时加入到条件队列中，然后释放当前线程持有的同步状态。然后则是不断检测该节点代表的线程是否出现在CLH同步队列中（收到signal信号之后就会在AQS队列中检测到），如果不存在则一直挂起，否则参与竞争同步状态。
+
