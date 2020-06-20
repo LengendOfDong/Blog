@@ -108,3 +108,42 @@ public final boolean release(int arg) {
     }
 ```
 只有当同步状态彻底释放后该方法才会返回true。当state == 0 时，则将锁持有线程设置为null，free= true，表示释放成功。 
+
+# 公平锁与非公平锁
+公平锁与非公平锁的区别在于获取锁的时候是否按照FIFO的顺序来。释放锁不存在公平性和非公平性，上面以非公平锁为例，下面我们来看看公平锁的tryAcquire(int arg) :
+```java
+protected final boolean tryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();
+        int c = getState();
+        if (c == 0) {
+            if (!hasQueuedPredecessors() &&
+                    compareAndSetState(0, acquires)) {
+                setExclusiveOwnerThread(current);
+                return true;
+            }
+        }
+        else if (current == getExclusiveOwnerThread()) {
+            int nextc = c + acquires;
+            if (nextc < 0)
+                throw new Error("Maximum lock count exceeded");
+            setState(nextc);
+            return true;
+        }
+        return false;
+    }
+```
+比较非公平锁和公平锁获取同步状态的过程，会发现两者唯一的区别就在于公平锁在获取同步状态时多了一个限制条件：hasQueuedPredecessors(),定义如下：
+```java
+public final boolean hasQueuedPredecessors() {
+        Node t = tail;  //尾节点
+        Node h = head;  //头节点
+        Node s;
+
+        //头节点 != 尾节点
+        //同步队列第一个节点不为null
+        //当前线程是同步队列第一个节点
+        return h != t &&
+                ((s = h.next) == null || s.thread != Thread.currentThread());
+    }
+```
+该方法主要做一件事情：主要是判断当前线程是否位于CLH同步队列中的第一个。如果是则返回true,否则返回false.
