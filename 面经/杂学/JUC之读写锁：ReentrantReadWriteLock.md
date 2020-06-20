@@ -117,4 +117,29 @@ public void unlock() {
         return false;
     }
 ```
-写锁的释放最终还是会调用AQS的模板方法release(int arg)方法，该方法首先调用tryRelease(int arg)尝试释放锁，tryRelease(int arg)
+写锁的释放最终还是会调用AQS的模板方法release(int arg)方法，该方法首先调用tryRelease(int arg)尝试释放锁，tryRelease(int arg)方法为读写锁内部类Sync中定义了，如下：
+```java
+protected final boolean tryRelease(int releases) {
+        //释放的线程不为锁的持有者
+        if (!isHeldExclusively())
+            throw new IllegalMonitorStateException();
+        int nextc = getState() - releases;
+        //若写锁的新线程数为0，则将锁的持有者设置为null
+        boolean free = exclusiveCount(nextc) == 0;
+        if (free)
+            setExclusiveOwnerThread(null);
+        setState(nextc);
+        return free;
+    }
+```
+写锁释放锁的整个过程和独占锁ReentrantLock相似，每次释放均是减少写状态，当写状态为0时表示 写锁已经完全释放了，从而等待的其他线程可以继续访问读写锁，获取同步状态，同时此次写线程的修改对后续的线程可见。 
+
+# 读锁
+读锁为一个可重入的共享锁，它能够被多个线程同时持有，在没有其他写线程访问时，读锁总是或获取成功。
+## 读锁的获取
+读锁的获取可以通过ReadLock的lock()方法：
+```java
+public void lock() {
+            sync.acquireShared(1);
+        }
+```
