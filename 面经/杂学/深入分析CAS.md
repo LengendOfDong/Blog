@@ -104,3 +104,82 @@ private static class Pair<T> {
     private volatile Pair<V> pair;
 ```
 Pair记录着对象的引用和版本戳，版本戳为int型，保持自增。同时Pair是一个不可变对象，其所有属性全部定义为final，对外提供一个of方法，该方法返回一个新建的Pari对象。pair对象定义为volatile，保证多线程环境下的可见性。在AtomicStampedReference中，大多方法都是通过调用Pair的of方法来产生一个新的Pair对象，然后赋值给变量pair。如set方法：
+```java
+public void set(V newReference, int newStamp) {
+        Pair<V> current = pair;
+        if (newReference != current.reference || newStamp != current.stamp)
+            this.pair = Pair.of(newReference, newStamp);
+    }
+```
+通过一个例子可以可以看到AtomicStampedReference和AtomicInteger的区别。我们定义两个线程，线程1负责将100 —> 110 —> 100，线程2执行 100 —>120，看两者之间的区别。
+```java
+public class Test {
+    private static AtomicInteger atomicInteger = new AtomicInteger(100);
+    private static AtomicStampedReference atomicStampedReference = new AtomicStampedReference(100,1);
+
+    public static void main(String[] args) throws InterruptedException {
+
+        //AtomicInteger
+        Thread at1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                atomicInteger.compareAndSet(100,110);
+                atomicInteger.compareAndSet(110,100);
+            }
+        });
+
+        Thread at2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TimeUnit.SECONDS.sleep(2);      // at1,执行完
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("AtomicInteger:" + atomicInteger.compareAndSet(100,120));
+            }
+        });
+
+        at1.start();
+        at2.start();
+
+        at1.join();
+        at2.join();
+
+        //AtomicStampedReference
+
+        Thread tsf1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //让 tsf2先获取stamp，导致预期时间戳不一致
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                // 预期引用：100，更新后的引用：110，预期标识getStamp() 更新后的标识getStamp() + 1
+                atomicStampedReference.compareAndSet(100,110,atomicStampedReference.getStamp(),atomicStampedReference.getStamp() + 1);
+                atomicStampedReference.compareAndSet(110,100,atomicStampedReference.getStamp(),atomicStampedReference.getStamp() + 1);
+            }
+        });
+
+        Thread tsf2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int stamp = atomicStampedReference.getStamp();
+
+                try {
+                    TimeUnit.SECONDS.sleep(2);      //线程tsf1执行完
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("AtomicStampedReference:" +atomicStampedReference.compareAndSet(100,120,stamp,stamp + 1));
+            }
+        });
+
+        tsf1.start();
+        tsf2.start();
+    }
+
+}
+```
