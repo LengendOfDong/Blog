@@ -183,3 +183,7 @@ public class Test {
 
 }
 ```
+运行结果：
+![ABA运行结果](https://github.com/LengendOfDong/Blog/blob/master/img/ABA%E9%97%AE%E9%A2%98%E7%BB%93%E6%9E%9C.png)
+
+运行结果充分展示了AtomicInteger的ABA问题和AtomicStampedReference解决ABA问题。
