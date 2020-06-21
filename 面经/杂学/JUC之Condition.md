@@ -59,3 +59,18 @@ public final void await() throws InterruptedException {
 ```
 此段代码的逻辑是：首先将当前线程新建一个节点同时加入到条件队列中，然后释放当前线程持有的同步状态。然后则是不断检测该节点代表的线程是否出现在CLH同步队列中（收到signal信号之后就会在AQS队列中检测到），如果不存在则一直挂起，否则参与竞争同步状态。
 
+# 通知
+调用Condition的signal()方法，将会唤醒在等待队列中等待最长时间的节点（条件队列里的首节点），在唤醒节点前，会将节点移到CLH同步队列中。
+```java
+public final void signal() {
+        //检测当前线程是否为拥有锁
+        if (!isHeldExclusively())
+            throw new IllegalMonitorStateException();
+        //头节点，唤醒条件队列中的第一个节点
+        Node first = firstWaiter;
+        if (first != null)
+            doSignal(first);    //唤醒
+    }
+```
+该方法会首先判断当前线程是否已经获得了锁，这是前提条件，然后唤醒条件队列中的头节点。
+
