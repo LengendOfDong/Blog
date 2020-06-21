@@ -74,6 +74,9 @@ public final void signal() {
 ```
 该方法会首先判断当前线程是否已经获得了锁，这是前提条件，然后唤醒条件队列中的头节点。
 
+# 总结
+一个线程获取锁后，通过调用Condition的await()方法，会将当前线程先加入到条件队列中，然后释放锁，最后通过isOnSyncQueue(Node node)方法不断自检节点是否已经在CLH同步队列了，如果是则尝试获取锁，否则一直挂起。当线程调用signal()方法后，程序首先检查当前线程是否获取了锁，然后通过doSignal(Node first)方法唤醒CLH同步队列的首节点。被唤醒的线程，将从await()方法中的while循环中退出来，然后调用acquireQueued()方法竞争同步状态。
+
 # Condition的应用
 ```java
 public class ConditionTest {
