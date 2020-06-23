@@ -91,3 +91,35 @@ protected int tryAcquireShared(int acquires) {
             }
         }
 ```
+## 信号量释放
+获取了许可，当用完之后就需要释放，Semaphore提供release()来释放许可。
+```java
+public void release() {
+        sync.releaseShared(1);
+    }
+```
+内部调用AQS的releaseShared(int arg):
+```java
+ public final boolean releaseShared(int arg) {
+        if (tryReleaseShared(arg)) {
+            doReleaseShared();
+            return true;
+        }
+        return false;
+    }
+```
+releaseShared(int arg)调用Semaphore内部类Sync的tryReleaseShared(int arg):
+```java
+protected final boolean tryReleaseShared(int releases) {
+        for (;;) {
+            int current = getState();
+            //信号量的许可数 = 当前信号许可数 + 待释放的信号许可数
+            int next = current + releases;
+            if (next < current) // overflow
+                throw new Error("Maximum permit count exceeded");
+            //设置可获取的信号许可数为next
+            if (compareAndSetState(current, next))
+                return true;
+        }
+    }
+```
