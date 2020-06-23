@@ -15,4 +15,40 @@ Semaphore通常用于限制可以访问某些资源（物理或逻辑的）线�
 
 号量Semaphore是一个非负整数（>=1）。当一个线程想要访问某个共享资源时，它必须要先获取Semaphore，当Semaphore >0时，获取该资源并使Semaphore – 1。如果Semaphore值 = 0，则表示全部的共享资源已经被其他线程全部占用，线程必须要等待其他线程释放资源。当线程释放资源时，Semaphore则+1
 
+# 实现分析
+Semaphore提供了两个构造函数：
+- Semaphore(int permits):创建具有给定的许可数和非公平的公平设置的Semaphore
+- Semaphore(int permits, boolean fair):创建具有给定的许可数和给定的公平设置的Semaphore
 
+实现如下：
+```java
+public Semaphore(int permits) {
+        sync = new NonfairSync(permits);
+    }
+
+    public Semaphore(int permits, boolean fair) {
+        sync = fair ? new FairSync(permits) : new NonfairSync(permits);
+    }
+```
+Semaphore默认选择非公平锁。
+
+当信号量Semaphore = 1时，它可以当做互斥锁使用。其中0、1就相当于它的状态，当=1时表示其他线程可以获取，当=0时，排他，即其他线程必须要等待。
+
+## 信号量获取
+Semaphore提供了acquire()方法来获取一个许可。
+```java
+public void acquire() throws InterruptedException {
+        sync.acquireSharedInterruptibly(1);
+    }
+```
+内部调用AQS的acquireSharedInterruptibly(int arg)，该方法以共享模式获取同步状态：
+```java
+public final void acquireSharedInterruptibly(int arg)
+            throws InterruptedException {
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        if (tryAcquireShared(arg) < 0)
+            doAcquireSharedInterruptibly(arg);
+    }
+```
+在acquireSharedInterruptibly(int arg)中，tryAcquireShared(int arg)由子类来实现，对于Semaphore而言，如果我们选择非公平模式，则调用NonfairSync的tryAcquireShared(int arg)方法，否则调用FairSync的tryAcquireShared(int arg)方法。
