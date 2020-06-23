@@ -163,7 +163,8 @@ CAP理论，分区容错性的意义
 - [JUC之重入锁：ReentrantLock](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/JUC%E4%B9%8B%E9%87%8D%E5%85%A5%E9%94%81%EF%BC%9AReentrantLock.md)
 - [JUC之读写锁：ReentrantReadWriteLock](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/JUC%E4%B9%8B%E8%AF%BB%E5%86%99%E9%94%81%EF%BC%9AReentrantReadWriteLock.md)
 - [JUC之Condition](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/JUC%E4%B9%8BCondition.md)
--[]()
+-[JUC之并发工具类：Semaphore](https://github.com/LengendOfDong/Blog/blob/master/%E9%9D%A2%E7%BB%8F/%E6%9D%82%E5%AD%A6/JUC%E4%B9%8B%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%B1%BB%EF%BC%9ASemaphore.md)
+- []()
 线程池有哪些类型
 线程池的构造函数及其含义
 如何确定线程池中的线程的个数
