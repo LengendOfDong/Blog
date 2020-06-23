@@ -52,3 +52,42 @@ public final void acquireSharedInterruptibly(int arg)
     }
 ```
 在acquireSharedInterruptibly(int arg)中，tryAcquireShared(int arg)由子类来实现，对于Semaphore而言，如果我们选择非公平模式，则调用NonfairSync的tryAcquireShared(int arg)方法，否则调用FairSync的tryAcquireShared(int arg)方法。
+
+- 公平
+```java
+ protected int tryAcquireShared(int acquires) {
+        for (;;) {
+            //判断该线程是否位于CLH队列的列头
+            if (hasQueuedPredecessors())
+                return -1;
+            //获取当前的信号量许可
+            int available = getState();
+
+            //设置“获得acquires个信号量许可之后，剩余的信号量许可数”
+            int remaining = available - acquires;
+
+            //CAS设置信号量
+            if (remaining < 0 ||
+                    compareAndSetState(available, remaining))
+                return remaining;
+        }
+    }
+```
+
+- 非公平
+对于非公平，因为它不需要判断当前线程是否位于CLH同步队列列头，所以相对会简单些。
+```java
+protected int tryAcquireShared(int acquires) {
+            return nonfairTryAcquireShared(acquires);
+        }
+
+        final int nonfairTryAcquireShared(int acquires) {
+            for (;;) {
+                int available = getState();
+                int remaining = available - acquires;
+                if (remaining < 0 ||
+                    compareAndSetState(available, remaining))
+                    return remaining;
+            }
+        }
+```
