@@ -164,10 +164,16 @@ Node定义如下：
     }
 ```
 1.index：arena的下标
+
 2.bound：上一次记录的Exchanger.bound
+
 3.collides:在当前bound下CAS失败的次数
+
 4.hash：伪随机数，用于自旋
+
 5.item:这个线程的当前向，也就是需要交换的数据
+
 6.match:做releasing操作的线程传递的项
+
 7.parked：挂起时设置线程值，其他情况下为null
 
