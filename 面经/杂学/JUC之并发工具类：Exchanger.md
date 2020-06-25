@@ -180,3 +180,22 @@ Node定义如下：
 在Node定义中有两个变量值值得思考：bound以及collides。前面提到了数组area是为了避免竞争而产生的，如果系统不存在竞争问题，那么完全没有必要开辟一个高效的arena来徒增系统的复杂性。
 
 首先通过单个slot的exchanger来交换数据，当探测到竞争时将安排不同的位置的slot来保存线程Node,并且可以确保没有slot会在同一个缓存行上。
+
+如何来判断竞争呢？CAS替换slot失败，如果失败，则通过记录冲突次数来扩展arena大小，我们在记录冲突的过程中会跟踪“bound"的值，以及会重新计算冲突次数在bound的值被改变时。
+
+# exchange(V x)
+exchange(V x)：等待另一个线程到达交换点（除非当前线程被中断），然后将给定的对象传送给该线程，并接收该线程的对象，方法定义如下：
+```java
+public V exchange(V x) throws InterruptedException {
+        Object v;
+        Object item = (x == null) ? NULL_ITEM : x; // translate null args
+        if ((arena != null ||
+             (v = slotExchange(item, false, 0L)) == null) &&
+            ((Thread.interrupted() || // disambiguates null return
+              (v = arenaExchange(item, false, 0L)) == null)))
+            throw new InterruptedException();
+        return (v == NULL_ITEM) ? null : (V)v;
+    }
+```
+这个方法比较好理解：arena为数组槽，如果为null,则执行slotExchange()方法，否则判断线程是否中断，如果中断值抛出InterruptedException异常，没有中断则执行arenaExchange()方法。整套逻辑就是：如果slotExchange(Object item,boolean timed,long ns)方法执行失败了就执行arenaExchange(Object item,boolean timed,long ns)方法，最后返回结果V。NULL_ITEM为一个空节点，其实就是一个Object对象而已，slotExchange为单个slot交换。
+
