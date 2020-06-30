@@ -91,3 +91,6 @@ Resource根据资源的不同类型提供了不同的具体实现，如下：
 - ByteArrayResource：对字节数组提供的数据的封装，如果通过InputStream形式访问该类型的资源，该实现会根据字节数组的数据构造一个相应的ByteArrayInputStream.
 - UrlResource:对java.net.URL类型资源的封装。内部委派URL进行具体的资源操作。
 - ClassPathResource:class path类型资源的实现。使用给定的ClassLoader或者给定的Class类加载资源。
+- InputStreamResource:将给定的InputStream作为一种资源的Resource的实现类。
+
+AbstractResource为Resource接口的默认实现，它实现了Resource接口的大部分的公共实现，作为Resource接口中的重中之重，
