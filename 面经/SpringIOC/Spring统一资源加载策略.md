@@ -314,4 +314,46 @@ public DefaultResourceLoader() {
     }
 ```
 ResourceLoader中最核心的方法为getResource()，它根据提供的location返回相应的Resource,而DefaultResourceLoader对该方法提供了核心实现（它的两个子类都没有提供覆盖该方法，可以断定ResourceLoader的资源加载策略就封装在DefaultResourceLoader中）
+```java
+public Resource getResource(String location) {
+        Assert.notNull(location, "Location must not be null");
 
+        for (ProtocolResolver protocolResolver : this.protocolResolvers) {
+            Resource resource = protocolResolver.resolve(location, this);
+            if (resource != null) {
+                return resource;
+            }
+        }
+
+        if (location.startsWith("/")) {
+            return getResourceByPath(location);
+        }
+        else if (location.startsWith(CLASSPATH_URL_PREFIX)) {
+            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
+        }
+        else {
+            try {
+                // Try to parse the location as a URL...
+                URL url = new URL(location);
+                return (ResourceUtils.isFileURL(url) ? new FileUrlResource(url) : new UrlResource(url));
+            }
+            catch (MalformedURLException ex) {
+                // No URL -> resolve as resource path.
+                return getResourceByPath(location);
+            }
+        }
+    }
+```
+首先通过 ProtocolResolver 来加载资源，成功返回 Resource，否则调用如下逻辑：
+
+1. 若 location 以 / 开头，则调用 getResourceByPath()构造 ClassPathContextResource 类型资源并返回。
+2. 若 location 以 classpath: 开头，则构造 ClassPathResource 类型资源并返回，在构造该资源时，通过 getClassLoader()获取当前的 ClassLoader。
+3. 构造 URL ，尝试通过它进行资源定位，若没有抛出 MalformedURLException 异常，则判断是否为 FileURL , 如果是则构造 FileUrlResource 类型资源，否则构造 UrlResource。若在加载过程中抛出 MalformedURLException 异常，则委派 getResourceByPath() 实现资源定位加载。
+
+ProtocolResolver ，用户自定义协议资源解决策略，作为 DefaultResourceLoader 的 SPI，它允许用户自定义资源加载协议，而不需要继承 ResourceLoader 的子类。在介绍 Resource 时，提到如果要实现自定义 Resource，我们只需要继承 DefaultResource 即可，但是有了 ProtocolResolver 后，我们不需要直接继承 DefaultResourceLoader，改为实现 ProtocolResolver 接口也可以实现自定义的 ResourceLoader。 ProtocolResolver 接口，仅有一个方法 Resource resolve(String location, ResourceLoader resourceLoader)，该方法接收两个参数：资源路径location，指定的加载器 ResourceLoader，返回为相应的 Resource 。在 Spring 中你会发现该接口并没有实现类，它需要用户自定义，自定义的 Resolver 如何加入 Spring 体系呢？调用 DefaultResourceLoader.addProtocolResolver() 即可
+```java
+public void addProtocolResolver(ProtocolResolver resolver) {
+        Assert.notNull(resolver, "ProtocolResolver must not be null");
+        this.protocolResolvers.add(resolver);
+    }
+```
