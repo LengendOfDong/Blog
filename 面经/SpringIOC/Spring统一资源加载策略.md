@@ -86,3 +86,8 @@ public interface Resource extends InputStreamSource {
 
 }
 ```
+Resource根据资源的不同类型提供了不同的具体实现，如下：
+- FileSystemResource：对java.io.File类型资源的封装，只要是跟File打交道的，基本上与FileSystemResource也可以打交道。支持文件和URL的形式，实现WritableResource接口，且从Spring FrameWork 5.0开始，FileSystemResource使用NIO API进行读/写交互。
+- ByteArrayResource：对字节数组提供的数据的封装，如果通过InputStream形式访问该类型的资源，该实现会根据字节数组的数据构造一个相应的ByteArrayInputStream.
+- UrlResource:对java.net.URL类型资源的封装。内部委派URL进行具体的资源操作。
+- ClassPathResource:class path类型资源的实现。使用给定的ClassLoader或者给定的Class类加载资源。
