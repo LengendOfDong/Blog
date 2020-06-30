@@ -359,3 +359,16 @@ public void addProtocolResolver(ProtocolResolver resolver) {
 ```
 
 ## FileSystemResourceLoader
+DefaultResourceLoader对getResourceByPath(String)方法处理其实不是很恰当，这个时候我们可以使用 FileSystemResourceLoader ，它继承 DefaultResourceLoader 且覆写了 getResourceByPath(String)，使之从文件系统加载资源并以 FileSystemResource 类型返回，这样我们就可以得到想要的资源类型，如下：
+```java
+@Override
+    protected Resource getResourceByPath(String path) {
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        return new FileSystemContextResource(path);
+    }
+```
+FileSystemContextResource为FileSystemResourceLoader的内部类，它继承自FileSystemResource.
+
+
