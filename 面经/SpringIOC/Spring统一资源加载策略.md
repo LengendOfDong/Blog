@@ -357,3 +357,5 @@ public void addProtocolResolver(ProtocolResolver resolver) {
         this.protocolResolvers.add(resolver);
     }
 ```
+
+## FileSystemResourceLoader
