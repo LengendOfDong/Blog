@@ -291,3 +291,27 @@ getClassLoader(）返回ClassLoader实例，对于想要获取ResourceLoader使�
 
 作为Spring统一的资源加载器，它提供了统一的抽象，具体的实现由相应的子类来负责实现。
 
+## DefaultResourceLoader
+DefaultResourceLoader 是 ResourceLoader 的默认实现，它接收 ClassLoader 作为构造函数的参数或者使用不带参数的构造函数，在使用不带参数的构造函数时，使用的 ClassLoader 为默认的 ClassLoader（一般为Thread.currentThread().getContextClassLoader()），可以通过 ClassUtils.getDefaultClassLoader()获取。当然也可以调用 setClassLoader()方法进行后续设置。
+
+```java
+public DefaultResourceLoader() {
+        this.classLoader = ClassUtils.getDefaultClassLoader();
+    }
+
+    public DefaultResourceLoader(@Nullable ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public void setClassLoader(@Nullable ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    @Override
+    @Nullable
+    public ClassLoader getClassLoader() {
+        return (this.classLoader != null ? this.classLoader : ClassUtils.getDefaultClassLoader());
+    }
+```
+ResourceLoader中最核心的方法为getResource()，它根据提供的location返回相应的Resource,而DefaultResourceLoader对该方法提供了核心实现（它的两个子类都没有提供覆盖该方法，可以断定ResourceLoader的资源加载策略就封装在DefaultResourceLoader中）
+
