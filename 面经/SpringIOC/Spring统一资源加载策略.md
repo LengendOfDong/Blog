@@ -370,5 +370,27 @@ DefaultResourceLoader对getResourceByPath(String)方法处理其实不是很恰�
     }
 ```
 FileSystemContextResource为FileSystemResourceLoader的内部类，它继承自FileSystemResource.
+```java
+ private static class FileSystemContextResource extends FileSystemResource implements ContextResource {
 
+        public FileSystemContextResource(String path) {
+            super(path);
+        }
 
+        @Override
+        public String getPathWithinContext() {
+            return getPath();
+        }
+    }
+```
+如果将上面的示例将DefaultResourceLoader 改为 FileSystemContextResource ，则 fileResource1 则为 FileSystemResource。
+
+## ResourcePatternResource
+ResourceLoader 的 Resource getResource(String location) 每次只能根据 location 返回一个 Resource，当需要加载多个资源时，我们除了多次调用 getResource() 外别无他法。ResourcePatternResolver 是 ResourceLoader 的扩展，它支持根据指定的资源路径匹配模式每次返回多个 Resource 实例，其定义如下：
+```java
+public interface ResourcePatternResolver extends ResourceLoader {
+    String CLASSPATH_ALL_URL_PREFIX = "classpath*:";
+
+    Resource[] getResources(String locationPattern) throws IOException;
+}
+```
