@@ -286,3 +286,8 @@ getResource（）根据所提供资源的路径location返回Resource实例，�
 - 相对路径资源，如“WEB-INF/test.dat”，此时返回的Resource实例根据实现不同而不同。
 
 该方法的主要实现是在其子类DefaultResourceLoader中实现。
+
+getClassLoader(）返回ClassLoader实例，对于想要获取ResourceLoader使用的ClassLoader用户来说，可以直接调用该方法来获取，在分析Resource时，提到了一个类ClassPathResource，这个类是可以根据指定的ClassLoader来加载资源的。
+
+作为Spring统一的资源加载器，它提供了统一的抽象，具体的实现由相应的子类来负责实现。
+
