@@ -93,4 +93,173 @@ Resource根据资源的不同类型提供了不同的具体实现，如下：
 - ClassPathResource:class path类型资源的实现。使用给定的ClassLoader或者给定的Class类加载资源。
 - InputStreamResource:将给定的InputStream作为一种资源的Resource的实现类。
 
-AbstractResource为Resource接口的默认实现，它实现了Resource接口的大部分的公共实现，作为Resource接口中的重中之重，
+AbstractResource为Resource接口的默认实现，它实现了Resource接口的大部分的公共实现，作为Resource接口中的重中之重，定义如下：
+```java
+public abstract class AbstractResource implements Resource {
+
+    /**
+     * 判断文件是否存在，若判断过程产生异常（因为会调用SecurityManager来判断），就关闭对应的流
+     */
+    @Override
+    public boolean exists() {
+        try {
+            return getFile().exists();
+        }
+        catch (IOException ex) {
+            // Fall back to stream existence: can we open the stream?
+            try {
+                InputStream is = getInputStream();
+                is.close();
+                return true;
+            }
+            catch (Throwable isEx) {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * 直接返回true，表示可读
+     */
+    @Override
+    public boolean isReadable() {
+        return true;
+    }
+
+    /**
+     * 直接返回 false，表示未被打开
+     */
+    @Override
+    public boolean isOpen() {
+        return false;
+    }
+
+    /**
+     *  直接返回false，表示不为 File
+     */
+    @Override
+    public boolean isFile() {
+        return false;
+    }
+
+    /**
+     * 抛出 FileNotFoundException 异常，交给子类实现
+     */
+    @Override
+    public URL getURL() throws IOException {
+        throw new FileNotFoundException(getDescription() + " cannot be resolved to URL");
+    }
+
+    /**
+     * 基于 getURL() 返回的 URL 构建 URI
+     */
+    @Override
+    public URI getURI() throws IOException {
+        URL url = getURL();
+        try {
+            return ResourceUtils.toURI(url);
+        }
+        catch (URISyntaxException ex) {
+            throw new NestedIOException("Invalid URI [" + url + "]", ex);
+        }
+    }
+
+    /**
+     * 抛出 FileNotFoundException 异常，交给子类实现
+     */
+    @Override
+    public File getFile() throws IOException {
+        throw new FileNotFoundException(getDescription() + " cannot be resolved to absolute file path");
+    }
+
+    /**
+     * 根据 getInputStream() 的返回结果构建 ReadableByteChannel
+     */
+    @Override
+    public ReadableByteChannel readableChannel() throws IOException {
+        return Channels.newChannel(getInputStream());
+    }
+
+    /**
+     * 获取资源的长度
+     *
+     * 这个资源内容长度实际就是资源的字节长度，通过全部读取一遍来判断
+     */
+    @Override
+    public long contentLength() throws IOException {
+        InputStream is = getInputStream();
+        try {
+            long size = 0;
+            byte[] buf = new byte[255];
+            int read;
+            while ((read = is.read(buf)) != -1) {
+                size += read;
+            }
+            return size;
+        }
+        finally {
+            try {
+                is.close();
+            }
+            catch (IOException ex) {
+            }
+        }
+    }
+
+    /**
+     * 返回资源最后的修改时间
+     */
+    @Override
+    public long lastModified() throws IOException {
+        long lastModified = getFileForLastModifiedCheck().lastModified();
+        if (lastModified == 0L) {
+            throw new FileNotFoundException(getDescription() +
+                    " cannot be resolved in the file system for resolving its last-modified timestamp");
+        }
+        return lastModified;
+    }
+
+
+    protected File getFileForLastModifiedCheck() throws IOException {
+        return getFile();
+    }
+
+    /**
+     * 交给子类实现
+     */
+    @Override
+    public Resource createRelative(String relativePath) throws IOException {
+        throw new FileNotFoundException("Cannot create a relative resource for " + getDescription());
+    }
+
+    /**
+     * 获取资源名称，默认返回 null
+     */
+    @Override
+    @Nullable
+    public String getFilename() {
+        return null;
+    }
+
+
+    /**
+     * 返回资源的描述
+     */
+    @Override
+    public String toString() {
+        return getDescription();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj == this ||
+            (obj instanceof Resource && ((Resource) obj).getDescription().equals(getDescription())));
+    }
+
+    @Override
+    public int hashCode() {
+        return getDescription().hashCode();
+    }
+
+}
+```
