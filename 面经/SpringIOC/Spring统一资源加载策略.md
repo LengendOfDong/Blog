@@ -263,3 +263,26 @@ public abstract class AbstractResource implements Resource {
 
 }
 ```
+如果要实现自定义的Resource，应该继承AbstractResource抽象类，然后根据当前的具体资源特性覆盖相应的方法即可。
+
+## 统一资源定位：ResourceLoader
+Spring将资源的定义和资源的加载区分开了，Resource定义了统一的资源，资源的加载由ResourceLoader来统一定义。
+
+org.springframework.core.io.ResourceLoader为Spring资源加载的统一抽象，具体的资源则由相应的实现类来完成，所以可以将ResourceLoader称作统一资源定位器。其定义如下：
+```java
+public interface ResourceLoader {
+    String CLASSPATH_URL_PREFIX = ResourceUtils.CLASSPATH_URL_PREFIX;
+
+    Resource getResource(String location);
+
+    ClassLoader getClassLoader();
+}
+```
+ResourceLoader接口提供两个方法：getResource()/getClassLoader().
+
+getResource（）根据所提供资源的路径location返回Resource实例，但是它不确保该Resource一定存在，需要调用Resource.exist()方法判断。该方法支持以下模式的资源加载：
+- URL位置资源，如“file:C:/test.dat”
+- ClassPath位置资源，如“classpath:test.dat”
+- 相对路径资源，如“WEB-INF/test.dat”，此时返回的Resource实例根据实现不同而不同。
+
+该方法的主要实现是在其子类DefaultResourceLoader中实现。
