@@ -415,3 +415,9 @@ public PathMatchingResourcePatternResolver(@Nullable ClassLoader classLoader) {
 ```
 PathMatchingResourcePatternResolver在实例化的时候，可以指定一个 ResourceLoader，如果不指定的话，它会在内部构造一个 DefaultResourceLoader。
 
+# 总结
+1. Spring 提供了Resource和ResourceLoader来统一抽象整个资源及其定位。使得资源与资源的定位有了一个更加清晰的界限，并且提供了合适的Default类，使得自定义实现更加方便和清晰。
+
+ 2.AbstactResource为Resource的默认实现，它对Resource接口做了一个统一的实现，子类继承该类后只需要覆盖相应的方法即可。
+ 
+ 3.DefaultResourceLoader同样也是ResourceLoader的默认实现，在自定义ResourceLoader的时候除了可以
