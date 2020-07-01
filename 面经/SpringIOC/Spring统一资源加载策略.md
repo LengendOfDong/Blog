@@ -385,7 +385,7 @@ FileSystemContextResource为FileSystemResourceLoader的内部类，它继承自F
 ```
 如果将上面的示例将DefaultResourceLoader 改为 FileSystemContextResource ，则 fileResource1 则为 FileSystemResource。
 
-## ResourcePatternResource
+## ResourcePatternResolver
 ResourceLoader 的 Resource getResource(String location) 每次只能根据 location 返回一个 Resource，当需要加载多个资源时，我们除了多次调用 getResource() 外别无他法。ResourcePatternResolver 是 ResourceLoader 的扩展，它支持根据指定的资源路径匹配模式每次返回多个 Resource 实例，其定义如下：
 ```java
 public interface ResourcePatternResolver extends ResourceLoader {
@@ -394,3 +394,24 @@ public interface ResourcePatternResolver extends ResourceLoader {
     Resource[] getResources(String locationPattern) throws IOException;
 }
 ```
+ResourcePatternResolver在ResourceLoader的基础上增加了getResource(String locationPattern),以支持根据路径匹配模式返回多个Resource实例，同时也新增了一种新的协议前缀classpath*:,该协议前缀由其子类负责实现。
+
+PatherMatchingResourcePatternResolver 为 ResourcePatternResolver最常用的子类，它除了支持ResourceLoader和ResourcePatternResolver新增的classpath*:前缀外，还支持Ant风格的路径匹配模式（类似于**/*.xml）
+
+PathingMatchingResourcePatternResolver提供了三个构造方法，如下：
+```java
+public PathMatchingResourcePatternResolver() {
+        this.resourceLoader = new DefaultResourceLoader();
+    }
+
+public PathMatchingResourcePatternResolver(ResourceLoader resourceLoader) {
+    Assert.notNull(resourceLoader, "ResourceLoader must not be null");
+    this.resourceLoader = resourceLoader;
+}
+
+public PathMatchingResourcePatternResolver(@Nullable ClassLoader classLoader) {
+    this.resourceLoader = new DefaultResourceLoader(classLoader);
+}
+```
+PathMatchingResourcePatternResolver在实例化的时候，可以指定一个 ResourceLoader，如果不指定的话，它会在内部构造一个 DefaultResourceLoader。
+
