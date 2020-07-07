@@ -115,6 +115,7 @@ MySQL 的聚簇索引和非聚簇索引有什么区别
 MyBatis中#和$符号的区别
 
 # Redis
+- [Redis高负载情况下的中断优化](https://blog.csdn.net/meituantech/article/details/80062289)
 Redis缓存回收机制
 Redis准备同步
 Redis哨兵机制
