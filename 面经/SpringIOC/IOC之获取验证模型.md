@@ -115,3 +115,4 @@ protected int getValidationModeForResource(Resource resource) {
         }
     }
 ```
+从代码中看，主要是通过读取 XML 文件的内容，判断内容中是否包含有 DOCTYPE ，如果是 则为 DTD，否则为 XSD，当然只会读取到 第一个 "<" 处，因为 验证模式一定会在第一个 “<” 之前。如果当中出现了 CharConversionException 异常，则为 XSD模式。 好了，XML 文件的验证模式分析完毕，下篇分析 doLoadBeanDefinitions() 的第二个步骤：获取 Document 实例。 
