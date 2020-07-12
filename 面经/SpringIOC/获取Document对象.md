@@ -91,3 +91,85 @@ public interface EntityResolver {
 4. DTD 验证模式
         publicId：-//SPRING//DTD BEAN 2.0//EN
         systemId：http://www.springframework.org/dtd/spring-beans.dtd 如下：
+
+我们知道在 Spring 中使用 DelegatingEntityResolver 为 EntityResolver 的实现类，resolveEntity() 实现如下：
+```java
+ public InputSource resolveEntity(String publicId, @Nullable String systemId) throws SAXException, IOException {
+        if (systemId != null) {
+            if (systemId.endsWith(DTD_SUFFIX)) {
+                return this.dtdResolver.resolveEntity(publicId, systemId);
+            }
+            else if (systemId.endsWith(XSD_SUFFIX)) {
+                return this.schemaResolver.resolveEntity(publicId, systemId);
+            }
+        }
+        return null;
+    }
+```
+不同的验证模式使用不同的解析器解析，如果是DTD验证模式则使用BeansDtdResolver来进行解析，如果是XSD则使用PluggableSchemaResolver来进行解析。BeansDtdResolver的解析过程如下：
+```java
+public InputSource resolveEntity(String publicId, @Nullable String systemId) throws IOException {
+        if (logger.isTraceEnabled()) {
+            logger.trace("Trying to resolve XML entity with public ID [" + publicId +
+                    "] and system ID [" + systemId + "]");
+        }
+        if (systemId != null && systemId.endsWith(DTD_EXTENSION)) {
+            int lastPathSeparator = systemId.lastIndexOf('/');
+            int dtdNameStart = systemId.indexOf(DTD_NAME, lastPathSeparator);
+            if (dtdNameStart != -1) {
+                String dtdFile = DTD_NAME + DTD_EXTENSION;
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Trying to locate [" + dtdFile + "] in Spring jar on classpath");
+                }
+                try {
+                    Resource resource = new ClassPathResource(dtdFile, getClass());
+                    InputSource source = new InputSource(resource.getInputStream());
+                    source.setPublicId(publicId);
+                    source.setSystemId(systemId);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Found beans DTD [" + systemId + "] in classpath: " + dtdFile);
+                    }
+                    return source;
+                }
+                catch (IOException ex) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Could not resolve beans DTD [" + systemId + "]: not found in classpath", ex);
+                    }
+                }
+            }
+        }
+or wherever.
+        return null;
+    }
+```
+从上面代码中我们可以看到加载DTD类型的BeansDtdResolver.resolveEntity() 只是对 systemId 进行了简单的校验（从最后一个 / 开始，内容中是否包含 spring-beans），然后构造一个 InputSource 并设置 publicId、systemId，然后返回。 PluggableSchemaResolver 的解析过程如下:
+```java
+public InputSource resolveEntity(String publicId, @Nullable String systemId) throws IOException {
+        if (logger.isTraceEnabled()) {
+            logger.trace("Trying to resolve XML entity with public id [" + publicId +
+                    "] and system id [" + systemId + "]");
+        }
+
+        if (systemId != null) {
+            String resourceLocation = getSchemaMappings().get(systemId);
+            if (resourceLocation != null) {
+                Resource resource = new ClassPathResource(resourceLocation, this.classLoader);
+                try {
+                    InputSource source = new InputSource(resource.getInputStream());
+                    source.setPublicId(publicId);
+                    source.setSystemId(systemId);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Found XML schema [" + systemId + "] in classpath: " + resourceLocation);
+                    }
+                    return source;
+                }
+                catch (FileNotFoundException ex) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Couldn't find XML schema [" + systemId + "]: " + resource, ex);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+```
