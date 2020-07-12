@@ -173,3 +173,4 @@ public InputSource resolveEntity(String publicId, @Nullable String systemId) thr
         return null;
     }
 ```
+首先调用 getSchemaMappings() 获取一个映射表(systemId 与其在本地的对照关系)，然后根据传入的 systemId 获取该 systemId 在本地的路径 resourceLocation，最后根据 resourceLocation 构造 InputSource 对象。
