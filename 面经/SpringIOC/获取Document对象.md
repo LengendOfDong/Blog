@@ -71,4 +71,23 @@ public class MyResolver implements EntityResolver {
      }
    }
 ```
+> EntityResolver的作用就是应用本身可以提供一个如何寻找验证文件的方法，即自定义实现。接口声明如下：
+```java
+public interface EntityResolver {
+    public abstract InputSource resolveEntity (String publicId,String systemId)
+        throws SAXException, IOException;
+}
+```
+接口方法接收两个参数 publicId 和 systemId，并返回 InputSource 对象。两个参数声明如下：
 
+1. publicId：被引用的外部实体的公共标识符，如果没有提供，则返回null
+
+2. systemId：被引用的外部实体的系统标识符 这两个参数的实际内容和具体的验证模式有关系。如下
+
+3. XSD 验证模式
+        publicId：null
+        systemId：http://www.springframework.org/schema/beans/spring-beans.xsd
+        
+4. DTD 验证模式
+        publicId：-//SPRING//DTD BEAN 2.0//EN
+        systemId：http://www.springframework.org/dtd/spring-beans.dtd 如下：
