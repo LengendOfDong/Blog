@@ -53,3 +53,22 @@ protected EntityResolver getEntityResolver() {
 
 4.PluggableSchemaResolver：使用一系列Map文件将Schema url解析到本地classpath资源
 
+getEntityResolver()返回EntityResolver，这个EntityResolver到底是什么呢？
+
+>If a SAX application needs to implement customized handling for external entities, it must implement this interface and register an instance with the SAX driver using the setEntityResolver method.
+就是说：如果 SAX 应用程序需要实现自定义处理外部实体，则必须实现此接口并使用 setEntityResolver() 向 SAX 驱动器注册一个实例。 如下：
+
+```java
+public class MyResolver implements EntityResolver {
+     public InputSource resolveEntity (String publicId, String systemId){
+       if (systemId.equals("http://www.myhost.com/today")){
+         MyReader reader = new MyReader();
+         return new InputSource(reader);
+       } else {
+            // use the default behaviour
+            return null;
+       }
+     }
+   }
+```
+
