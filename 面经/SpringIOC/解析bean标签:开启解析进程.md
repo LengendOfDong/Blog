@@ -1,0 +1,93 @@
+# 解析bean标签
+import标签解析完毕了，再看Spring中最复杂也是最重要的标签 bean 标签的解析过程。 在方法 parseDefaultElement() 中，如果遇到标签 为 bean 则调用 processBeanDefinition() 方法进行 bean 标签解析，如下：
+```java
+protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
+        BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
+        if (bdHolder != null) {
+            bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
+            try {
+                // Register the final decorated instance.
+                BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
+            }
+            catch (BeanDefinitionStoreException ex) {
+                getReaderContext().error("Failed to register bean definition with name '" +
+                        bdHolder.getBeanName() + "'", ele, ex);
+            }
+            // Send registration event.
+            getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));
+        }
+    }
+```
+整个过程分为四个步骤：
+- 调用调用 BeanDefinitionParserDelegate.parseBeanDefinitionElement() 进行元素解析，解析过程中如果失败，返回 null，错误由 ProblemReporter 处理。如果解析成功则返回 BeanDefinitionHolder 实例 bdHolder。BeanDefinitionHolder 为持有 name 和 alias 的 BeanDefinition。
+- 若实例bdHolder不为空，则调用BeanDefinitionParserDelegate.decorateBeanDefinitionIfRequired() 进行自定义标签处理
+- 解析完成后，则调用BeanDefinitionReaderUtils.registerBeanDefinition()对bdHolder进行注册
+- 发出响应事件，通知相关的监听器，完成Bean标签解析。
+
+先看方法parseBeanDefinitionElement()，如下：
+```java
+public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
+        // 解析 ID 属性
+        String id = ele.getAttribute(ID_ATTRIBUTE);
+        // 解析 name 属性
+        String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
+
+        // 分割 name 属性
+        List<String> aliases = new ArrayList<>();
+        if (StringUtils.hasLength(nameAttr)) {
+            String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);
+            aliases.addAll(Arrays.asList(nameArr));
+        }
+
+        String beanName = id;
+        if (!StringUtils.hasText(beanName) && !aliases.isEmpty()) {
+            beanName = aliases.remove(0);
+            if (logger.isDebugEnabled()) {
+                logger.debug("No XML 'id' specified - using '" + beanName +
+                        "' as bean name and " + aliases + " as aliases");
+            }
+        }
+
+        // 检查 name 的唯一性
+        if (containingBean == null) {
+            checkNameUniqueness(beanName, aliases, ele);
+        }
+
+        // 解析 属性，构造 AbstractBeanDefinition
+        AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
+        if (beanDefinition != null) {
+            // 如果 beanName 不存在，则根据条件构造一个 beanName
+            if (!StringUtils.hasText(beanName)) {
+                try {
+                    if (containingBean != null) {
+                        beanName = BeanDefinitionReaderUtils.generateBeanName(
+                                beanDefinition, this.readerContext.getRegistry(), true);
+                    }
+                    else {
+                        beanName = this.readerContext.generateBeanName(beanDefinition);
+                        String beanClassName = beanDefinition.getBeanClassName();
+                        if (beanClassName != null &&
+                                beanName.startsWith(beanClassName) && beanName.length() > beanClassName.length() &&
+                                !this.readerContext.getRegistry().isBeanNameInUse(beanClassName)) {
+                            aliases.add(beanClassName);
+                        }
+                    }
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Neither XML 'id' nor 'name' specified - " +
+                                "using generated bean name [" + beanName + "]");
+                    }
+                }
+                catch (Exception ex) {
+                    error(ex.getMessage(), ele);
+                    return null;
+                }
+            }
+            String[] aliasesArray = StringUtils.toStringArray(aliases);
+
+            // 封装 BeanDefinitionHolder
+            return new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray);
+        }
+
+        return null;
+    }
+```
