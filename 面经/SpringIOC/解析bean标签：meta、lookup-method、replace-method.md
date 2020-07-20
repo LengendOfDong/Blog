@@ -24,4 +24,4 @@ public void parseMetaElements(Element ele, BeanMetadataAttributeAccessor attribu
         }
     }
 ```
-解析过程较为简单，获取相应的key - value构建BeanMetadataAttribute对象。
+解析过程较为简单，获取相应的key - value构建BeanMetadataAttribute对象, 
