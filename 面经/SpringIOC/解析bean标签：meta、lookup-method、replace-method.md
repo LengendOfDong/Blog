@@ -42,3 +42,14 @@ public void setAttribute(String name, @Nullable Object value) {
         }
     }
 ```
+AttributeAccessorSupport是接口AttributeAccessor的实现者。AttributeAccessor接口定义了与其他对象的元数据进行连接和访问的约定，可以通过该接口对属性进行获取、设置、删除操作。设置元数据后，可以通过getAttribute()获取，如下：
+```java
+public Object getAttribute(String name) {
+        BeanMetadataAttribute attribute = (BeanMetadataAttribute) super.getAttribute(name);
+        return (attribute != null ? attribute.getValue() : null);
+    }
+```
+
+## lookup-method子元素
+> lookup-method:获取器注入，是把一个方法声明为返回某种类型的bean但实际要返回的bean是在配置文件里面配置的。该方法可以用于设计一些可插拔的功能上，解除程序依赖。
+
