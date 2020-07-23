@@ -30,3 +30,15 @@ public void parseMetaElements(Element ele, BeanMetadataAttributeAccessor attribu
         super.setAttribute(attribute.getName(), attribute);
     }
 ```
+委托AttributeAccessorSupport实现，如下：
+```java
+public void setAttribute(String name, @Nullable Object value) {
+        Assert.notNull(name, "Name must not be null");
+        if (value != null) {
+            this.attributes.put(name, value);
+        }
+        else {
+            removeAttribute(name);
+        }
+    }
+```
