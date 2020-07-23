@@ -24,4 +24,9 @@ public void parseMetaElements(Element ele, BeanMetadataAttributeAccessor attribu
         }
     }
 ```
-解析过程较为简单，获取相应的key - value构建BeanMetadataAttribute对象, 
+解析过程较为简单，获取相应的key - value构建BeanMetadataAttribute对象,  然后通过addMetadataAttribute()加入到AbstractBeanDefinition中。如下：
+```java
+ public void addMetadataAttribute(BeanMetadataAttribute attribute) {
+        super.setAttribute(attribute.getName(), attribute);
+    }
+```
