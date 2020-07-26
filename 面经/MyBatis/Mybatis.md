@@ -56,5 +56,27 @@ mybatis是一个持久层框架，是用java编写的。
     }
  ```
 
+ 两个配置文件SqlMapConfig.xml与IUserDao.xml，进行了以下几个步骤：
  
+ 1）读取配置文件：用到解析XML的技术，此处用的是dom4j解析xml技术
+ 
+ 2）根据配置文件的信息，创建Connection对象，就比如：注册驱动，获取连接
+ 
+ 3）获取预处理对象PreparedStatement，此时需要SQL语句，conn.prepareStatement(sql);
+ 
+ 4) 执行查询，ResultSet  resultSet = preparedStatement.executeQuery();
+ 
+ 5) 遍历结果集用于封装：
+ ```java
+ List<E> list = new ArrayList():
+ while(resultSet.hasNext()){
+    E  element = (E)Class.forName(配置的全限定类名).newInstance();
+    进行封装，把每个rs的内容都添加到element中，把Element加入到list中
+    我们的实体类属性和表中的列名是一致的。于是我们就可以把表的列名看成是实体类的属性名称。就可以使用反射的方式来根据名称获取每个属性，并把值赋进去。
+    把element加入到list中
+    list.add(element);
+ }
+ ```
+  
+ 6) 返回list,  return list;
  
