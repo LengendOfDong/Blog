@@ -53,3 +53,77 @@ public Object getAttribute(String name) {
 ## lookup-method子元素
 > lookup-method:获取器注入，是把一个方法声明为返回某种类型的bean但实际要返回的bean是在配置文件里面配置的。该方法可以用于设计一些可插拔的功能上，解除程序依赖。
 
+```java
+public interface Car {
+
+    void display();
+}
+
+public class Bmw implements Car{
+    @Override
+    public void display() {
+        System.out.println("我是 BMW");
+    }
+}
+
+public class Hongqi implements Car{
+    @Override
+    public void display() {
+        System.out.println("我是 hongqi");
+    }
+}
+
+public abstract class Display {
+
+
+    public void display(){
+        getCar().display();
+    }
+
+    public abstract Car getCar();
+}
+
+   public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring.xml");
+
+        Display display = (Display) context.getBean("display");
+        display.display();
+    }
+}
+```
+配置内容如下：
+```java
+<bean id="display" class="org.springframework.core.test1.Display">
+        <lookup-method name="getCar" bean="hongqi"/>
+    </bean>
+```
+运行结果为：
+```java
+我是 hongqi
+```
+如果将 bean="hongqi"替换为bean="bwm",则运行结果变成：
+```java
+我是bwm
+```
+lookup-method解析过程如下：
+```java
+public void parseLookupOverrideSubElements(Element beanEle, MethodOverrides overrides) {
+        NodeList nl = beanEle.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (isCandidateElement(node) && nodeNameEquals(node, LOOKUP_METHOD_ELEMENT)) {
+                Element ele = (Element) node;
+                String methodName = ele.getAttribute(NAME_ATTRIBUTE);
+                String beanRef = ele.getAttribute(BEAN_ELEMENT);
+                LookupOverride override = new LookupOverride(methodName, beanRef);
+                override.setSource(extractSource(ele));
+                overrides.addOverride(override);
+            }
+        }
+    }
+```
+解析过程和meta子元素没有多大区别，同样是解析methodName，beanRef构造一个LookupOverride对象，然后覆盖即可。
+
+## replaced-method子元素
+>replaced-method：可以在运行时调用新的方法替换现有的方法，还能动态地更新原有方法的逻辑。
+
