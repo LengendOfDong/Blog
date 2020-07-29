@@ -177,3 +177,32 @@ public class MethodReplace implements MethodReplacer {
 ```
 可以看到，replaced-method标签表明是从MethodReplace这个类中获取需要替换的display方法。
 
+replaced-method标签的解析过程：
+```java
+ public void parseReplacedMethodSubElements(Element beanEle, MethodOverrides overrides) {
+        NodeList nl = beanEle.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            //获取replaced-method标签
+            if (isCandidateElement(node) && nodeNameEquals(node, REPLACED_METHOD_ELEMENT)) {
+                Element replacedMethodEle = (Element) node;
+                //获取标签中的name属性，以及replacer属性
+                String name = replacedMethodEle.getAttribute(NAME_ATTRIBUTE);
+                String callback = replacedMethodEle.getAttribute(REPLACER_ATTRIBUTE);
+                //通过获取的属性，封装成一个ReplaceOverride对象
+                ReplaceOverride replaceOverride = new ReplaceOverride(name, callback);
+                // Look for arg-type match elements.
+                List<Element> argTypeEles = DomUtils.getChildElementsByTagName(replacedMethodEle, ARG_TYPE_ELEMENT);
+                for (Element argTypeEle : argTypeEles) {
+                    String match = argTypeEle.getAttribute(ARG_TYPE_MATCH_ATTRIBUTE);
+                    match = (StringUtils.hasText(match) ? match : DomUtils.getTextValue(argTypeEle));
+                    if (StringUtils.hasText(match)) {
+                        replaceOverride.addTypeIdentifier(match);
+                    }
+                }
+                replaceOverride.setSource(extractSource(replacedMethodEle));
+                overrides.addOverride(replaceOverride);
+            }
+        }
+    }
+```
