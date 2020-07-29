@@ -105,6 +105,7 @@ public abstract class Display {
 ```java
 我是bwm
 ```
+lookup-method标签表明getCar方法返回的值的类型为Hongqi类型
 lookup-method解析过程如下：
 ```java
 public void parseLookupOverrideSubElements(Element beanEle, MethodOverrides overrides) {
@@ -126,4 +127,53 @@ public void parseLookupOverrideSubElements(Element beanEle, MethodOverrides over
 
 ## replaced-method子元素
 >replaced-method：可以在运行时调用新的方法替换现有的方法，还能动态地更新原有方法的逻辑。
+该标签使用方法和lookup-method标签差不多，只不过替代方法的类需要实现MethodReplacer接口，如下：
+```java
+public class Method {
+    public void display(){
+        System.out.println("我是原始方法");
+    }
+}
+
+public class MethodReplace implements MethodReplacer {
+
+    @Override
+    public Object reimplement(Object obj, Method method, Object[] args) throws Throwable {
+        System.out.println("我是替换方法");
+
+        return null;
+    }
+}
+
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring.xml");
+
+        Method method = (Method) context.getBean("method");
+        method.display();
+    }
+```
+如果spring.xml文件如下：
+```java
+ <bean id="methodReplace" class="org.springframework.core.test1.MethodReplace"/>
+
+    <bean id="method" class="org.springframework.core.test1.Method"/>
+```
+则运行结果为：
+```java
+我是原始方法
+```
+
+增加replaced-method子元素：
+```java
+<bean id="methodReplace" class="org.springframework.core.test1.MethodReplace"/>
+
+    <bean id="method" class="org.springframework.core.test1.Method">
+        <replaced-method name="display" replacer="methodReplace"/>
+    </bean>
+```
+运行结果为：
+```java
+我是替换方法
+```
+可以看到，replaced-method标签表明是从MethodReplace这个类中获取需要替换的display方法。
 
