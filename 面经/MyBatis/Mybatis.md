@@ -86,3 +86,7 @@ mybatis是一个持久层框架，是用java编写的。
  OGNL:Object Graphic  Navigation Language,对象图像导航语言
  
  它是通过对象的取值方法来获取数据，在写法上把get给省略了。
+ 
+ 假如实体类与数据库中的字段没有对应，该如何处理？
+ - 执行效率：在mapper文件中，将 sql语句使用 as 起别名的方式进行替换。
+ - 开发效率：在mapper文件中，使用resultMap来进行配置，并且将sql语句返回类型设置为resultMap
