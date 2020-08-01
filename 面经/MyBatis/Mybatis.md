@@ -89,4 +89,18 @@ mybatis是一个持久层框架，是用java编写的。
  
  假如实体类与数据库中的字段没有对应，该如何处理？
  - 执行效率：在mapper文件中，将 sql语句使用 as 起别名的方式进行替换。
+ ```java
+ select id as userId, name as userName, sex as userSex, address as userAddress, birthday as userBirthday from user 
+ ```
  - 开发效率：在mapper文件中，使用resultMap来进行配置，并且将sql语句返回类型设置为resultMap
+```java
+<resultMap id="userMap" type="com.dong.domain.User">
+        <!-- 主键字段的对应 -->
+        <id property="userId" column="id" />
+        <!-- 非主键字段的对应 -->
+        <result property="userNme" column="username" />
+        <result property="userAddress" column="address" />
+        <result property="userSex" column="sex" />
+        <result property="userBirthday" column="birthday" />
+    </resultMap>
+```
