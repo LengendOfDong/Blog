@@ -50,3 +50,134 @@ User{id=49, username='mybatis_test', birthday=Sun Aug 02 16:00:54 CST 2020, sex=
 可以看到POOLED比UNPOOLED多了一个操作，”reated connection 326298949.“ 以及"Returned connection 326298949 to pool",POOLED从连接池中获取了连接之后再还回了连接。
 
 POOLED从池中获取一个连接来用，而UNPOOLED是每次创建一个新的连接来用。
+
+
+```java
+private PooledConnection popConnection(String username, String password) throws SQLException {
+    boolean countedWait = false;
+    PooledConnection conn = null;
+    long t = System.currentTimeMillis();
+    int localBadConnectionCount = 0;
+
+    //连接为空，需要继续获取连接
+    while (conn == null) {
+      //需要对状态进行锁定，此处state可以理解为资源集合
+      synchronized (state) {
+        //资源中空闲连接集合不为空
+        if (state.idleConnections.size() > 0) {
+          // Pool has available connection
+          // 池中有可用的连接，取出第一个赋值给conn,这样就能够退出循环了
+          conn = state.idleConnections.remove(0);
+          if (log.isDebugEnabled()) {
+            log.debug("Checked out connection " + conn.getRealHashCode() + " from pool.");
+          }
+          //资源中空闲连接集合为空
+        } else {
+          // Pool does not have available connection
+          //活动连接池没有达到最大数量限制
+          if (state.activeConnections.size() < poolMaximumActiveConnections) {
+            // Can create new connection
+            // 能够创建一个新的连接，并赋值给conn
+            conn = new PooledConnection(dataSource.getConnection(), this);
+            @SuppressWarnings("unused")
+            //used in logging, if enabled
+            Connection realConn = conn.getRealConnection();
+            if (log.isDebugEnabled()) {
+              log.debug("Created connection " + conn.getRealHashCode() + ".");
+            }
+          } else {
+            // Cannot create new connection
+            // 活动连接池已经达到最大数量限制，则不能创建新的连接
+            // 从活动连接中取第一个也就是最老的那个连接
+            PooledConnection oldestActiveConnection = state.activeConnections.get(0);
+            // 最老的连接的交付时间
+            long longestCheckoutTime = oldestActiveConnection.getCheckoutTime();
+            // 交付时间超过了连接池定义的最长交付时间，则说明是过期了
+            if (longestCheckoutTime > poolMaximumCheckoutTime) {
+              // Can claim overdue connection
+              // 声明此连接为过期交付连接，资源中过期交付连接数加一
+              state.claimedOverdueConnectionCount++;
+              // 统计过期连接的交付时间的总和
+              state.accumulatedCheckoutTimeOfOverdueConnections += longestCheckoutTime;
+              // 统计交付时间总和
+              state.accumulatedCheckoutTime += longestCheckoutTime;
+              // 从活动连接池中移除该连接
+              state.activeConnections.remove(oldestActiveConnection);
+              // 此最老的连接不是自动提交的，则需要进行回滚操作
+              if (!oldestActiveConnection.getRealConnection().getAutoCommit()) {
+                oldestActiveConnection.getRealConnection().rollback();
+              }
+              // 最老的连接退位，让出位子，可以创建一个新的连接
+              conn = new PooledConnection(oldestActiveConnection.getRealConnection(), this);
+              // 将此连接设置为无效
+              oldestActiveConnection.invalidate();
+              if (log.isDebugEnabled()) {
+                log.debug("Claimed overdue connection " + conn.getRealHashCode() + ".");
+              }
+              //说明此时最老的连接还没有过期
+            } else {
+              // Must wait
+              // 此时就必须等待下去
+              try {
+                // 就进入一次该方法体
+                if (!countedWait) {
+                  //用于记录资源不得不等待的次数，该次数加一
+                  state.hadToWaitCount++;
+                  //下次就不进来了
+                  countedWait = true;
+                }
+                if (log.isDebugEnabled()) {
+                  log.debug("Waiting as long as " + poolTimeToWait + " milliseconds for connection.");
+                }
+                long wt = System.currentTimeMillis();
+                //等待20秒，和连接池最大交付的时间相同，保证最老的连接释放
+                state.wait(poolTimeToWait);
+                // 统计等待的时间
+                state.accumulatedWaitTime += System.currentTimeMillis() - wt;
+              } catch (InterruptedException e) {
+                break;
+              }
+            }
+          }
+        }
+        if (conn != null) {
+          if (conn.isValid()) {
+            if (!conn.getRealConnection().getAutoCommit()) {
+              conn.getRealConnection().rollback();
+            }
+            conn.setConnectionTypeCode(assembleConnectionTypeCode(dataSource.getUrl(), username, password));
+            conn.setCheckoutTimestamp(System.currentTimeMillis());
+            conn.setLastUsedTimestamp(System.currentTimeMillis());
+            state.activeConnections.add(conn);
+            state.requestCount++;
+            state.accumulatedRequestTime += System.currentTimeMillis() - t;
+          } else {
+            if (log.isDebugEnabled()) {
+              log.debug("A bad connection (" + conn.getRealHashCode() + ") was returned from the pool, getting another connection.");
+            }
+            state.badConnectionCount++;
+            localBadConnectionCount++;
+            conn = null;
+            if (localBadConnectionCount > (poolMaximumIdleConnections + 3)) {
+              if (log.isDebugEnabled()) {
+                log.debug("PooledDataSource: Could not get a good connection to the database.");
+              }
+              throw new SQLException("PooledDataSource: Could not get a good connection to the database.");
+            }
+          }
+        }
+      }
+
+    }
+
+    if (conn == null) {
+      if (log.isDebugEnabled()) {
+        log.debug("PooledDataSource: Unknown severe error condition.  The connection pool returned a null connection.");
+      }
+      throw new SQLException("PooledDataSource: Unknown severe error condition.  The connection pool returned a null connection.");
+    }
+
+    return conn;
+  }
+```
+存在两个池，一个空闲连接池，一个活动连接池，需要创建连接时，先从空闲连接池中获取连接，失败则判断活动连接池中连接是否已满，没有满则创建一个新的连接，如果满了则
