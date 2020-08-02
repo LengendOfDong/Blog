@@ -56,7 +56,7 @@ User作为QueryVo的属性，User中又有属性username,如果使用username进
     </select>
 ```
 
-对于重复出现的sql可以统一抽取成一个：
+对于重复出现的sql可以统一抽取成一个，此处需要注意如果被替换的sql语句后面还有语句，则不要写分号
 ```java
 <sql id="defaultUser" >
         select * from customer
