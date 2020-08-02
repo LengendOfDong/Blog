@@ -104,3 +104,30 @@ mybatis是一个持久层框架，是用java编写的。
         <result property="userBirthday" column="birthday" />
     </resultMap>
 ```
+
+## properties标签的使用
+```java
+<properties resource="" url="">
+    <property name="" value=""></property>
+</properties>
+```
+可以在标签内部配置连接数据库的信息，也可以通过属性引用外部配置文件信息
+ 
+resource 属性：常用于指定配置文件的位置，是按照类路径的写法来写，并且必须存在于类路径下。
+ 
+url属性：是要求按照url的写法来写地址
+     
+URL：Uniform Resource Locator 统一资源定位符，它是可以唯一标识一个资源的位置
+     
+URI：Uniform Resource Identifier 统一资源标识符，它是在应用中可以唯一定位一个资源的。
+    
+URL是全网络中都可以唯一标识一个资源，而URI是在应用中唯一标识，所以URL比URI更加准确。日常访问文件也是通过file协议来访问的，只是在Windows系统中默认支持file协议，所以没有显示"file:///"开头
+
+## typeAliaes标签的使用
+```java
+<!-- 使用typeAliaes配置别名，只能配置domain中类的别名-->
+<typeAliases>
+    <!--typealias用于配置别名，type属性指定的是实体类全限定类名，alias属性指定别名，当指定了别名就再区分大小写-->
+    <typeAlias type="com.dong.domain.User" alias="user"></typeAlias>
+</typeAliases>
+```
