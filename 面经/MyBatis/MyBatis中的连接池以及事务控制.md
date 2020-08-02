@@ -49,4 +49,4 @@ User{id=49, username='mybatis_test', birthday=Sun Aug 02 16:00:54 CST 2020, sex=
 ```
 可以看到POOLED比UNPOOLED多了一个操作，”reated connection 326298949.“ 以及"Returned connection 326298949 to pool",POOLED从连接池中获取了连接之后再还回了连接。
 
-
+POOLED从池中获取一个连接来用，而UNPOOLED是每次创建一个新的连接来用。
