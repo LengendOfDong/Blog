@@ -127,7 +127,9 @@ URL是全网络中都可以唯一标识一个资源，而URI是在应用中唯�
 ```java
 <!-- 使用typeAliaes配置别名，只能配置domain中类的别名-->
 <typeAliases>
-    <!--typealias用于配置别名，type属性指定的是实体类全限定类名，alias属性指定别名，当指定了别名就再区分大小写-->
+    <!--typealias用于配置别名，type属性指定的是实体类全限定类名，alias属性指定别名，当指定了别名就不再区分大小写-->
     <typeAlias type="com.dong.domain.User" alias="user"></typeAlias>
 </typeAliases>
 ```
+在使用typeAliaes标签之后，在mapper文件中就可以使用alias来替换mapper中的返回值类型或者参数类型
+
