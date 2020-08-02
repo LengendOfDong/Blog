@@ -44,3 +44,32 @@ where标签的使用，主要是省略了”where 1= 1“，这样使SQL语句�
 - item:代表遍历结合的每个元素，生成的变量名
 - seperator:代表分隔符
 
+User作为QueryVo的属性，User中又有属性username,如果使用username进行查询，可以如下进行编写：
+```java
+    <select id="findUserByVoOne" resultType="com.dong.domain.User" parameterType="com.dong.domain.QueryVo">
+        select * from customer
+        <where>
+            <if test="#{user.username} != null">
+                and username = #{user.username}
+            </if>
+        </where>
+    </select>
+```
+
+对于重复出现的sql可以统一抽取成一个：
+```java
+<sql id="defaultUser" >
+        select * from customer
+    </sql>
+```
+那么上面例子就可以写成：
+```java
+<select id="findUserByVoOne" resultType="com.dong.domain.User" parameterType="com.dong.domain.QueryVo">
+        <include refid="defaultUser"/>
+        <where>
+            <if test="#{user.username} != null">
+                and username = #{user.username}
+            </if>
+        </where>
+    </select>
+```
