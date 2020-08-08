@@ -18,3 +18,6 @@
 
 当SqlSession消失的时候，一级缓存也就消失了。
 
+比如sqlsession.close()可以是关闭sqlsession对象，此时一级缓存就消失了
+
+另外，调用sqlsession.clearCache()也可以清除缓存
