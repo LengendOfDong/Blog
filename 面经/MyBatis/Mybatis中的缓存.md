@@ -31,6 +31,15 @@
 
 二级缓存的使用步骤：
 - 第一步：让Mybatis框架支持二级缓存（SqlMapConfig.xml中配置）
+  - 在SqlMapConfig.xml中配置settings，开启缓存
+  ```java
+  <settings>
+      <setting name="cacheEnabled" value="true">
+  </settings>
+  ```
 - 第二步：让当前的映射文件支持二级缓存（在IUserDao.xml中配置）
+  - 在IUserDao.xml中增加cache标签 <cache />
 - 第三步：在当前的操作支持二级缓存（在select标签中配置）
+  
+
 
