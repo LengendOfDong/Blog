@@ -23,6 +23,8 @@
 在其他位置使用@ResultMap进行引用， @ResultMap(value={"userMap"})
 
 # 注解开发一对一
+
+```java
 @Select("select * from account)
 @Results( id="accountMap"
   value={
@@ -33,3 +35,4 @@
     @Result(property="user", column="uid", property=@One(select="com.dong.dao.IUserDao.findById",fetchType=FetchType.EAGER))
   }
 )
+```
