@@ -21,3 +21,15 @@
 ```
 
 在其他位置使用@ResultMap进行引用， @ResultMap(value={"userMap"})
+
+# 注解开发一对一
+@Select("select * from account)
+@Results( id="accountMap"
+  value={
+    @Result(id=true, column="id", property="id"),
+    @Result(column="uid", property="uid"),
+    @Result(column="money", property="money"),
+    //封装的是user对象，user作为account对象中的一个属性存在，通过uid进行查询，所以column中填写uid
+    @Result(property="user", column="uid", property=@One(select="com.dong.dao.IUserDao.findById",fetchType=FetchType.EAGER))
+  }
+)
