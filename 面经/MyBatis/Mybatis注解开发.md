@@ -37,3 +37,17 @@
 )
 ```
 
+# 注解开发一对多
+```java
+@Select("select * from account)
+@Results(id = "userMap" value={
+  @Result(id = true,column="id", property="userId"),
+  @Result(column="username",property="userName"),
+  @Result(column="address",property="userAddress"),
+  @Result(column="sex",property="userSex"),
+  @Result(column="birthday",property="userBirthday"),
+  @Result(property = "accounts",column="id",
+      many=@Many(select ="com.dong.dao.IAccountDao.findAccountByUid",fetchType="FetchType.LAZY))
+})
+```
+
