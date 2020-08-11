@@ -51,3 +51,15 @@
 })
 ```
 
+# 注解开发使用二级缓存
+SqlMapConfig.xml中使用
+```java
+<settings>
+  <setting name="cacheEnabled" value="true" />
+</settings>
+```
+
+或者在IUserDao接口中使用注解：
+```java
+@CacheNamespace(blocking = true)
+```
