@@ -29,4 +29,25 @@ Angular支持双向数据绑定，这是一种对模板中的各个部件与组�
 ```
 在双向数据绑定中，数据属性值通过属性绑定从组件流到输入框，用户的修改通过事件绑定流回组件，把属性值设置为最新的值。
 
+## 管道
+Angular的管道可以让你在模板中声明显示值的转换逻辑。要在HTML模板中指定值的转换方式，使用管道操作符（|），例如： {{interpolated_value | pipe_name}}
 
+<p>Today is {{today | date}}</p>
+
+## 指令
+Angular的模板是动态的，当Angular渲染他们的时候，会根据指令给出的指示对DOM进行转换。指令就是一个带有@Directive()装饰器的类。
+
+组件从技术角度上来说就是一个指令，但是由于组件对 Angular 应用来说非常独特、非常重要，因此 Angular 专门定义了 @Component() 装饰器，它使用一些面向模板的特性扩展了 @Directive() 装饰器。
+
+点击进入@Component注解，可以看到以下内容，可以说明确实应该是@Component继承自@Directive
+```java
+/**
+ * Type of the Directive metadata.
+ */
+export declare const Directive: DirectiveDecorator;
+/**
+ * Component decorator interface
+ *
+ */
+export interface ComponentDecorator {
+```
