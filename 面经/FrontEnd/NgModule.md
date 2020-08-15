@@ -6,3 +6,20 @@ NgModule为其中的组件提供了一个编译上下文环境。根模块总会
 - templateUrl:该组件的HTML模板文件相对于这个组件文件的地址。另外，你还可以用template属性的值内联的HTML模板。这个模板定义了该组件的宿主视图。
 - providers:当前组件所需的服务提供者的一个数组。在这个例子中，它告诉Angular该如何提供一个HeroService实例，以获取要显示的英雄列表。
 
+## 模板语法
+模板很像标准的HTML，但是它还包含了Angular的模板语法，这些模板语法可以根据你的应用逻辑，应用状态和DOM数据来修改这些HTML。你的模板可以使用数据绑定来协调应用和DOM中的数据，使用管道在显示出来之前对其进行转换，使用指令来把程序逻辑应用到要显示的内容上。
+
+## 数据绑定
+Angular支持双向数据绑定，这是一种对模板中的各个部件与组件中的各个部件进行协调的机制。往模板HTML中添加绑定标记可以告诉Angular该如何连接他们。
+
+- {{value}}:表示Component绑定到DOM上, Component -> DOM
+- [property]="value",表示Component绑定到DOM上, Component -> DOM
+- (event)="handler",表示从DOM绑定到Component, DOM -> Component
+- [(ng-model)] = "property", 表示DOM和Component双向绑定， DOM <-> Component
+
+```JavaScript
+<li>{{hero.name}}</li>
+<app-hero-detail [hero]="selectedHero"></app-hero-detail>
+<li (click)="selectHero(hero)"></li>
+```
+
