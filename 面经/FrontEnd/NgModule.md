@@ -56,3 +56,16 @@ export interface ComponentDecorator {
 除组件外，还有两种指令：结构型指令和属性型指令。Angular本身定义了一系列这两种类型的指令，也可以使用@Directive（）装饰器来定义自己的指令。
 
 结构型指令通过添加、移除或替换DOM元素来修改布局。
+
+```java
+<li *ngFor="let hero of heroes"></li>
+<app-hero-detail *ngIf="selectedHero"></app-hero-detail>
+```
+- *ngFor 是一个迭代器，它要求 Angular 为 heroes 列表中的每个英雄渲染出一个 <li>。
+- *ngIf 是个条件语句，只有当选中的英雄存在时，它才会包含 HeroDetail 组件。
+这种写法和Mybatis中的动态SQL写法很类似。
+  
+### 属性型指令
+属性型指令会修改现有元素的外观或行为。在模板中，他们看起来就像普通的HTML属性一样，因此得名“属性型指令”
+
+ngModel指令就是属性型指令的一个例子，它实现了双向数据绑定。
