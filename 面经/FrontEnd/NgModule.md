@@ -51,3 +51,8 @@ export declare const Directive: DirectiveDecorator;
  */
 export interface ComponentDecorator {
 ```
+
+### 结构型指令
+除组件外，还有两种指令：结构型指令和属性型指令。Angular本身定义了一系列这两种类型的指令，也可以使用@Directive（）装饰器来定义自己的指令。
+
+结构型指令通过添加、移除或替换DOM元素来修改布局。
