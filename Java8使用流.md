@@ -109,7 +109,6 @@ boolean isHealthy = menu.stream().noneMatch(d -&gt; d.getCalories() &gt;= 1000)
 ```
 
 ### 查找元素
-
 findAny方法将返回当前流中的任意元素。它可以与其他流操作结合使用。可以结合使用filter和findAny方法来实现查询素食菜肴：
 
 ```
