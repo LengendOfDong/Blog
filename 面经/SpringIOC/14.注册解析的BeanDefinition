@@ -44,4 +44,6 @@ protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate d
 
 首先通过beanName注册BeanDefinition，然后再注册别名alias.BeanDefinition的注册由接口BeanDefinitionRegistry定义。通过beanName注册BeanDefinition，处理过程如下：
 - 首先BeanDefinition进行校验，该校验也是注册过程中的最后一次校验了，主要是对AbstractBeanDefinition的methodOverrides
-
+- 根据 beanName 从缓存中获取 BeanDefinition，如果缓存中存在，则根据 allowBeanDefinitionOverriding 标志来判断是否允许覆盖，如果允许则直接覆盖，否则抛出 BeanDefinitionStoreException 异常
+- 若缓存中没有指定 beanName 的 BeanDefinition，则判断当前阶段是否已经开始了 Bean 的创建阶段（），如果是，则需要对 beanDefinitionMap 进行加锁控制并发问题，否则直接设置即可。对于 hasBeanCreationStarted() 方法后续做详细介绍，这里不过多阐述。
+- 若缓存中存在该 beanName 或者 单利 bean 集合中存在该 beanName，则调用 resetBeanDefinition() 重置 BeanDefinition 缓存。
