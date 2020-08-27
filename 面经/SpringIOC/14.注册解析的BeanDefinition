@@ -42,4 +42,6 @@ protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate d
     }
 ```
 
-首先通过beanName注册BeanDefinition，然后再注册别名alias.BeanDefinition的注册由接口BeanDefinitionRegistry定义。通过beanName注册
+首先通过beanName注册BeanDefinition，然后再注册别名alias.BeanDefinition的注册由接口BeanDefinitionRegistry定义。通过beanName注册BeanDefinition，处理过程如下：
+- 首先BeanDefinition进行校验，该校验也是注册过程中的最后一次校验了，主要是对AbstractBeanDefinition的methodOverrides
+
