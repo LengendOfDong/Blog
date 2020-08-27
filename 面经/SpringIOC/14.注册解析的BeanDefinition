@@ -22,4 +22,6 @@ protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate d
 - 解析默认标签 
 - 解析默认标签后下的自定义标签
 - 注册解析后的BeanDefinition
-经过前面两个步骤的解析，BeanDefinition已经得到了，后面的工作
+经过前面两个步骤的解析，BeanDefinition已经得到了，后面的工作就是将这些BeanDefinition进行注册，也就是完成第三步。
+
+
