@@ -1,0 +1,25 @@
+# 注册解析的BeanDefinition
+DefaultBeanDefinitionDocumentReader.processBeanDefinition()完成Bean标签的解析的核心工作。如下：
+```java
+protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
+        BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
+        if (bdHolder != null) {
+            bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
+            try {
+                // Register the final decorated instance.
+                BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
+            }
+            catch (BeanDefinitionStoreException ex) {
+                getReaderContext().error("Failed to register bean definition with name '" +
+                        bdHolder.getBeanName() + "'", ele, ex);
+            }
+            // Send registration event.
+            getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));
+        }
+    }
+```
+解析工作分为三步：
+- 解析默认标签 
+- 解析默认标签后下的自定义标签
+- 注册解析后的BeanDefinition
+经过前面两个步骤的解析，BeanDefinition已经得到了，后面的工作
