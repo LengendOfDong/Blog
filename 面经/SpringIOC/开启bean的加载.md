@@ -151,3 +151,28 @@ Spring只处理单例模式下的循环依赖，对于原型模式的循环依�
   }
 ```
 Spring bean 的作用域默认为 singleton，当然还有其他作用域，如prototype、request、session 等，不同的作用域会有不同的初始化策略。
+
+6.类型转换
+```java
+ // 检查需要的类型是否符合 bean 的实际类型
+  if (requiredType != null && !requiredType.isInstance(bean)) {
+      try {
+          T convertedBean = getTypeConverter().convertIfNecessary(bean, requiredType);
+          if (convertedBean == null) {
+              throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
+          }
+          return convertedBean;
+      }
+      catch (TypeMismatchException ex) {
+          if (logger.isDebugEnabled()) {
+              logger.debug("Failed to convert bean '" + name + "' to required type '" +
+                      ClassUtils.getQualifiedName(requiredType) + "'", ex);
+          }
+          throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
+      }
+  }
+```
+在调用 doGetBean() 方法时，有一个 requiredType 参数，该参数的功能就是将返回的 bean 转换为 requiredType 类型。当然就一般而言我们是不需要进行类型转换的，也就是 requiredType 为空（比如 getBean(String name)），但有可能会存在这种情况，比如我们返回的 bean 类型为 String，我们在使用的时候需要将其转换为 Integer，那么这个时候 requiredType 就有用武之地了。
+
+整个过程分成三个部分：
+- 分析从缓存中获取单例bean，以及对bean的实例中获取对象
