@@ -15,3 +15,39 @@ getBean()方法会触发加载bean阶段，如下：
 - args:创建bean时传递的参数，这个参数仅限于创建bean时使用
 - typeCheckOnly:是否为类型检查。
 
+1.获取beanName
+```java
+final String beanName = transformedBeanName(name);
+```
+这里传递的是 name，不一定就是 beanName，可能是 aliasName，也有可能是 FactoryBean，所以这里需要调用 transformedBeanName() 方法对 name 进行一番转换，主要如下： 
+```java
+protected String transformedBeanName(String name) {
+        return canonicalName(BeanFactoryUtils.transformedBeanName(name));
+    }
+
+    // 去除 FactoryBean 的修饰符
+    public static String transformedBeanName(String name) {
+        Assert.notNull(name, "'name' must not be null");
+        String beanName = name;
+        while (beanName.startsWith(BeanFactory.FACTORY_BEAN_PREFIX)) {
+            beanName = beanName.substring(BeanFactory.FACTORY_BEAN_PREFIX.length());
+        }
+        return beanName;
+    }
+
+    // 转换 aliasName
+    public String canonicalName(String name) {
+        String canonicalName = name;
+        // Handle aliasing...
+        String resolvedName;
+        do {
+            resolvedName = this.aliasMap.get(canonicalName);
+            if (resolvedName != null) {
+                canonicalName = resolvedName;
+            }
+        }
+        while (resolvedName != null);
+        return canonicalName;
+    }
+```
+
