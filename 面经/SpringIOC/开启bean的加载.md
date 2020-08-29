@@ -121,3 +121,32 @@ Spring只处理单例模式下的循环依赖，对于原型模式的循环依�
                     }
                 }
 ```
+每个 bean 都不是单独工作的，它会依赖其他 bean，其他 bean 也会依赖它，对于依赖的 bean ，它会优先加载，所以在 Spring 的加载顺序中，在初始化某一个 bean 的时候首先会初始化这个 bean 的依赖。
+
+5.作用域处理
+```j // 从指定的 scope 下创建 bean
+                    String scopeName = mbd.getScope();
+                    final Scope scope = this.scopes.get(scopeName);
+                    if (scope == null) {
+                        throw new IllegalStateException("No Scope registered for scope name '" + scopeName + "'");
+                    }
+                    try {
+                        Object scopedInstance = scope.get(beanName, () -> {
+                            beforePrototypeCreation(beanName);
+                            try {
+                                return createBean(beanName, mbd, args);
+                            }
+                            finally {
+                                afterPrototypeCreation(beanName);
+                            }
+                        });
+                        bean = getObjectForBeanInstance(scopedInstance, name, beanName, mbd);
+                    }
+                    catch (IllegalStateException ex) {
+                        throw new BeanCreationException(beanName,
+                                "Scope '" + scopeName + "' is not active for the current thread; consider " +
+                                        "defining a scoped proxy for this bean if you intend to refer to it from a singleton",
+                                ex);
+                    }ava
+
+```
