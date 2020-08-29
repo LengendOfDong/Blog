@@ -50,4 +50,74 @@ protected String transformedBeanName(String name) {
         return canonicalName;
     }
 ```
+主要处理过程包括两步： 
+- 去除 FactoryBean 的修饰符。如果 name 以 “&” 为前缀，那么会去掉该 "&"，例如，name = "&studentService"，则会是 name = "studentService"。
+- 取指定的 alias 所表示的最终 beanName。主要是一个循环获取 beanName 的过程，例如别名 A 指向名称为 B 的 bean 则返回 B，若 别名 A 指向别名 B，别名 B 指向名称为 C 的 bean，则返回 C。
 
+2.从单例bean缓存中获取bean，对应代码如下：
+```java
+ Object sharedInstance = getSingleton(beanName);
+        if (sharedInstance != null && args == null) {
+            if (logger.isDebugEnabled()) {
+                if (isSingletonCurrentlyInCreation(beanName)) {
+                    logger.debug("Returning eagerly cached instance of singleton bean '" + beanName +
+                            "' that is not fully initialized yet - a consequence of a circular reference");
+                }
+                else {
+                    logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
+                }
+            }
+            bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
+        }
+```
+单例模式的 bean 在整个过程中只会被创建一次，第一次创建后会将该 bean 加载到缓存中，后面在获取 bean 就会直接从单例缓存中获取。如果从缓存中得到了 bean，则需要调用 getObjectForBeanInstance() 对 bean 进行实例化处理，因为缓存中记录的是最原始的 bean 状态，我们得到的不一定是我们最终想要的 bean。 
+
+3.原型模式依赖检查与 parentBeanFactory 对应代码段 ：
+```java
+if (isPrototypeCurrentlyInCreation(beanName)) {
+                throw new BeanCurrentlyInCreationException(beanName);
+            }
+
+            // Check if bean definition exists in this factory.
+            BeanFactory parentBeanFactory = getParentBeanFactory();
+            if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
+                // Not found -> check parent.
+                String nameToLookup = originalBeanName(name);
+                if (parentBeanFactory instanceof AbstractBeanFactory) {
+                    return ((AbstractBeanFactory) parentBeanFactory).doGetBean(
+                            nameToLookup, requiredType, args, typeCheckOnly);
+                }
+                else if (args != null) {
+                    // Delegation to parent with explicit args.
+                    return (T) parentBeanFactory.getBean(nameToLookup, args);
+                }
+                else {
+                    // No args -> delegate to standard getBean method.
+                    return parentBeanFactory.getBean(nameToLookup, requiredType);
+                }
+            }
+```
+Spring只处理单例模式下的循环依赖，对于原型模式的循环依赖直接抛出异常。主要原因还是在于Spring解决循环依赖的策略有关。对于单例模式Spring在创建bean的时候并不是等bean完全创建完成后才会将bean添加至缓存中，而是不等bean创建完成就会将创建bean的ObjectFactory提早加入到缓存中，这样一旦下一个bean创建的时候需要依赖bean时直接使用ObjectFactory。
+
+对于原型模式我们知道时没法使用缓存的，所以Spring对原型模式的循环依赖处理策略则是不处理。如果容器缓存中没有相对应的BeanDefinition则会尝试从父类工厂（parentBeanFactory）中加载，然后再去递归调用getBean().
+
+4.依赖处理
+```java
+ String[] dependsOn = mbd.getDependsOn();
+                if (dependsOn != null) {
+                    for (String dep : dependsOn) {
+                        if (isDependent(beanName, dep)) {
+                            throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+                                    "Circular depends-on relationship between '" + beanName + "' and '" + dep + "'");
+                        }
+                        registerDependentBean(dep, beanName);
+                        try {
+                            getBean(dep);
+                        }
+                        catch (NoSuchBeanDefinitionException ex) {
+                            throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+                                    "'" + beanName + "' depends on missing bean '" + dep + "'", ex);
+                        }
+                    }
+                }
+```
