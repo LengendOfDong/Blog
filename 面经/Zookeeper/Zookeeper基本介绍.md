@@ -9,4 +9,4 @@ zookeeper数据模型是一种分层的树形结构：
 - 每个Znode都可以有数据（byte[]类型），也可以有子节点
 - Znode的路径使用斜线分割，例如：/Zoo/Duck,zookeeper中没有相对路径的说法，也即所有节点的路径都要写为绝对路径的方式。
 - zookeeper定义了org.apache.zookeeper.data.Stat数据结构来存储数据的变化、ACL(访问权限)的变化和时间戳
-- 
+- 当Zookeeper中的数据发生变化时，版本号会变更
