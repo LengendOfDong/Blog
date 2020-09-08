@@ -28,5 +28,9 @@ zookeeper内置了一些权限控制方案，可以用以下方案为每个节�
 |权限模式|授权对象|
 |--|--|
 |IP|一个IP地址或是IP段|
-|Digest|
+|Digest|自定义，通常是“username:BASE64()"|
+|World|只有一个ID:"anyone"|
+|Super|与Digest模式一致|
+
+
 
