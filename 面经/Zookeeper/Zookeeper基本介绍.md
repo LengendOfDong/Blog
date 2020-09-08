@@ -61,4 +61,11 @@ zookeeper中有三种类型的版本：
 - watcher监听在Znode节点上
 - 当节点的数据更新或者子节点的状态发生变化都会使客户端的watcher得到通知
 
+## zookeeper中的ACL（访问控制）
+类似于Linux/Unix下的权限控制，有以下几种访问控制权限：
+- CREATE: 创建子节点的权限
+- READ: 获取节点数据和子节点列表的权限
+- WRITE:更新节点数据的权限
+- DELETE：删除子节点的权限
+- ADMIN：设置节点ACL的权限
 
