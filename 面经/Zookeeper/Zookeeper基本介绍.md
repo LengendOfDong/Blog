@@ -32,4 +32,12 @@ zookeeper实现负载均衡本质上是利用zookeeper的配置管理功能，zo
 ## 集群管理
 获取当前集群中机器的数量，集群中机器的运行状态、集群中节点的上下线操作、集群节点的统一配置等。
 
+# zookeeper基本概念
+## 集群角色
+- Leader: 为客户端提供读写服务
+- Follower:为客户端提供读服务，客户端到Follower的写请求会转交给Leader角色，Follower会参与Leader的选举
+- Observer:为客户端提供读服务，不参与Leader的选举过程，一般时为了增强zookeeper集群的读请求 并发能力。
 
+## 会话（Session）
+- session是客户端与zookeeper服务端之间建立的长连接
+- 
