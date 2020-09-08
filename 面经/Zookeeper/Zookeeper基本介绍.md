@@ -57,4 +57,8 @@ zookeeper中有三种类型的版本：
 - Cversion:代表当前Znode的子节点的版本，子节点发生变化时会增加该版本号的值。
 - Aversion:代表当前Znode的ACL（访问控制）的版本，修改节点的访问控制权限时会增加该版本号的值。
 
+## zookeeper中的watcher
+- watcher监听在Znode节点上
+- 当节点的数据更新或者子节点的状态发生变化都会使客户端的watcher得到通知
+
 
