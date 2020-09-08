@@ -40,4 +40,15 @@ zookeeper实现负载均衡本质上是利用zookeeper的配置管理功能，zo
 
 ## 会话（Session）
 - session是客户端与zookeeper服务端之间建立的长连接
-- 
+- zookeeper在一个会话中进行心跳检测来感知客户端链接的存活
+- zookeeper客户端在一个会话中接收来自服务端的watch事件通知
+- zookeeper可以给会话设置超时时间
+
+## zookeeper的数据节点（Znode）
+- Znode是zookeeper树形结构中的数据节点，用于存储数据
+- Znode分为持久节点和临时节点两种类型：
+  - 持久节点：一旦创建，除非主动调用删除操作，否则一直存储在zookeeper上；
+  - 临时节点：与客户端会话绑定，一旦客户端失效，这个客户端创建的所有临时节点都会被删除
+- 可以为持久节点或临时节点设置Sequential属性，如果设置该属性则会自动在该节点名称后面追加一个整型数字
+
+
