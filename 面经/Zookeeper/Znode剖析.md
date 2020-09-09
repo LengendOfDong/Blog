@@ -19,4 +19,12 @@ Zookeeper规定，临时节点不能拥有子节点。
 ```java
 create /module1 module1
 ```
+这样，便创建了一个持久节点/module1, 其数据为”module1"
+
+### 临时节点
+使用create命令，加上-e参数，可以创建一个临时节点
+```java
+create -e /module1/app1 app1
+```
+
 
