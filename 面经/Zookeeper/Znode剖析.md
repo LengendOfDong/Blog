@@ -26,5 +26,14 @@ create /module1 module1
 ```java
 create -e /module1/app1 app1
 ```
+这样便创建了一个临时节点/module1/app1,其数据为“app1"。关闭会话，然后输入命令：
+```java
+get /module1/app1
+```
+可以看到有以下提示，说明临时节点已经被删除：
+```java
+Node does not exist : /module1/app1
+```
+### 顺序节点
 
 
