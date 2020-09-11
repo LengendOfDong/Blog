@@ -58,6 +58,9 @@ Zookeeper虽然提供了在节点数据存储的功能，但它并不将自己�
 - cversion:子节点的版本号，当znode的子节点有变化时，cversion的值就会增加1.
 - aclVersion:ACL的版本号
 
+### 事务id
+对于zk来说，每次的变化都会产生一个唯一的事务id，zxid(Zookeeper Transaction ID）,通过zxid,可以确定更新操作的先后顺序，例如，如果zxid小于zxid2,说明zxid1操作先于zxid2发生。
+
 
 
 
