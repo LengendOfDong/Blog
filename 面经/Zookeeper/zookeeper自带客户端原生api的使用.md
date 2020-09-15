@@ -20,3 +20,16 @@ public Zookeeper(String connectString, int sessionTimeOUt, Watcher watcher, long
 - canBeReadOnly：用于标识当前会话是否支持”read-only”模式 ”，“read-only”模式是指当zk集群中的某台机器与集群中过半以上的机器网络端口不同，则此机器将不会接受客户端的任何读写请求，但是，有时候，我们希望继续提供读请求，因此设置此参数为true， 即客户端还以从与集群中半数以上节点网络不通的机器节点中读数据；
 - sessionId和sessionPasswd：分别代表会话ID和会话密钥，这两个个参数一起可以唯一确定一个会话，客户端通过这两个参数可以实现客户端会话复用；
 
+# 创建zookeeper节点
+org.apache.zookeeper.Zookeeper类提供了如下创建zk节点的api:
+```java
+public String create(final String path, byte data[], List<ACL> acl, CreateMode createMode)
+ public void create(final String path, byte data[], List<ACL> acl, CreateMode createMode, StringCallback cb, Object ctx)
+```
+第一个方法以同步的方式创建节点，第二个方法以异步的方式来创建节点，需要注意，不论同步或异步创建节点，都不能递归创建节点，当节点已经存在时，会抛出NodeExistsException异常。
+
+create方法参数说明：
+- path: 被创建的节点路径，比如：/zk-book/foo
+- data[]: 节点中的数据，是一个字节数组
+- acl: acl策略
+- createMode: 节点类型，
