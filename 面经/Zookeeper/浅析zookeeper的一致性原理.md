@@ -19,4 +19,5 @@ follower及observer会将事务请求转交给leader处理。
 要搭建一个高可用的zk集群，我们首先需要确定好集群规模。一般我们将节点（指leader及follower节点，不包括observer节点）个数设置为 2*n+1 ，n为可容忍宕机的个数。 zk使用“过半”设计原则，很好地解决了单点问题，提升了集群容灾能力。但是zk的集群伸缩不是很灵活，集群中所有机器ip及port都是事先配置在每个服务的zoo.cfg 文件里的。如果要往集群增加一个follower节点，首先需要更改所有机器的zoo.cfg，然后逐个重启。
 
 集群模式下，单个zk服务节点启动时的工作流程大致如下：
-
+- 统一由QuorumPeerMain作为启动类，加载解析zoo.cfg配置文件；
+- 初始化核心类：ServerCnxnFactory（IO操作）、FileTxnSnapLog（事务日志及快照文件操作）、QuorumPeer实例（代表zk集群中的一台机器）、ZKDatabase（内存数据库）等；
