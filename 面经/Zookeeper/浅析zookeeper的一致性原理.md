@@ -27,3 +27,7 @@ follower及observer会将事务请求转交给leader处理。
 - 当leader收到过半的learner完成数据同步的ACK，集群开始正常工作，可以接收并处理客户端请求，在此之前集群不可用。
 
 # zookeeper一致性协议
+zookeeper实现数据一致性的核心是ZAB协议（Zookeeper原子消息广播协议）。该协议需要做到以下几点：
+- 集群在半数以下节点宕机的情况下，能正常对外提供服务；
+- 客户端的写请求全部转交给leader来处理，leader需确保写变更能实时同步给所有follower及observer；
+- leader宕机或整个集群重启时，需要确保那些已经在leader服务器上提交的事务最终被所有服务器都提交，确保丢弃那些只在leader服务器上被提出的事务，并保证集群能快速恢复到故障前的状态。
