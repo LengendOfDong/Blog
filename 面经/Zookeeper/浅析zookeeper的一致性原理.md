@@ -21,3 +21,7 @@ follower及observer会将事务请求转交给leader处理。
 集群模式下，单个zk服务节点启动时的工作流程大致如下：
 - 统一由QuorumPeerMain作为启动类，加载解析zoo.cfg配置文件；
 - 初始化核心类：ServerCnxnFactory（IO操作）、FileTxnSnapLog（事务日志及快照文件操作）、QuorumPeer实例（代表zk集群中的一台机器）、ZKDatabase（内存数据库）等；
+- 加载本地快照文件及事务日志，恢复内存数据；
+- 完成leader选举，节点间通过一系列投票，选举产生最合适的机器成为leader，同时其余机器成为follower或是observer。关于选举算法，就是集群中哪个机器处理的数据越新（通过ZXID来比较，ZXID越大，数据越新），其越有可能被选中；
+- 完成leader与learner间的数据同步：集群中节点角色确定后，leader会重新加载本地快照及日志文件，以此作为基准数据，再结合各个learner的本地提交数据，leader再确定需要给具体learner回滚哪些数据及同步哪些数据；
+- 当leader收到过半的learner完成数据同步的ACK，集群开始正常工作，可以接收并处理客户端请求，在此之前集群不可用。
