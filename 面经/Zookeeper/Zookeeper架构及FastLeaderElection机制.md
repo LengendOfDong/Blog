@@ -29,4 +29,12 @@ zookeeper的这种角色分配类似于董事长（Leader),董事会大股东（
 - Leader得到过半的ACK（Leader对自己默认有一个ACK）后向所有的Follower和Observer发送Commit
 - Leader将处理结果返回给客户端
 
+这里要注意：
+- Leader并不需要得到Observer的ACK，即Observer无投票权
+- Leader不需要得到所有Follower的ACK，只要收到过半的ACK即可，同时Leader本身对自己有一个ACK，即 （n + 1) / (Follower number + 1) > 1 / 2,当有4个Follower时，只需要2个Follower返回ACK即可，即（2 + 1）/ (4 + 1) > 1/2 
+- Observer虽然没有投票权，但仍需同步Leader的数据从而在处理读请求时可以返回尽可能新的数据。
 
+## 写Follower/Observer
+通过Follower/Observer进行写操作流程， Follower/Observer均可接受写请求，但不能直接处理，而需要将写请求转发给Leader处理
+
+除了多了一步请求转发，其它流程与直接写Leader无任何区别。
