@@ -24,4 +24,9 @@ zookeeper的这种角色分配类似于董事长（Leader),董事会大股东（
 ## 写Leader
 通过Leader进行写操作，主要分为五步：
 - 客户端向Leader发起写请求
-- L
+- Leader将写请求以Proposal的形式发给所有Follower并等待ACK
+- Follower收到Leader的Proposal后返回Ack
+- Leader得到过半的ACK（Leader对自己默认有一个ACK）后向所有的Follower和Observer发送Commit
+- Leader将处理结果返回给客户端
+
+
