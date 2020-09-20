@@ -38,3 +38,6 @@ zookeeper的这种角色分配类似于董事长（Leader),董事会大股东（
 通过Follower/Observer进行写操作流程， Follower/Observer均可接受写请求，但不能直接处理，而需要将写请求转发给Leader处理
 
 除了多了一步请求转发，其它流程与直接写Leader无任何区别。
+
+## 读操作
+Leader/Follower/Observer都可直接处理读请求，从本地内存中读取数据并返回给客户端即可。
