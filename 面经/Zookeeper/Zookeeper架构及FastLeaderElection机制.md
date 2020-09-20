@@ -41,3 +41,6 @@ zookeeper的这种角色分配类似于董事长（Leader),董事会大股东（
 
 ## 读操作
 Leader/Follower/Observer都可直接处理读请求，从本地内存中读取数据并返回给客户端即可。
+
+由于处理读请求不需要服务器之间的交互，Follower/Observer越多，整体可处理的读请求量越大，也即读性能越好。
+
