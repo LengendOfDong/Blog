@@ -44,3 +44,4 @@ Leader/Follower/Observer都可直接处理读请求，从本地内存中读取�
 
 由于处理读请求不需要服务器之间的交互，Follower/Observer越多，整体可处理的读请求量越大，也即读性能越好。
 
+
