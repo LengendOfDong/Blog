@@ -64,3 +64,16 @@ Leader/Follower/Observer都可直接处理读请求，从本地内存中读取�
 - Following : 跟随者状态，表明当前服务器角色并且它知道leader是谁
 - LEADING: 领导者状态，表明当前服务器角色是Leader，它会维护与Follower间的心跳
 - OBSERVING:观察者状态，表明当前服务器角色是Observer,与FoLlower唯一的不同的地方在于不参与选举，也
+
+4.选票数据结构
+
+每个服务器子进行领导选举时，会发送如下关键信息：
+- logicClock: 每个服务器会维护一个自增的整数，名为logicClock,它表示这是该服务器发起的第多少轮投票。
+- state:当前服务器的状态
+- self_id： 当前服务器的myid
+- self_zxid: 当前服务器上所保存的数据的最大zxid
+- vote_id: 被选举的服务器的myid
+- vote_zxid: 被选举的服务器上所保存的数据的最大zxid
+
+我的理解：logicClock表示第几轮投票。 state表示当前服务器是否能投票，是否有投票选举权。 self_id表示谁投的票。 self_zxid和vote_zxid都用于确定选票是否有效。vote_id表示要投给谁。
+
