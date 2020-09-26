@@ -50,4 +50,11 @@ Leader/Follower/Observer都可直接处理读请求，从本地内存中读取�
 - 2 基于 UDP和认证的FastLeaderElection
 - 3 基于 TCP的FastLeaderElection
 
+## FastLeaderElection原理
+1. myid
 
+每个zookeeper服务器，都需要在数据文件夹下创建一个名为myid的文件，该文件包含整个zookeeper集群唯一的id. 
+
+2. zxid
+
+类似于RDBMS中的事务id，用于表示一次更新操作的Proposal id。 为了保证顺序性，该zxid必须单调递增
