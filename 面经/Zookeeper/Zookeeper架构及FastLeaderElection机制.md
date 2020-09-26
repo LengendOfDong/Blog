@@ -57,4 +57,6 @@ Leader/Follower/Observer都可直接处理读请求，从本地内存中读取�
 
 2. zxid
 
-类似于RDBMS中的事务id，用于表示一次更新操作的Proposal id。 为了保证顺序性，该zxid必须单调递增
+类似于RDBMS中的事务id，用于表示一次更新操作的Proposal id。 为了保证顺序性，该zxid必须单调递增。因此zookeeper使用一个64位的数来表示，高32位时Leader的epoch, 每次选出新的Leader，epoch加1。低32位为该epoch内的序号，每次epoch变化，都将低32位的序号重置，这样保证了zkid的全局递增性。
+
+
