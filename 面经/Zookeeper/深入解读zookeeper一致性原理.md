@@ -1,1 +1,7 @@
 # zookeeper的实现
+zookeeper通过Master选举来帮助分布式系统解决单点故障，保证该系统中每时每刻只有一个Master为分布式系统提供服务。
+
+zookeeper如果只用一台服务器来提供服务，那么这台服务器挂了，就会出现问题，此时需要zookeeper在其实现过程中需要做一些可用性和恢复性的保证。
+
+## zookeeper运行模式
+zookeeper服务有两种不同的运行模式，一种是“独立模式”（standalone mode)，即只有一个zookeeper服务器，这种模式较为简单，比较适合于测试环境，甚至可以在单元测试中采用，但是不能保证高可用性和恢复性。在生产环境中的zookeeper
