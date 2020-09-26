@@ -24,4 +24,9 @@ zk集群中每个server，都保存一份数据副本，zookeeper使用简单的
 所有的读请求由zk server本地响应，所有的更新请求将转发给Leader，由Leader实施。
 
 3）zk组件
-zk组件，除了请求处理器
+zk组件，除了请求处理器（Request Processor）以外，组成ZK服务的每一个Server会复制这些组件的副本。
+
+ReplicatedDatabase是一个内存数据库，它包含了整个Data Tree。为了恢复，更新会被记录到磁盘，并且写在被应用到内存数据库之前，先被序列化到磁盘。
+每一个ZK Server，可服务于多个Client。Client可以连接到一台Server，来提交请求。读请求，由每台Server数据库的本地副本来进行服务。改变服务器的状态的写请求，需要通过一致性协议来处理。
+
+
