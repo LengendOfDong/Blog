@@ -61,4 +61,6 @@ Leader/Follower/Observer都可直接处理读请求，从本地内存中读取�
 
 3. 服务器状态
 - LOOKING : 不确定Leader状态，该状态下的服务器认为当前集群中没有Leader，会发起Leader选举
-- Following : 跟随者状态，表明当前服务器角色
+- Following : 跟随者状态，表明当前服务器角色并且它知道leader是谁
+- LEADING: 领导者状态，表明当前服务器角色是Leader，它会维护与Follower间的心跳
+- OBSERVING:观察者状态，表明当前服务器角色是Observer,与FoLlower唯一的不同的地方在于不参与选举，也
