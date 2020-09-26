@@ -44,4 +44,10 @@ Leader/Follower/Observer都可直接处理读请求，从本地内存中读取�
 
 由于处理读请求不需要服务器之间的交互，Follower/Observer越多，整体可处理的读请求量越大，也即读性能越好。
 
+可通过electionAlg配置项设置Zookeeper用于领导选举的算法.到3.4.10版为止，可选项有：
+- 0 基于 UDP的LeaderElection
+- 1 基于UDP的FastLeaderElection
+- 2 基于 UDP和认证的FastLeaderElection
+- 3 基于 TCP的FastLeaderElection
+
 
