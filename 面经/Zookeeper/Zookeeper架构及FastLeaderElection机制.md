@@ -59,4 +59,6 @@ Leader/Follower/Observer都可直接处理读请求，从本地内存中读取�
 
 类似于RDBMS中的事务id，用于表示一次更新操作的Proposal id。 为了保证顺序性，该zxid必须单调递增。因此zookeeper使用一个64位的数来表示，高32位时Leader的epoch, 每次选出新的Leader，epoch加1。低32位为该epoch内的序号，每次epoch变化，都将低32位的序号重置，这样保证了zkid的全局递增性。
 
-
+3. 服务器状态
+- LOOKING : 不确定Leader状态，该状态下的服务器认为当前集群中没有Leader，会发起Leader选举
+- Following : 跟随者状态，表明当前服务器角色
