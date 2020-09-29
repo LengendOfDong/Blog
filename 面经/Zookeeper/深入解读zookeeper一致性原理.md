@@ -60,5 +60,6 @@ ZooKeeper服务的高可用性就需要采用分布式模式，来冗余数据�
 zookeeper的核心是原子广播机制，这个机制保证了各个server之间的同步，实现这个机制的协议叫做ZAB协议。ZAB协议由两种模式，它们分别是恢复模式和广播模式。
 - 恢复模式
 当服务启动或者在领导者崩溃后，ZAB就进入了恢复模式，当领导者被选举出来，且大多数server完成了和leader的状态同步以后，恢复模式就结束了，状态同步保证了leader和server由相同的系统状态。
-
+- 广播模式
+一旦leader已经和多数的Follower进行了状态同步后，他就可以开始广播消息了，即进入广播状态。这时候当一个server加入zookeeper服务中，它会在恢复模式下启动，发现leader并和leader进行状态同步，等到同步结束，它也参与消息广播。zookeeper服务一直维持在Broadcast状态，直到leader崩溃了或者leader失去了大部分的Follower支持。
 
