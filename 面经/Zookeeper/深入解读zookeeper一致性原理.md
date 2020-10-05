@@ -65,4 +65,3 @@ zookeeper的核心是原子广播机制，这个机制保证了各个server之�
 
 Broadcast模式极其类似于分布式事务中的2pc(two-phrase commit 两阶段提交）：即leader提起一个决议，由Followers进行投票，Leader对投票结果进行计算决定是否通过该决议，如果通过执行该决议，否则什么也不做。
 
-
