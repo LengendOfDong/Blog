@@ -64,5 +64,3 @@ zookeeper的核心是原子广播机制，这个机制保证了各个server之�
 一旦leader已经和多数的Follower进行了状态同步后，他就可以开始广播消息了，即进入广播状态。这时候当一个server加入zookeeper服务中，它会在恢复模式下启动，发现leader并和leader进行状态同步，等到同步结束，它也参与消息广播。zookeeper服务一直维持在Broadcast状态，直到leader崩溃了或者leader失去了大部分的Follower支持。
 
 Broadcast模式极其类似于分布式事务中的2pc(two-phrase commit 两阶段提交）：即leader提起一个决议，由Followers进行投票，Leader对投票结果进行计算决定是否通过该决议，如果通过执行该决议，否则什么也不做。
-
-
