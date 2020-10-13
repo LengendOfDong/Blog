@@ -3,9 +3,9 @@
 
 2.register（进行注册）
 
-3.start
+3.start（启动ServerTask进程，不停监听客户端传输过来的消息，并进行处理）
 
-4.RPCTest调用本地方法
+4.RPCTest调用本地方法（使用动态代理的方式，将本地的接口调用，转换成远程的接口调用）
 
 5.RPCClient端调用远程服务器方法ServiceProducer,传入本地参数
 
