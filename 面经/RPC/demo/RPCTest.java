@@ -1,4 +1,3 @@
-```java
 package com.zte.rpc;
 
 import java.io.IOException;
@@ -24,4 +23,3 @@ public class RPCTest {
     }
 }
 
-```
