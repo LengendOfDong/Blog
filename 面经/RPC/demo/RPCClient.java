@@ -1,4 +1,3 @@
-```java
 package com.zte.rpc;
 
 import java.io.ObjectInputStream;
@@ -46,4 +45,3 @@ public class RPCClient<T> {
         );
     }
 }
-```
