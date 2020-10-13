@@ -1,7 +1,7 @@
 # 流程
 1.本地方法ServiceProducer在服务器端进行注册并启动
 
-2.register
+2.register（进行注册）
 
 3.start
 
