@@ -20,3 +20,4 @@ public class ConnectHandler extends ChannelInBoundHandlerAdapter{
 以上例子，Netty采用回调的方式，在连接建立的时候会回调channelActive方法打印连接成功信息。
 
 # Future
+Future提供了
