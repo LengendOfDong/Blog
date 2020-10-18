@@ -26,4 +26,12 @@ ChannelHandler可专门用于几乎任何类型的动作，例如将数据从一
 
 ChannelInBoundHandler是一个经常实现的子接口，这种类型的ChannelHandler接受入站事件和数据，这些数据随后将会被应用程序的业务逻辑所处理。
 
+## ChannelPipeline
+ChannelPipeline为ChannelHandler链提供了容器，并定义了用于在该链上传播入站和出站事件流的API。
+
+ChannelHandler安装到ChannelPipeline中的过程如下所示：
+- 一个ChannelInitializer的实现被注册到了ServerBootStrap中
+- 当ChannelInitializer.initChannel()方法被调用时，ChannelInitializer将在ChannelPipeline中安装一组自定义的ChannelHandler.
+- ChannelInitializer将它自己从ChannelPipeline中移除。
+
 
