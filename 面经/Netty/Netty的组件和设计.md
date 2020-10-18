@@ -19,4 +19,11 @@ Channel、EventLoop、Thread和EventLoopGroup之间的关系如下：
 - 一个EventLoop可能会被分配给一个或者多个Channel
 
 ## ChannelFuture
-ChannelFuture看作是将来要执行的操作的结果的占位符。Netty中所有的I/O操作都是异步的，因为一个操作可能不会立即返回，所以我们需要一种用于在之后的某个时间点确定其结果的方法。
+ChannelFuture看作是将来要执行的操作的结果的占位符。Netty中所有的I/O操作都是异步的，因为一个操作可能不会立即返回，所以我们需要一种用于在之后的某个时间点确定其结果的方法。Netty提供了ChannelFuture接口，其addListener()方法注册了一个ChannelFutureListener,以便在某个操作完成时（无论是否成功）得到通知。
+
+# ChannelHandler和ChannelPipeline
+ChannelHandler可专门用于几乎任何类型的动作，例如将数据从一种格式转换为另一种格式，或者处理转换过程中所抛出的异常。
+
+ChannelInBoundHandler是一个经常实现的子接口，这种类型的ChannelHandler接受入站事件和数据，这些数据随后将会被应用程序的业务逻辑所处理。
+
+
