@@ -108,4 +108,9 @@ public class EchoClient {
 ```
 客户端的步骤：
 - 初始化客户端，创建一个Bootstrap的实例
-- 为进行事件处理分配了一个
+- 为进行事件处理分配了一个NioEventLoopGroup实例，其中事件处理包括创建新的连接以及处理入站和出站的数据
+- 为服务器连接创建了一个InetSocketAddress实例
+- 当连接被建立时，一个EchoClientHandler实例会被安装到（该Channel的）ChannelPipeLine中
+- 在一切都设置完成后，调用BootStrap.connect()方法连接到远程节点
+
+
