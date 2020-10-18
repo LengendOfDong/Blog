@@ -17,3 +17,6 @@ Channel、EventLoop、Thread和EventLoopGroup之间的关系如下：
 - 所有由EventLoop处理的I/O事件都将在它专有的Thread上被处理
 - 一个Channel在它的生命周期内只注册一个或多个Channel
 - 一个EventLoop可能会被分配给一个或者多个Channel
+
+## ChannelFuture
+ChannelFuture看作是将来要执行的操作的结果的占位符。Netty中所有的I/O操作都是异步的，因为一个操作可能不会立即返回，所以我们需要一种用于在之后的某个时间点确定其结果的方法。
