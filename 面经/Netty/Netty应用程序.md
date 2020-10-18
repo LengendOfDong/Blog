@@ -65,3 +65,47 @@ public class EchoServer {
 - 调用ServerBootStrap.bind()方法以绑定服务器
 
 # Netty客户端
+```java
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+
+import java.net.InetSocketAddress;
+
+public class EchoClient {
+    private final String host;
+    private final int port;
+    
+    public EchoClient(String host, int port){
+        this.port = port;
+        this.host = host;
+    }
+    
+    public void start() throws Exception{
+        EventLoopGroup group = new NioEventLoopGroup();
+        try{
+            Bootstrap b = new Bootstrap();//创建BootStrap
+            b.group(group)
+                    .channel(NioSocketChannel.class)//适用于NIO传输的Channel类型，客户端与服务端Channle类型没有必要一致，客户端可以是OIO传输
+                    .remoteAddress(new InetSocketAddress(host, port))
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            socketChannel.pipeline().addLast(new EchoClientHandler());     
+                        }
+                    });
+            ChannelFuture f = b.connect().sync();
+            f.channel().closeFuture().sync();//阻塞直到Channel关闭
+        }finally {
+            group.shutdownGracefully().sync();//关闭线程池并释放所有的资源
+        }
+    }
+}
+
+```
+客户端的步骤：
+- 初始化客户端，创建一个Bootstrap的实例
+- 为进行事件处理分配了一个
