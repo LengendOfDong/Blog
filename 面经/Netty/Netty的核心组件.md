@@ -21,3 +21,10 @@ public class ConnectHandler extends ChannelInBoundHandlerAdapter{
 
 # Future
 Future提供了另一种在操作完成时通知应用程序的方式
+
+# 事件和ChannelHandler
+Netty使用不同的事件来通知我们状态的改变或者操作的状态，这使得我们能够基于已经发生的事件来触发适当的动作。这些动作可能是：
+- 记录日志：
+- 数据转换
+- 流控制
+- 应用程序逻辑
