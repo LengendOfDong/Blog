@@ -35,3 +35,4 @@ ChannelHandler安装到ChannelPipeline中的过程如下所示：
 - ChannelInitializer将它自己从ChannelPipeline中移除。
 
 使得事件流经ChannelPipeline是ChannelHandler的工作，它们是在应用程序的初始化或者引导阶段被安装的。这些对象接收事件、执行他们所实现的处理逻辑，并将数据传递给链中的下一个ChannelHandler。
+
