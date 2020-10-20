@@ -100,3 +100,5 @@ chgrp 命令可以更改文件或目录的默认属组
 chgrp shared  newfile
 
 ```
+
+
