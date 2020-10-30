@@ -10,3 +10,5 @@ OIO：使用java.net包作为基础，使用阻塞流。
 Local：可以在VM内部通过管道进行通信的本地传输。
 
 Embedded： Embedded传输，允许使用ChannelHandler而又不需要一个真正的基于网络的传输，这在测试你的ChannelHandler实现时非常有用。
+
+- 
