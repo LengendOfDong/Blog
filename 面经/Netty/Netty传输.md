@@ -17,4 +17,4 @@ Embedded： Embedded传输，允许使用ChannelHandler而又不需要一个真�
 
 - 在同一个JVM内部的通信，不需要通过网络来暴露服务，是Local传输的完美用例。这将消除所有真实网络操作的开销，同时仍然使用你的Netty代码库。如果随后需要通过网络暴露服务，那么你将只需要把传输修改为NIO或者OIO即可。
 
-
+- 测试你的ChannelHandler实现：如果你想要为自己的ChannelHandler实现编写单元测试，那么请考虑使用Embedded传输。这既便于测试你的代码，又不需要创建大量的模拟（mock）对象
