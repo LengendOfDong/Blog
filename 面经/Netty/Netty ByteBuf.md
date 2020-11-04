@@ -30,3 +30,15 @@ ByteBuf被分为3个区域：
 - 尚未被读过的字节，可读字节
 - 可以添加更多字节的空间，可写字节。
 
+discardReadBytes():将可丢弃字节分段中的空间变为可写空间
+
+readBytes(ByteBuf dest):源缓冲区的readIndex和writeIndex都会增加相同的大小
+
+writeBytes(ByteBuf dest):源缓冲区的readIndex和writeIndex都会增加相同的大小
+
+mark(int readlimit):将流中的当前位置标记为指定的值。
+
+reset()：将流重置
+
+markReaderIndex()：标记ByteBuf中的readIndex
+
