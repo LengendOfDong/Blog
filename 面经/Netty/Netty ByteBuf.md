@@ -41,4 +41,3 @@ mark(int readlimit):将流中的当前位置标记为指定的值。
 reset()：将流重置
 
 markReaderIndex()：标记ByteBuf中的readIndex
-
