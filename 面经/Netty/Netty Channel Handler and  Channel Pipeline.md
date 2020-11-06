@@ -15,5 +15,5 @@ ChannelHandler的生命周期方法：
 
 Channel中的大部分方法都需要一个ChannelPromise参数，以便在操作完成时得到通知。ChannelPromise是ChannelFuture的一个子类，其定义了一些可写的方法，如setSuccess()和setFailure(),从而使ChannelFuture不可变。
 
-
+可以使用ChannelInBoundHandlerAdapter和ChannelOutBoundHandlerAdapter作为自己的ChannelHandler的起始点。
 
