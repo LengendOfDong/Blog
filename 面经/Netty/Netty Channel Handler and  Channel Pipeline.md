@@ -13,5 +13,7 @@ ChannelHandler的生命周期方法：
 - handlerRemoved: 当从ChannelPipeline中移除ChannelHandler时被调用
 - exceptionCaught: 当处理过程中在ChannelPipeline中有错误产生时被调用
 
+Channel中的大部分方法都需要一个ChannelPromise参数，以便在操作完成时得到通知。ChannelPromise是ChannelFuture的一个子类，其定义了一些可写的方法，如setSuccess()和setFailure(),从而使ChannelFuture不可变。
+
 
 
