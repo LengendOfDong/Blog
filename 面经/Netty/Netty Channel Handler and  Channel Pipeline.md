@@ -58,3 +58,11 @@ channel.write(Unpooled.copiedBuffer("Netty in Action",CharsetUtil.UTF_8));
 一个ChannelHandler可以从属于多个ChannelPipeline，所以它可以绑定到多个ChannelHandlerContext实例，对于这种用法（指在多个ChannelPipeline中共享同一个ChannelHandler），对应的ChannelHandler必须要使用@Sharable注解标注，否则，试图将它添加到多个ChannelPipeline时将会触发异常。
 
 只有在确定了ChannelHandler是线程安全的时候才使用@Sharable注解。
+
+## 异常处理
+ChannelHandler.exceptionCaught()的默认实现是简单地将当前异常转发给ChannelPipeline中的下一个ChannelHandler
+
+如果异常到达了ChannelPipeline的尾端，它将会被记录为未被处理
+
+要想定义自定义的处理逻辑，你需要重写exceptionCaught()方法，然后你需要决定是否需要将异常传播出去。
+
