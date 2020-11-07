@@ -29,3 +29,5 @@ Channel中的大部分方法都需要一个ChannelPromise参数，以便在操�
 
 根据事件的起源，事件将会被ChannelInBoundHandler或者ChannelOutBoundHandler处理，随后，通过调用ChannelHandlerContext的实现，转发给同一超类型的下一个ChannelHandler处理。
 
+ChannelHandlerContext：就像工作流中的上下文，能够传递处理的信息。它使得ChannelHandler能够和它的ChannelPipeline以及其他的ChannelHandler交互。ChannelHandler可以通知其所属的ChannelPipeline中的下一个ChannelHandler，甚至可以动态修改它所属的ChannelPipeline.
+
