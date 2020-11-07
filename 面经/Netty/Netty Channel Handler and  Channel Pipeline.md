@@ -54,3 +54,7 @@ Channel channel = ctx.channel();
 channel.write(Unpooled.copiedBuffer("Netty in Action",CharsetUtil.UTF_8));
 ```
 通过上面的代码，ChannelHandlerContext绑定的channel与pipeline都可以通过write()方法写入数据，效果是一样的。
+
+一个ChannelHandler可以从属于多个ChannelPipeline，所以它可以绑定到多个ChannelHandlerContext实例，对于这种用法（指在多个ChannelPipeline中共享同一个ChannelHandler），对应的ChannelHandler必须要使用@Sharable注解标注，否则，试图将它添加到多个ChannelPipeline时将会触发异常。
+
+只有在确定了ChannelHandler是线程安全的时候才使用@Sharable注解。
