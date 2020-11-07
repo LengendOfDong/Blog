@@ -17,3 +17,10 @@ Channel中的大部分方法都需要一个ChannelPromise参数，以便在操�
 
 可以使用ChannelInBoundHandlerAdapter和ChannelOutBoundHandlerAdapter作为自己的ChannelHandler的起始点。
 
+## 资源管理
+泄露检测级别：
+- DISABLED:禁用泄露检测，只有在详尽的测试之后才应设置这个值
+- SIMPLE:使用1%的默认采样率检测并报告任何发现的泄露，这是默认级别，适合绝大部分的情况。
+- ADVANCED:使用默认的采样率，报告所发现的任何泄露以及对应的消息被访问的位置
+- PARANOID:类似于ADVANCED，但是其将会对每次（对消息的）访问都进行采样，这对性能将会有很大的影响，应该只是在调试阶段使用
+
