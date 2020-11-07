@@ -26,3 +26,6 @@ Channel中的大部分方法都需要一个ChannelPromise参数，以便在操�
 
 ## ChannelPipeline
 每一个新创建的Channel都会被分配一个ChannelPipeline,这项关联是永久性的，Channel既不能附加另外一个ChannelPipeline,也不能分离其当前的。
+
+根据事件的起源，事件将会被ChannelInBoundHandler或者ChannelOutBoundHandler处理，随后，通过调用ChannelHandlerContext的实现，转发给同一超类型的下一个ChannelHandler处理。
+
