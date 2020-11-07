@@ -24,3 +24,5 @@ Channel中的大部分方法都需要一个ChannelPromise参数，以便在操�
 - ADVANCED:使用默认的采样率，报告所发现的任何泄露以及对应的消息被访问的位置
 - PARANOID:类似于ADVANCED，但是其将会对每次（对消息的）访问都进行采样，这对性能将会有很大的影响，应该只是在调试阶段使用
 
+## ChannelPipeline
+每一个新创建的Channel都会被分配一个ChannelPipeline,这项关联是永久性的，Channel既不能附加另外一个ChannelPipeline,也不能分离其当前的。
