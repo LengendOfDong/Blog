@@ -1,1 +1,4 @@
-# 
+# EventLoop线程分配
+EventLoopGroup负责为每一个新创建的Channel分配一个EventLoop.
+
+在当前的实现中，使用顺序循环的方式进行分配以获取一个均衡的分布，并且相同的EventLoop可能会被分配给多个Channel.
