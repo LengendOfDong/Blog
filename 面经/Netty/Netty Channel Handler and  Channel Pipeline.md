@@ -39,3 +39,18 @@ ChannelPipeline可以根据需要，通过添加或者删除ChannelHandler来动
 
 ChannelPipeline有着丰富的API用以被调用，以响应入站和出站事件。
 
+## Channel、ChannelPipeline以及ChannelHandler、ChannelHandlerContext之间的关系
+1.Channel被绑定到ChannelPipeline上
+
+2.ChannelPipeline包括了所有的入站和出站的ChannelHandler
+
+3.当把ChannelHandler添加到ChannelPipeline时，ChannelHandlerContext将会被创建。
+
+```java
+ChannelHandlerContext ctx = ...;
+//ChannelPipeline pipeline = ctx.pipeline(); 
+Channel channel = ctx.channel();
+//pipeline.write(Unpooled.copiedBuffer("Netty in Action",CharsetUtil.UTF_8)); 
+channel.write(Unpooled.copiedBuffer("Netty in Action",CharsetUtil.UTF_8));
+```
+通过上面的代码，ChannelHandlerContext绑定的channel与pipeline都可以通过write()方法写入数据，效果是一样的。
