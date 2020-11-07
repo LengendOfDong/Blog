@@ -32,3 +32,10 @@ Channel中的大部分方法都需要一个ChannelPromise参数，以便在操�
 ChannelHandlerContext：就像工作流中的上下文，能够传递处理的信息。它使得ChannelHandler能够和它的ChannelPipeline以及其他的ChannelHandler交互。ChannelHandler可以通知其所属的ChannelPipeline中的下一个ChannelHandler，甚至可以动态修改它所属的ChannelPipeline.
 
 Netty总是将ChannelPipelINE的入站口作为头部，而将出站口作为尾端。在ChannelPipeline传播事件时，它会测试ChannelPipeline中的下一个ChannelHandler类型是否和事件的运动方向相匹配。。
+
+ChannelPipeline保存了于Channel相关联的ChannelHandler。
+
+ChannelPipeline可以根据需要，通过添加或者删除ChannelHandler来动态地修改
+
+ChannelPipeline有着丰富的API用以被调用，以响应入站和出站事件。
+
