@@ -1,0 +1,3 @@
+# EmbeddedChannel
+将入站数据或者出站数据写入到EmbeddedChannel中，然后检查是否有任何东西叨叨了ChannelPipeline的尾端。以这种方式，可以确定消息是否已经被编码或者被解码过了，以及是否触发了任何的ChannelHandler动作
+在每种情况下，消息
