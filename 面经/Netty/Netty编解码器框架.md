@@ -5,3 +5,7 @@
 
 每当需要为ChannelPipeline中的下一个ChannelInBoundHandler转换入站数据时会用到。可以将多个解码器链接在一起，实现任意复杂的转换逻辑。
 
+两个不同的用例：
+- 将字节解码为消息——ByteToMessageDecoder和ReplayingDecoder
+- 将一种消息类型解码为另一种——MessageToMessageDecoder
+
