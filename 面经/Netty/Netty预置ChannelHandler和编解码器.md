@@ -84,3 +84,29 @@ public class HttpAggregatorInitializer  extends ChannelInitializer<Channel> {
     }
 }
 ```
+
+# Http压缩
+当使用HTTP时，建议开启压缩功能以尽可能多地减小传输数据的大小，虽然压缩会带来CPU时钟周期上的开销，但是对于文本数据来说，它是一个很好的主意。
+```java
+public class HttpCompressionInitializer extends ChannelInitializer<Channel> {
+
+    private final boolean isClient;
+
+    public HttpCompressionInitializer(boolean isClient) {
+        this.isClient = isClient;
+    }
+
+    protected void initChannel(Channel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        if (isClient) {
+            pipeline.addLast("codec", new HttpClientCodec());
+            //如果是客户端，则添加以处理来自服务器的压缩内容
+            pipeline.addLast("decompressor", new HttpContentDecompressor());
+        } else {
+            pipeline.addLast("codec", new HttpServerCodec());
+            //如果是服务端，则添加以压缩数据
+            pipeline.addLast("compressor", new HttpContentCompressor());
+        }
+    }
+}
+```
