@@ -137,3 +137,11 @@ public class HttpsCodecInitializer extends ChannelInitializer<Channel> {
     }
 }
 ```
+
+# WebSocket
+- BinaryWebSocketFrame:数据帧，二进制数据
+- TextWebSocketFrame:数据帧，文本数据
+- ContinuationWebSocketFrame:数据帧：属于上一个BinaryWebSocketFrame或者TextWebSocketFrame的文本或者二进制数据
+- CloseWebSocketFrame:控制帧，一个CLOSE请求，关闭的状态和关闭的原因
+- PingWebSocketFrame:控制帧，请求一个PingWebSocketFrame
+- PongWebSocketFrame:控制帧，对PingWebSocketFrame请求的响应。
