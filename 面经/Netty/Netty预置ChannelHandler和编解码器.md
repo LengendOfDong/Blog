@@ -19,3 +19,15 @@ public class SslChannelHandler extends ChannelInitializer<Channel> {
     }
 }
 ```
+
+# Http/Https应用程序
+一个完整的HTTP请求包含：
+- 第一个部分包含了HTTP请求的头部信息
+- HTTPContent包含了数据，后面可能还跟着一个或者多个HttpContent部分
+- LastHttpContent标记流该HTTP请求的结束，可能还包含了尾随的HTTP头部信息
+
+一个HTTP的响应包含：
+- HTTP响应的第一个部分包含了HTTP的头部信息
+- HTTPContent包含了响应数据，后面可能还跟着一个或者多个HttpContent部分
+- LastHttpContent标记了该HTTP响应的结束，可能还包含了尾随的HTTP头部信息
+
