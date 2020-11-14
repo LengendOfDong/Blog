@@ -58,3 +58,9 @@ public class HttpPipelineInitializer  extends ChannelInitializer<Channel> {
     }
 }
 ```
+
+# 聚合HTTP消息
+Netty提供了一个聚合器，可以将多个消息合并为FullHttpRequest或者FullHttpResponse消息。通过这样的方式，总是可以看到完整的消息内容
+
+由于消息分段需要缓冲，直到可以转发一个完整的消息给下一个ChannelInBoundHandler，所以这个操作有轻微的开销。但是带来的好处就是不用关心消息碎片了。
+
