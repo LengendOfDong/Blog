@@ -33,3 +33,28 @@ public class SslChannelHandler extends ChannelInitializer<Channel> {
 
 HTTP的请求和响应编码器和解码器无非就是将字节与HttpRequest(HttpResponse)、HttpContent和LastHttpContent之间进行相互转换。将接收到的字节转换成有意义的请求头，请求内容数据以及请求结束数据。或者将响应头信息、响应内容数据以及响应结束信息转换成字节方便传输。
 
+```java
+public class HttpPipelineInitializer  extends ChannelInitializer<Channel> {
+    
+    private final boolean client;
+    
+    public HttpPipelineInitializer(boolean client) {
+        this.client = client;
+    }
+    
+    protected void initChannel(Channel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        if (client) {
+            //如果是客户端，则添加HttpResponseDecoder以处理来自服务器的响应
+            pipeline.addLast("decoder", new HttpResponseDecoder());
+            //如果是客户端，则添加HttpRequestEncoder以向服务器发送请求
+            pipeline.addLast("encoder", new HttpRequestDecoder());
+        } else {
+            //如果是服务器，则添加HttpRequestDecoder以处理来自客户端的请求
+            pipeline.addLast("decoder", new HttpRequestDecoder());
+            //如果是服务器，则添加HttpResponseEncoder以向客户端发送响应。
+            pipeline.addLast("encoder", new HttpResponseEncoder());
+        }
+    }
+}
+```
