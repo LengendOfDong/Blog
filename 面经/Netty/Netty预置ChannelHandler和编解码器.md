@@ -110,3 +110,30 @@ public class HttpCompressionInitializer extends ChannelInitializer<Channel> {
     }
 }
 ```
+
+# 使用HTTPS
+启用HTTPS只需要将SSLhandler添加到Channel的ChannelPipeline中即可。
+```java
+public class HttpsCodecInitializer extends ChannelInitializer<Channel> {
+    private final SslContext context;
+    private final boolean isClient;
+    
+    public HttpsCodecInitializer(SslContext context, boolean isClient) {
+        this.context = context;
+        this.isClient = isClient;
+    }
+    
+    
+    protected void initChannel(Channel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        SSLEngine engine = context.newEngine(ch.alloc());
+        pipeline.addFirst("ssl", new SslHandler(engine));
+        
+        if(isClient) {
+            pipeline.addLast("codec", new HttpClientCodec());
+        } else  {
+            pipeline.addLast("codec", new HttpServerCodec());
+        }
+    }
+}
+```
