@@ -31,3 +31,5 @@ public class SslChannelHandler extends ChannelInitializer<Channel> {
 - HTTPContent包含了响应数据，后面可能还跟着一个或者多个HttpContent部分
 - LastHttpContent标记了该HTTP响应的结束，可能还包含了尾随的HTTP头部信息
 
+HTTP的请求和响应编码器和解码器无非就是将字节与HttpRequest(HttpResponse)、HttpContent和LastHttpContent之间进行相互转换。将接收到的字节转换成有意义的请求头，请求内容数据以及请求结束数据。或者将响应头信息、响应内容数据以及响应结束信息转换成字节方便传输。
+
