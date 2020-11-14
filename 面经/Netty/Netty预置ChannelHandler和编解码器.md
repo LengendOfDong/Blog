@@ -63,4 +63,24 @@ public class HttpPipelineInitializer  extends ChannelInitializer<Channel> {
 Netty提供了一个聚合器，可以将多个消息合并为FullHttpRequest或者FullHttpResponse消息。通过这样的方式，总是可以看到完整的消息内容
 
 由于消息分段需要缓冲，直到可以转发一个完整的消息给下一个ChannelInBoundHandler，所以这个操作有轻微的开销。但是带来的好处就是不用关心消息碎片了。
-
+```java
+public class HttpAggregatorInitializer  extends ChannelInitializer<Channel> {
+    
+    private final boolean isClient;
+    
+    public HttpAggregatorInitializer(boolean isClient) {
+        this.isClient = isClient;
+    }
+    
+    protected void initChannel(Channel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        if (isClient) {//如果是客户端，则添加HttpClientCodec
+            pipeline.addLast("codec", new HttpClientCodec());
+        } else {//如果是服务器，则添加HttpServerCodec
+            pipeline.addLast("codec", new HttpServerCodec());
+        }
+        //将最大的消息大小为512KB的HttpObjectAggregator添加到ChannelPipeline
+        pipeline.addLast("aggregator", new HttpObjectAggregator(512 * 1024));
+    }
+}
+```
