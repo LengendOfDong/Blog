@@ -30,3 +30,4 @@ public class IdleStateHandlerInitializer extends ChannelInitializer<Channel> {
 在写大型数据时，需要准备好处理到远程节点的连接时慢速连接的情况，这种情况会导致内存释放的延迟。
 
 NIO的零拷贝特性，这种特性消除了将文件从文件系统移动到网络栈的复制过程。所有的这一切都发生在Netty的核心中，所以应用程序所需要做的就是使用一个FileRegion接口的实现。
+
