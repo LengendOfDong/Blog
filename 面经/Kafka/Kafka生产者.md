@@ -87,4 +87,5 @@ producer.send(record, new DemoProducerCallBack());
 
 6.client.id:该参数可以是任意的字符串，服务器会用它来识别消息的来源，还可以用在日志或者配合指标里。
 
-7.
+在消息的顺序有严格要求的情况下，可以把retries设置为0，并把max.in.flight.requests.per.connection设置为1，这样在失败的情况下也可以进行重试，并在重试的时候不会有其他的消息发给broker。
+
