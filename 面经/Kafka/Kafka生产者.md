@@ -40,4 +40,14 @@ try {
 
 虽然可以忽略发送消息时的错误，或者服务器端发生的错误，但是在发送之前，生产者还是有可能发生其他的错误。比如SerializationException(发生在序列化器中的错误，序列化异常)，BufferExhaustedException和TimeOutException（发生在缓冲区的错误，缓冲区已满），InterruptedException(发生在发送线程的错误，发送线程被中断)
 
-## 
+## 同步发送消息
+```java
+ProducerRecord<String,String> record = new ProducerRecord<String,String>("CustomerCountry","Precision Products","France");
+try {
+  producer.send(record).get();
+} catch (Exception e) {
+  e.printStackTrace();
+}
+```
+producer.send()会返回一个Future对象，然后调用Future对象的get()方法等待Kafka响应。如果服务器返回错误，get()方法会抛出异常，如果没有发生错误，会得到一个RecordMetadata对象，可以用它获取消息的偏移量。
+
