@@ -8,3 +8,36 @@
 - 第四步：如果消息成功写入Kafka中，就会返回一个RecordMetadata对象，包含了主题和分区信息，以及记录在分区中的偏移量。如果没有写入成功，则会返回一个错误，生产者在收到这个错误之后会重新发送消息，几次之后如果还是失败，就返回错误信息。
 
 # 创建Kafka生产者
+Kafka生产者有3个必选的属性：
+- bootstrap.servers:该属性指定broker的地址清单，地址的格式为host:port,建议至少两个broker的信息，一旦其中一个宕机，生产者仍然能够连接到集群上。
+- key.serializer:broker希望接收到的消息的键和值都是字节数组。可以设置为自定义的序列化类，需要实现org.apache.kafka.common.serialization.Serializer接口的类。kafka客户端默认提供了ByteArraySerializer/StringSerializer/IntegerSerializer.
+- value.serializer:同key.serializer情况相同。
+
+```java
+private Properties kafkaProps = new Properties();
+kafkaProps.put("bootstrap.servers","broker1:9092,broker2:9092")
+kafkaProps.put("key.serializer","org.apache.kafka.common.serialization.Serializer");
+kafkaProps.put("value.serializer","org.apache.kafka.common.serialization.Serializer");
+producer= new KafkaProducer<String, String>(kafkaProps);
+```
+
+发送消息主要有3种方式：
+- 发送并忘记（fire-and-forget）：消息发送给服务器，并不关心发送是否成功，通常情况下是会成功的，因为kafka是高可用的，失败之后还会进行重试，不过有时候也会丢失消息。
+- 同步发送：使用send()方法发送消息，会返回一个Future对象，调用get()方法进行等待，就可以知道消息是否成功
+- 异步发送：调用send()方法，并指定一个回调函数，服务器在返回响应时调用该函数。
+
+# 发送消息到Kafka
+## 发送并忘记
+```java
+ProducerRecord<String,String> record = new ProducerRecord<String,String>("CustomerCountry","Precision Products","France");
+try {
+  producer.send(record);
+} catch (Exception e) {
+  e.printStackTrace();
+}
+```
+生产者的send()方法将ProducerRecord对象作为参数，键和值得对象的类型必须与序列化器相匹配。此处调用send()方法会返回一个Future对象，但是此处忽略了返回值，无法知道消息是否发送成功。如果不关心发送结果，那么可以使用这种方式。
+
+虽然可以忽略发送消息时的错误，或者服务器端发生的错误，但是在发送之前，生产者还是有可能发生其他的错误。比如SerializationException(发生在序列化器中的错误，序列化异常)，BufferExhaustedException和TimeOutException（发生在缓冲区的错误，缓冲区已满），InterruptedException(发生在发送线程的错误，发送线程被中断)
+
+## 
