@@ -89,3 +89,35 @@ producer.send(record, new DemoProducerCallBack());
 
 在消息的顺序有严格要求的情况下，可以把retries设置为0，并把max.in.flight.requests.per.connection设置为1，这样在失败的情况下也可以进行重试，并在重试的时候不会有其他的消息发给broker。
 
+## 分区
+ProducerRecord对象包含目标主题、键和值。Kafka的消息是一个个的键值对，ProducerRecord可以只包含目标主题和值，键可以设置为null,键有两个用途：可以作为消息的附加信息，也可以用来决定消息该被写到主题的哪个分区。
+
+如果键值为null，并且使用默认的分区器，记录将被随机地发送到主题内各个可用的分区上，分区器使用轮询（Round Robin）算法将消息均匀地分布到各个分区上。
+
+如果键不为空，并且使用了默认的分区器，那么Kafka会对键进行散列，然后根据散列值把消息映射到特定的分区上。同一个键总是被映射到同一个分区上，所以在进行映射时，我们会使用主题所有的分区，而不仅仅是可用的分区。这也意味着，如果写入数据的分区不可用，那么就会发生错误。
+
+```java
+public class BananaPartitioner  implements Partitioner {
+    public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
+        List<PartitionInfo>  partitions = cluster.partitionsForTopic(topic);//获取集群中对应主题的分区
+        int numPartitions = partitions.size();//获取主题的分区数
+        
+        if((keyBytes == null) || (!(key instanceof String))) {//键要么为空，要么就是字符串，否则就抛出异常
+            throw new InvalidRecordException("We expect all messages to have customer name as key");
+        }
+        if (((String) key).equals("Banana")) { //Banana总是被分配到最后一个分区
+            return numPartitions;
+        }
+        //其他记录则被散列到其他分区
+        return (Math.abs(Utils.murmur2(keyBytes)) % (numPartitions - 1));
+    }
+
+    public void close() {
+
+    }
+
+    public void configure(Map<String, ?> map) {
+
+    }
+}
+```
