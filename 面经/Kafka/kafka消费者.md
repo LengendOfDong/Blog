@@ -96,3 +96,24 @@ while (true) {
    
 }
 ```
+
+## 独立消费者
+如果需要消费者从一个主题的所有分区或者某个特定的分区读取数据，这时候就会用到独立消费者。
+```java
+List<PartitionInfo> partitionInfos = null;
+partitionInfos = consumer.partitionsFor("topic");
+
+if(partitionInfos ! = null) {
+   for(PartitionInfo partition: partitionInfos) {
+      partitions.add(new TopicPartition(partition.topic(), partition.partition());
+   }
+   consumer.assign(partitions);
+   while (true) {
+      ConsumerRecords<String,String> records = customer.poll(100);
+      for (ConsumerRecord<String,String> record: records ) {
+         //do something with record
+      }
+      consumer.commitSync();
+   }
+}
+```
