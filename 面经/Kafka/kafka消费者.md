@@ -101,7 +101,7 @@ while (true) {
 如果需要消费者从一个主题的所有分区或者某个特定的分区读取数据，这时候就会用到独立消费者。
 ```java
 List<PartitionInfo> partitionInfos = null;
-partitionInfos = consumer.partitionsFor("topic");
+partitionInfos = consumer.partitionsFor("topic");//向集群请求主题可用的分区
 
 if(partitionInfos ! = null) {
    for(PartitionInfo partition: partitionInfos) {
@@ -117,3 +117,4 @@ if(partitionInfos ! = null) {
    }
 }
 ```
+如果主题增加了新的分区，消费者并不会收到通知， 所以要么周期性地调用consumer.partitionFor方法来检查是否有新的分区加入，要么在添加新分区后重启应用程序。
