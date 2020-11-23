@@ -77,4 +77,22 @@ try {
  }
 ```
 
+## 提交特定的偏移量
+如果想要在中间提交偏移量，而不是等到所有消息处理完之后再提交，可以调用commitSync()和commitAsync()方法时传进去希望提交的分区和偏移量的map。
+```java
+private Map<TopicPartition, OffsetAndMetadata> currentOffsets = new HashMap<>();
+int count = 0;
 
+while (true) {
+   ConsumerRecords<String,String> records = customer.poll(100);
+   for (ConsumerRecord<String,String> record: records ) {
+      //do something with record
+      currentOffsets.put(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1, "no metadata"));
+      if (count % 1000 == 0) {
+          consumer.commitAsync(currentOffsets, null);
+      }
+      count++;
+   }
+   
+}
+```
