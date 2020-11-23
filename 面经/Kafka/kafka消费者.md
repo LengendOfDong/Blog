@@ -56,3 +56,25 @@ try {
 当消费者发生崩溃或者有新的消费者加入到消费者组中时，会触发**再平衡**，此时每个消费者可能不会接收原来的分区，为了能够继续之前的工作，消费者需要读取每个分区最后一次提交的偏移量，然后从偏移量的地方继续处理。
 
 如果提交的偏移量小于客户端处理的最后一个消息的偏移量，那么处于两个偏移量之间的消息就会重复处理。如果提交的偏移量大于客户端处理的最后一个消息的偏移量，那么处于两个偏移量之间的消息就会丢失。
+
+同步和异步组合提交：如果发生在关闭消费者或者再均衡前的最后一次提交，就要确保能够提交成功。在消费者关闭前一般会组合使用commitAsync()和commitSync()。
+```java
+ try{
+    while(true) {
+        ConsumerRecords<String,String> records = consumer.poll(100);
+        //do something with record
+        
+       consumer.commitAsync();
+    }
+ } catch (Exception e) {
+    log.error("Unexception error", e);
+ } finally {
+    try {
+       consumer.commitSync();
+    } finally {
+       consumer.close();
+    }
+ }
+```
+
+
