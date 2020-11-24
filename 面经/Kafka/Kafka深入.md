@@ -1,0 +1,7 @@
+## 集群成员关系
+在broker启动时，它通过创建临时节点把自己的id注册到zookeeper，kafka组件订阅Zookeeper的/brokers/ids路径（broker在Zookeeper上的注册路径），当有broker加入集群或退出集群时，这些组件就可以获得通知。
+
+控制器是一个broker，除了具有一般broker的功能之外，还负责分区首领的选举。集群里第一个启动的broker通过在zookeeper里创建一个临时节点/controller让自己成为控制器。其他broker在控制器节点上增加watch对象，这样就可以得到控制器的通知。
+
+每个新选出的控制器通过zookeeper的条件递增操作获得一个全新的，数值更大的controller epoch。其他broker在知道当前controller epoch后，如果收到由控制器发出的包含旧controller epoch的消息就会忽略他们。
+
