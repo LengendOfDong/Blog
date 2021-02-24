@@ -33,4 +33,5 @@ Bean的生命周期分为以下几步：
 
 10.最后，如果这个Bean的Spring配置中配置了destory-method属性，会自动调用其配置的销毁方法。
 
+参考： https://www.zhihu.com/question/38597960
 
