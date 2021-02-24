@@ -14,23 +14,23 @@ Bean的生命周期分为以下几步：
 - 调用定制的销毁方法
 
 1.实例化一个Bean
-2.
-3.按照Spring上下文对实例化的Bean进行配置，也就是IOC注入
-4.
-5.如果这个Bean已经实现了BeanNameAware接口，会调用它实现的setBeanName方法，传递的参数就是Spring配置文件中的Bean的id值。
-6.
-7.如果这个Bean已经实现了BeanFactoryAware接口，会调用它实现的setBeanFactory方法，传递的是Spring工厂自身
-8.
-9.如果这个Bean已经实现了ApplicationContextAware接口，会调用setApplicationContext方法，传入Spring上下文
-10.
-11.如果这个Bean关联了BeanPostProcessor接口，将会调用postProcessBeforeInitialization方法，BeanPostProcessor经常被用作是Bean内容的更改。
-12.
-13.如果Bean在Spring配置文件中配置了init-method属性会自动调用其配置的初始化方法
-14.
-15.如果这个Bean关联了BeanPostProcessor接口，将会调用postProcessAfterInitialization方法
-16.
-17.当Bean不再需要时，会经过清理阶段，如果Bean实现了DisposableBean这个接口，会调用那个其实现的destory方法。
-18.
-19.最后，如果这个Bean的Spring配置中配置了destory-method属性，会自动调用其配置的销毁方法。
+
+2.按照Spring上下文对实例化的Bean进行配置，也就是IOC注入
+
+3.如果这个Bean已经实现了BeanNameAware接口，会调用它实现的setBeanName方法，传递的参数就是Spring配置文件中的Bean的id值。
+
+4.如果这个Bean已经实现了BeanFactoryAware接口，会调用它实现的setBeanFactory方法，传递的是Spring工厂自身
+
+5.如果这个Bean已经实现了ApplicationContextAware接口，会调用setApplicationContext方法，传入Spring上下文
+
+6.如果这个Bean关联了BeanPostProcessor接口，将会调用postProcessBeforeInitialization方法，BeanPostProcessor经常被用作是Bean内容的更改。
+
+7.如果Bean在Spring配置文件中配置了init-method属性会自动调用其配置的初始化方法
+
+8.如果这个Bean关联了BeanPostProcessor接口，将会调用postProcessAfterInitialization方法
+
+9.当Bean不再需要时，会经过清理阶段，如果Bean实现了DisposableBean这个接口，会调用那个其实现的destory方法。
+
+10.最后，如果这个Bean的Spring配置中配置了destory-method属性，会自动调用其配置的销毁方法。
 
 
