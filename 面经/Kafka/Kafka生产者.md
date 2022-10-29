@@ -121,3 +121,23 @@ public class BananaPartitioner  implements Partitioner {
     }
 }
 ```
+
+部分生产者客户端参数：
+
+| 参数名称             | 默认值 | 参数释义 |
+| -------------------- | ------ | -------- |
+|bootstrap.servers|""|指定连接Kafka集群所需的broker地址清单|
+|key.serializer|""|消息中key对应的序列化类，需要实现Serializer接口|
+|value.serializer|""|消息中value对应的序列化类，需要实现Serializer接口|
+|buffer.memory|32MB|生产者客户端中用于缓存消息的缓冲区大小|
+|batch.size|16KB|用于指定ProducerBatch可以复用内存区域大小|
+|max.block.ms|60000|用来控制KafkaProducer中send()方法和partitionFor()方法的阻塞时间。当生产者的发送缓冲区已满，或者没有可用的元数据时，这些方法就会阻塞|
+|partitioner.class|DefaultPartitioner|用来指定分区器，需要实现Partitioner接口|
+|enable.idempotence|false|是否开启幂等性功能|
+|interceptor.class|""|用来设定生产者拦截器，需要实现ProducerInterceptor接口|
+|max.in.flight.requests.per.connection|5|限制每个连接（也就是客户端与Node之间的连接）最多缓存的请求数|
+|metadata.max.age.ms|5分钟|如果在这个时间内元数据没有更新，会被强制更新|
+|transactional.id|null|设置事务id,必须唯一|
+
+对于KafkaProducer而言，它是线程安全的，我们可以在多线程环境使用它，而KafkaConsumer而言，它是非线程安全的，因为它具备了状态。
+

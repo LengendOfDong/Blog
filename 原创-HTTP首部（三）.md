@@ -230,10 +230,10 @@ Last-Modified:Mon, 23 Oct 2017 10:01:51 GMT
 
 为Cookie服务的首部字段如下：
 
-|首部字段名|说明|首部类型
-|------
-|Set-Cookie|开始状态管理所使用的Cookie信息|响应首部字段
-|Cookie|服务器接收到的Cookie信息|请求首部字段
+|首部字段名|说明|首部类型|
+|:---|:---|:---|
+|Set-Cookie|开始状态管理所使用的Cookie信息|响应首部字段|
+|Cookie|服务器接收到的Cookie信息|请求首部字段|
 
 ## Set-Cookie
 
@@ -246,7 +246,7 @@ Set-Cookie: BD_CK_SAM=deleted; expires=Thu, 01-Jan-1970 17:00:00 GMT; path=/; do
 下面的表格列举了Set-Cookie的字段值
 
 |属性|说明
-|------
+|:---|:---|
 |NAME=VALUE|赋予Cookie的名称和其值
 |expires=DATE|Cookie的有效期（若不明确指定则默认为浏览器关闭前为止）
 |path=PATH|将服务器上的文件目录作为Cookie的适用对象（若不指定则默认为文档所在的文件目录）
