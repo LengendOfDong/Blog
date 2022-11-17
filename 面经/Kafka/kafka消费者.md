@@ -118,3 +118,4 @@ if(partitionInfos ! = null) {
 }
 ```
 如果主题增加了新的分区，消费者并不会收到通知， 所以要么周期性地调用consumer.partitionFor方法来检查是否有新的分区加入，要么在添加新分区后重启应用程序。
+
