@@ -132,13 +132,77 @@ docker images 命令可以列出本地主机上已有的镜像
 
 ![docker tag](../../img/docker_tag.png)
 
+<font color=blue>使用docker inspect命令可以获取该镜像的详细信息</font>
 
+## 搜寻镜像
 
+docker search命令可以搜索远端仓库中共享的镜像，返回很多包含关键字的镜像，其中包括镜像名字，描述，星级（表示该镜像受欢迎程度），是否官方创建，是否自动创建等。
 
+默认的输出结果将按照星级评价进行排序。
 
+## 删除镜像
 
+使用docker  rmi命令可以删除镜像，命令格式为docker  rmi  IMAGE[image ...]，其中IMAGE可以为标签或ID
 
+当同一个镜像存在多个标签时，docker  rmi 命令只是删除了该镜像多个标签中的指定标签而已，并不影响镜像文件。
 
+当镜像只剩下一个标签的时候就要注意了，此时再使用docker  rmi命令会彻底删除该镜像。
+
+### 使用镜像ID删除镜像
+
+使用docker rmi 命令后面跟上镜像的ID时，会先尝试删除所有指向该镜像的标签，然后删除该镜像文件本身。
+
+当有该镜像创建的容器存在时，镜像文件默认时无法被删除的。
+
+正确的做法是，先删除依赖该镜像的所有容器，再来删除镜像。
+
+- sudo  docker  rm   容器ID
+- sudo  docker   rmi  镜像ID
+
+## 创建镜像
+
+创建镜像的方法有三种：基于已有镜像的容器创建，基于本地模板导入，基于Dockerfile创建
+
+### 基于已有镜像的容器创建
+
+该方法主要是使用docker  commit 命令，其命令格式为docker  commit  [OPTIONS] CONTAINER  [REPOSITORY[:TAG]],主要选项包括：
+
+- -a, --author="" 作者信息
+- -m,  --message="" 提交消息
+- -p,  --pause=true, 提交时暂停容器运行
+
+使用如下命令创建新的镜像，docker  images中会有test镜像出现
+
+![提交新镜像](../../img/提交新镜像.png)
+
+### 基于本地模板导入
+
+从OPENVZ网站下载模板：[Index of /template/precreated (openvz.org)](https://download.openvz.org/template/precreated/)
+
+![本地模板导入](../../img/本地模板导入.png)
+
+从OPENVZ网站上下载ubuntu 16.04模板
+
+执行sudo cat ubuntu-16.04-x86_64.tar.gz |docker import - ubuntu:16.04报错：	
+
+- sudo groupadd docker     #添加docker用户组
+- sudo gpasswd -a $USER docker     #将登陆用户加入到docker用户组中
+- newgrp docker     #更新用户组
+- docker ps    #测试docker命令是否可以使用sudo正常使用
+
+再执行cat ubuntu-16.04-x86_64.tar.gz |docker import - ubuntu:16.04不再报错
+
+执行docker   images 后发现多了一个ubuntu 16.04的镜像
+
+## 存储和载入镜像
+
+可以使用docker  save 和 docker   load命令来存储和载入镜像
+
+![存储和载入镜像](../../img/存储和载入镜像.png)
+
+## 上传镜像
+
+可以使用docker push命令上传镜像到仓库，默认上传到DockerHub官方仓库，命令格式为docker push  NAME[:TAG]
 
 
 
