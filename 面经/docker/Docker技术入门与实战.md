@@ -114,7 +114,7 @@ Docker Desktop 是 Docker 在 Windows 10 和 macOS 操作系统上的官方安�
 
 docker images 命令可以列出本地主机上已有的镜像
 
-![docker images](../../img/docker image.png)
+![docker images](../../img/docker_image.png)
 
 在列出信息中，可以看到几个字段信息：
 
@@ -130,7 +130,7 @@ docker images 命令可以列出本地主机上已有的镜像
 
 使用docker  tag命令为本地镜像添加新的标签，通过镜像ID可以看出它们实际上是同一个镜像文件。
 
-![docker tag](../../img/docker tag.png)
+![docker tag](../../img/docker_tag.png)
 
 
 
