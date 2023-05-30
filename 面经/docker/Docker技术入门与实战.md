@@ -177,7 +177,7 @@ docker search命令可以搜索远端仓库中共享的镜像，返回很多包�
 
 ### 基于本地模板导入
 
-从OPENVZ网站下载模板：[Index of /template/precreated (openvz.org)](https://download.openvz.org/template/precreated/)
+从OPENVZ网站下载模板：https://download.openvz.org/template/precreated/
 
 ![本地模板导入](../../img/本地模板导入.png)
 
@@ -204,11 +204,79 @@ docker search命令可以搜索远端仓库中共享的镜像，返回很多包�
 
 可以使用docker push命令上传镜像到仓库，默认上传到DockerHub官方仓库，命令格式为docker push  NAME[:TAG]
 
+第一步：
 
+centos7系统登录方式：
 
+```dockerfile
+docker   login
+```
 
+centos8及以上系统登录方式：
 
+```dockerfile
+podman login docker.io
+```
 
+<font  color=red>注意：podman login 和 podman login docker.io是不同的</font>
+
+![podman login](..\..\img\podman_login.png)
+
+第二步：给镜像打标签
+
+centos7  打标签方式
+
+```dockerfile
+docker tag 29bad2f8a84d zheng1dong2/new-repo:1.0
+```
+
+centos8及以上打标签方式
+
+```dockerfile
+podman tag  29bad2f8a84d  docker.io/zheng1dong2/new-repo:1.0
+```
+
+<font color=red>注意：29bad2f8a84d是镜像id,  zheng1dong2是dockerhub上注册的账号名称，new-repo是在dockerhub上创建的仓库名称，1.0是tag标签，这里podman 打标签需要加上docker.io</font>
+
+否则可能出现如下问题：
+
+```dockerfile
+[root@localhost .ssh]# podman push zheng1dong2/new-repo:1.0
+Getting image source signatures
+Copying blob b362758f4793 [--------------------------------------] 8.0b / 190.9MiB
+Copying blob 7b9106e4f33d [--------------------------------------] 8.0b / 2.0KiB
+Copying blob 4849f19ea97e [--------------------------------------] 8.0b / 9.0KiB
+Copying blob fb7792cec03a [--------------------------------------] 8.0b / 13.5KiB
+Copying blob 9a044e4cd3a9 [--------------------------------------] 8.0b / 21.6MiB
+Copying blob 50d50cf31f6c [--------------------------------------] 8.0b / 5.0KiB
+Copying blob 6727c67c3a66 [--------------------------------------] 8.0b / 3.5KiB
+Copying blob e29819798e50 [--------------------------------------] 8.0b / 5.5KiB
+Copying blob 6339e3d757ac [--------------------------------------] 8.0b / 2.0KiB
+Copying blob 194fcbcfcb81 [--------------------------------------] 8.0b / 787.8MiB
+Copying blob 97148cd18852 [--------------------------------------] 8.0b / 2.5KiB
+Error: Error copying image to the remote destination: Error writing blob: Error initiating layer upload to /v2/zheng1dong2/new-repo/blobs/uploads/ in registry-1.docker.io: errors:
+denied: requested access to the resource is denied
+unauthorized: authentication required
+
+```
+
+第三步：上传镜像到docker  hub
+
+centos7 系统：
+
+```dockerfile
+docker push zheng1dong2/new-repo:1.0
+```
+
+centos8及以上系统：
+
+```dockerfile
+podman push docker.io/zheng1dong2/new-repo:1.0
+```
+
+打开hub.docker.com，进入自己的空间查看刚上传的镜像：
+
+![new-repo](..\..\img\new-repo.png)
 
 
 
