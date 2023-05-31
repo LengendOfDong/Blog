@@ -278,13 +278,193 @@ podman push docker.io/zheng1dong2/new-repo:1.0
 
 ![new-repo](..\..\img\new-repo.png)
 
+# 四、容器
 
+## 创建容器
 
+使用docker  create 命令新建一个容器
 
+docker create 命令新建的容器处于停止状态，可以使用docker  start 命令启动。
 
+启动容器有两种方式，一种是基于镜像新建一个容器并启动，另外一个是将在终止状态的容器重新启动。
 
+docker run 等价于docker   create命令 加上  docker  start命令。
 
+当利用docker  run来创建并启动容器时，Docker在后台运行的标准操作包括：
 
+- 检查本地是否存在指定的镜像，不存在就从公有仓库下载（这一步基本能保证镜像是有的）
+- 利用镜像创建并启动一个容器
+- 分配一个文件系统，并在只读的镜像层外面挂载一层可读写层。
+- 从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去。
+- 从地址池配置一个IP地址给容器。
+- 执行用户指定的应用程序。
+- 执行完毕后容器被终止。
+
+docker  run  -it    ubuntu:14.04   /bin/bash  能够启动一个bash终端，允许用户交互。
+
+其中 -t 选项让Docker  分配一个伪终端并绑定到容器的标准输入上， -i  则让容器的标准输入保持打开。
+
+### 守护态运行
+
+docker run -d   ubuntu /bin/sh -c  "while true; do echo hello world; sleep 1; done"
+
+![守护态运行](../../img/守护态运行.png)
+
+要获取容器的输出信息，可以通过docker   logs命令查看。
+
+## 终止容器
+
+可以使用docker  stop来终止一个运行中的容器， 命令的格式为 docker    stop  [-t | --time[=10]]
+
+它首先会向容器发送SIGTERM信号，等待一段时间后默认为10秒，再发送SIGKILL信号终止容器。
+
+- docker   ps  -a  -q：查看处于终止状态的容器的ID信息
+- docker   start   容器ID：启动终止状态的容器
+- docker   restart  容器ID：将一个运行态的容器终止，然后再重新启动它
+
+## 进入容器
+
+### attach命令
+
+docker  attach 是Docker自带的命令
+
+![docker_attach](../../img/docker_attach.png)
+
+多个窗口同时attach到同一个容器时，所有窗口都会同步显示，当某个窗口因命令阻塞时，其他窗口也无法执行操作。
+
+### exec命令
+
+进入一个容器并启动一个bash:
+
+docker   exec  -it    容器ID   /bin/bash
+
+## 删除容器
+
+docker   rm命令删除处于终止状态的容器，命令格式为docker   rm   [OPTIONS]  CONTAINER  [CONTAINER...]
+
+支持的选项包括：
+
+- -f,  --force = false 强行终止并删除一个运行中的容器
+- -l ,  --link = false 删除容器的连接， 但保留容器
+- -v, --volumes = false  删除容器挂载的数据卷
+
+不建议使用-f，这样运行中的容器会突然中断
+
+## 导入和导出容器
+
+导出容器是指导出一个已经创建的容器到一个文件，不管此时这个容器是否处于运行态，可以使用docker  export命令，该命令格式为 docker   export   CONTAINER
+
+```dockerfile
+docker  export  -o  test_for_fun.tar   ce5
+```
+
+导入容器可以使用docker import  命令导入，成为镜像。
+
+```dockerfile
+docker  import   test_for_fun.tar  -  test/ubuntu:v1.0
+```
+
+docker  save与docker   export的区别：
+
+docker save用于导出镜像到文件，包含镜像元数据和历史信息；
+docker export用于将当前容器状态导出至文件，类似快照，所以不包含元数据及历史信息，体积更小，此外从容器快照导入时也可以重新指定标签和元数据信息；
+
+## 查看容器
+
+### 查看容器详情
+
+docker  container  inspect  test
+
+会返回容器id, 创建时间，路径， 状态，镜像，配置等在内的各项信息
+
+### 查看容器内进程
+
+docker  top  容器ID
+
+该命令会打印出容器内的进程信息，包括PID，用户，时间，命令等。
+
+### 查看统计信息
+
+docker  stats  容器ID
+
+会显示CPU，内存，存储，网络等使用情况的统计信息
+
+## 其他容器命令
+
+### 复制文件
+
+cp命令支持在容器和主机之间复制文件，命令格式为docker  cp  [OPTIONS]   container:SRC_PATH  DEST_PATH
+
+支持的选项包括：
+
+- -a ,  -archive: 打包模式，复制文件会带有原始的uid/gid信息
+- -L，-follow-link:跟随软连接，当源路径为软连接时，默认只复制链接信息，使用该选项会复制链接的目标内容
+
+例如，将本地的路径data复制到test容器(容器id,  d0f开头)的/tmp路径下
+
+```dockerfile
+docker  [container]  cp  data  d0f:/tmp/
+```
+
+### 查看变更
+
+docker   [container]   diff    容器ID
+
+### 查看端口映射
+
+docker  container   port  容器id
+
+### 更新配置
+
+docker  container  update  容器id
+
+例如，限制总配额为1秒，容器test(d0f)所占用时间为10%
+
+```dockerfile
+docker   update  [OPTIONS]  --cpu-quota   1000000   d0f
+```
+
+支持的选项包括：
+
+□ -blkio-weigh uint16 ：更新块 IO 限制， 10~lOOO ，默认值为 0，代表着无限制；
+
+□ -cpu-period   int：限制 CPU 调度器 CFS (Completely Fair Scheduler) 使用时间，
+
+单位为微秒，最小 1000;
+
+□ -cpu-quo int：限制 CPU 调度器 CFS 配额，单位为微秒，最小 1000;
+
+□ -cpu-rt－ period int：限制 CPU 调度器的实时周期，单位为微秒；
+
+□ -cpu-rt－ run ime int：限制 CPU 调度器的实时运行时，单位为微秒；
+
+□ -c, -cpu-shares int：限制 CPU 使用份额；
+
+□ -cpus decimal: 限制 CPU 个数；
+
+□ -cpuset－cpus string: 允许使用的 CPU 核，如 0-3, 0,1; 
+
+□ -cpuset－ mems string: 允许使用的内存块，如 0-3, 0,1; 
+
+□ -kernel-memory bytes: 限制使用的内核内存；
+
+□ -m, -memory bytes ：限制使用的内存；
+
+□ -memory-reservation bytes: 内存软限制；
+
+□ -memory-swap bytes ：内存加上缓存区的限制，－1 表示为对缓冲区无限制；
+
+□ -restart string: 容器退出后的重启策略。
+
+# 五、仓库
+
+仓库是集中存放镜像的地方
+
+仓库是一个具体的项目或目录，dl.dockerpool.com/ubuntu中，dl.dockerpool.com是注册服务器，ubuntu是仓库名。
+
+仓库又分为公共仓库和私有仓库
+
+## Docker Hub
 
 
 
