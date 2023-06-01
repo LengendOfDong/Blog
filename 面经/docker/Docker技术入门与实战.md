@@ -361,7 +361,7 @@ docker  export  -o  test_for_fun.tar   ce5
 导入容器可以使用docker import  命令导入，成为镜像。
 
 ```dockerfile
-docker  import   test_for_fun.tar  -  test/ubuntu:v1.0
+docker  import   test_for_fun.tar test/ubuntu:v1.0
 ```
 
 docker  save与docker   export的区别：
@@ -466,15 +466,345 @@ docker   update  [OPTIONS]  --cpu-quota   1000000   d0f
 
 ## Docker Hub
 
+### 登录
+
+docker   login  命令来输入用户名，密码和邮箱来完成注册和登录
+
+### 基本操作
+
+docker  search  命令来查找官方仓库中的镜像，并利用docker  pull命令将它下载到本地
+
+根据是否为官方提供，可以分为两类：
+
+- 一种时类似于centos这样的镜像，也称为根镜像，这些镜像是由Docker公司创建，验证，支持和提供，往往使用单个单词作为名字
+- 另一种比如ansible/centos7-ansible镜像，是由Docker用户ansible创建并维护的，带有用户名称为前缀，表明是某用户下的某仓库。
+
+### 自动创建
+
+自动创建是Docker  Hub提供的自动化服务，这一功能可以自动跟随项目代码的变更而重新构建镜像。
+
+用户构建了某应用镜像，如果应用发布新版本，用户需要手动更新镜像，而自动创建则允许用户通过Docker Hub指定跟踪一个目标网站，比如说github，一旦项目发生新的提交，则自动执行构建。这样就完成了持续构建/持续交付（CI/CD）的操作。
+
+## 第三方镜像市场
+
+### 下载镜像
+
+下载镜像也是使用 docker  pull命令，但是要在镜像名称前添加注册服务器的具体地址，
+
+格式为index.tenxcloud.com/<namespace>/repository:<tag>
+
+## 搭建本地私有仓库
+
+### 使用registry镜像创建私有仓库
+
+通过官方提供的registry镜像来简单搭建一套本地私有仓库环境：
+
+```dockerfile
+docker  run  -d  -p  5000:5000  registry:2
+```
+
+可以通过-v参数来将镜像文件存放在本地的指定路径
+
+默认仓库被创建在容器的/var/lib/registry目录下，将上传的镜像放到/opt/data/registry目录，监听端口为5000：
+
+```dockerfile
+docker run -d  -p  5000:5000 -v  /opt/data/registry:/var/lib/registry  registry:2
+```
+
+### 
+
+# 六、Docker数据管理
+
+容器中管理数据的主要方式有两种：
+
+- 数据卷：容器内数据直接映射到本地主机环境
+- 数据卷容器：使用特定容器维护数据卷
+
+## 数据卷
+
+数据卷是一个可供容器使用的特殊目录，它将主机操作系统目录直接映射进容器，类似于Linux中的mount行为。
+
+数据卷可以提供很多有用的特性：
+
+- 数据卷可以在容器之间共享和重用，容器间传递数据将变得高效与方便
+- 对数据卷内数据的修改会立马生效，无论是容器内操作还是本地操作
+- 对数据卷的更新不会影响镜像，解耦开应用和数据
+- 卷会一直存在，直到没有容器使用，可以安全地卸载它
+
+### 创建数据卷
+
+Docker提供了volume子命令来管理数据卷：
+
+```dockerfile
+docker   volume  create  -d   local  test1
+```
+
+![创建数据卷](../../img/创建数据卷.png)
+
+除了create命令外，docker  volume还支持inspect（查看详细信息），ls(列出已有数据卷)，prune (清理无用数据卷)， rm (删除数据卷)等
+
+![docker_volume](../../img/docker_volume.png)
+
+### 绑定数据卷
+
+除了使用volume子命令来管理数据卷外，还可以在创建容器时将主机本地的任意路径挂载到容器内作为数据卷，这种形式创建的数据卷称为绑定数据卷。
+
+docker   run 命令使用的时候，可以用 -mount选项来使用数据卷
+
+-mount选项支持三种类型的数据卷
+
+- volume: 普通数据卷， 映射到主机 /var/lib/docker/volumes 路径下
+- bind :  绑定数据卷，映射到主机指定路径下
+- tmpfs : 临时数据卷， 只存在于内存中
+
+例如使用ubuntu:latest 镜像创建一个web容器，并创建一个数据卷挂载到容器的/opt/webapp目录：
+
+```dockerfile
+docker run -d -P  --name web  --mount  type=bind,source=/tmp,destination=/opt/webapp ubuntu:latest /bin/sh
+```
+
+这个命令等价于使用 -v标记
+
+```dockerfile
+docker run -d -P  --name web  -v  /tmp:/opt/webapp ubuntu:latest /bin/sh
+```
+
+这个功能在进行应用测试的时候十分方便，用户可以放置一些程序或者数据到本地目录中实时更新，然后在容器内运行和使用。
+
+第一步：创建容器并挂载路径
+
+```dockerfile
+zhengdong@ubuntu:/$ docker run -d -P  --name web  --mount  type=bind,source=/tmp,destination=/opt/webapp ubuntu:latest /bin/sh -c "while true;do echo helloworld; sleep 2; done"
+```
+
+第二步：进入容器
+
+```dockerfile
+docker exec -it 762 /bin/sh
+```
+
+第三步：进入/opt/webapp中，创建文件并编辑
+
+```Linux
+> touch 1.txt
+> echo zhengdong > 1.txt
+```
+
+第四步：退出容器，查看本地/tmp中是否有文件
+
+```dockerfile
+>  exit
+>  zhengdong@ubuntu:/tmp$ ls
+```
+
+![绑定数据卷](../../img/绑定数据卷.png)
+
+另外，本地目录的路径必须是绝对路径，容器内路径可以为相对路径，如果目录不存在，Docker会自动创建。
+
+Docker挂载数据卷的默认权限是读写（rw）,用户也可以通过ro指定为只读：
+
+```dockerfile
+docker run -d -P  --name web  -v  /tmp:/opt/webapp:ro ubuntu:latest /bin/sh
+```
+
+ro：read  only，只读，加了之后，容器内对所挂载数据卷内的数据就无法修改了。
+
+![数据卷只读](../../img/数据卷只读.png)
+
+## 数据卷容器
+
+如果用户需要多个容器之间共享一些持续更新的数据，最简单的方式是使用数据卷容器。数据卷容器也是一个容器，目的是专门提供数据卷给其他容器挂载。
+
+创建数据卷容器：
+
+```dockerfile
+docker run -it -v /dbdata   --name  dbdata  ubuntu
+```
+
+创建容器并从dbdata容器挂载数据卷
+
+```dockerfile
+docker run -it --volumes-from  dbdata --name  db1  ubuntu
+docker run -it --volumes-from  dbdata --name  db2  ubuntu
+```
+
+![创建数据卷容器](../../img/创建数据卷容器.png)
+
+在其中一个容器中创建文件，其他容器中也会相应变化
+
+![数据卷共享](../../img/数据卷共享.png)
+
+也可以从其他已经挂载了容器卷的容器来挂载数据卷
+
+```dockerfile
+docker run -itd --name db4  --volumes-from db2 ubuntu
+```
+
+![从挂载了容器卷的容器挂载数据卷](../../img/从挂载了容器卷的容器挂载数据卷.png)
+
+通过上面两节可以结合，既然容器和本地之间可以共享数据，而容器与容器之间也可以共享，那么两者结合一下，就可以通过本地变化触发数据卷容器的内容变化，继而触发挂载数据卷容器的容器内容发生变化。这样可以一次变化影响多个，不需要每个容器单独挂载本地文件。
+
+## 利用数据卷容器来迁移数据
+
+### 备份
+
+docker  run  --volumes-from  dbdata  -v  ${pwd}:/backup   --name   worker   ubuntu   tar  cvf   /backup/backup.tar  /dbdata
+
+--volumes-from   dbdata参数来让worker容器挂载dbdata容器的数据卷；
+
+-v ${pwd}:/backup参数来挂载本地的当前目录到worker容器的/backup目录
+
+worker容器启动后，使用tar  cvf   /backup/backup.tar  /dbdata命令将/dbdata下内容备份为容器内的/backup/backup.tar，即宿主机当前目录下的backup.tar
+
+### 恢复
+
+第一步：创建带有数据卷的容器dbdata2
+
+docker    run   -v     /dbdata    --name   dbdata2   ubuntu    /bin/bash
+
+第二步：创建一个新容器，挂载dbdata2的容器，并使用解压命令备份文件到所挂载的容器卷中
+
+docker   run    --volumes-from   dbdata2   -v   ${pwd}:/backup   busybox    tar   xvf    /backup/backup.tar
+
+假如数据文件比较重要，那么应该定期将主机的本地数据进行备份，或者使用支持容错的存储系统
+
+假如数据文件不重要，不希望将数据保存在宿主机或者容器中，可以使用tmpfs类型的数据卷，数据只存储与内存中，容器退出后自动删除。
 
 
 
+# 七、端口映射与容器互联
 
+## 端口映射实现容器访问
 
+### 从外部访问容器应用
 
+当容器运行一些网络应用，要让外部访问这些应用时，可以通过-P或-p参数来指定端口映射。
 
+当使用-P标记时，Docker会随机映射一个32768~49900的端口到内部容器开放的网络端口。
 
+```dockerfile
+docker run -P  docker.io/nginx
+```
 
+开启nginx应用，查看随机分配的端口
 
+![查看随机分配端口](../../img/查看随机分配端口.png)
 
+访问nginx，找到自己的ip地址，拼接上随机端口进行访问
+
+![访问nginx应用](../../img/访问nginx应用.png)
+
+-p（小写的）可以指定要映射的端口，并且在一个指定的端口上只可以绑定一个容器。
+
+### 映射所有的接口地址
+
+```dockerfile
+docker   run  -d  -p  5000:5000  ubuntu/test 
+docker   run  -d  -p  5000:5000  -p  3000:80  ubuntu/test 
+```
+
+### 映射到指定地址的指定端口
+
+```dockerfile
+docker   run  -d  -p 127.0.0.1:5000:5000 ubuntu/test    
+```
+
+### 映射到指定地址的任意端口
+
+```dockerfile
+docker  run  -d  -p  127.0.0.1::5000 ubuntu/test  
+```
+
+还可以使用udp标记指定udp端口
+
+```dockerfile
+docker  run  -d  -p  127.0.0.1:5000:5000/udp ubuntu/test  
+```
+
+### 查看映射端口配置
+
+```dockerfile
+docker  port  relaxed_williamson  5000
+```
+
+## 互联机制实现便捷互访
+
+### 自定义容器命名
+
+容器的互联是一种让多个容器中的应用进行快速交互的方式，它会在源和接收容器之间创建连接关系，接收容器可以通过容器名快速访问到源容器，而不用指定具体的IP地址。
+
+使用--name 标记可以为容器自定义命名：
+
+```dockerfile
+docker  run -d  -P  --name  web   training/webapp  python app.py
+```
+
+可以使用docker  [container]  inspect 来查看容器的名字：
+
+```dockerfile
+zhengdong@ubuntu:/tmp$ docker inspect -f "{{.Name}}"  afe
+/web
+```
+
+### 容器互联
+
+使用--link参数可以让容器之间安全地进行交互
+
+创建一个新的数据库容器db：
+
+```dockerfile
+docker run  -d   --name  db   ubuntu:latest
+```
+
+创建一个web容器，并将它连接到db容器：
+
+```dockerfile
+docker run -d  -P  --name  web   --link db:db   ubuntu:latest 
+```
+
+--link参数的格式为--link  name:alias   其中name是要连接的容器的名称，alias是别名。
+
+Docker相当于在两个互联的容器之间创建了一个虚机通道，不用映射它们的端口到宿主主机上。
+
+Docker通过两种方式为容器公开连接信息：
+
+- 更新环境变量
+- 更新/etc/hosts文件
+
+查看环境变量信息：
+
+```dockerfile
+root@8bf69e064818:/# env |grep DB_
+DB_ENV_NGINX_VERSION=1.25.0
+DB_ENV_NJS_VERSION=0.7.12
+DB_PORT_80_TCP_ADDR=172.17.0.10
+DB_PORT_80_TCP=tcp://172.17.0.10:80
+DB_PORT=tcp://172.17.0.10:80
+DB_PORT_80_TCP_PROTO=tcp
+DB_PORT_80_TCP_PORT=80
+DB_NAME=/dreamy_montalcini/db
+DB_ENV_PKG_RELEASE=1~bullseye
+```
+
+进入web容器，查看/etc/hosts文件
+
+```dockerfile
+root@8bf69e064818:/# cat /etc/hosts
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+ff00::0	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.10	db fbe8dec539c7
+172.17.0.12	8bf69e064818
+```
+
+可以看到db容器的IP和主机名,分别为172.17.0.10     db
+
+web容器中安装ping命令，测试跟db容器的联通
+
+![ping_db](../../img/ping_db.png)
+
+可以看出，ping db确实解析成172.17.0.10这个地址。
 
