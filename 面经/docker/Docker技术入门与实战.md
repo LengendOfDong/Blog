@@ -808,3 +808,84 @@ web容器中安装ping命令，测试跟db容器的联通
 
 可以看出，ping db确实解析成172.17.0.10这个地址。
 
+# 八、使用Dockerfile创建镜像
+
+## 基本结构
+
+Dockerfile主体内容分为四部分：基础镜像信息、维护者信息、镜像操作指令和容器启动时执行指令。
+
+首行可以通过注释来指定解析器命令，后续通过注释说明镜像的相关信息。主体部分首先使用FROM指令指明所基于的镜像名称，接下来一般是使用LABEL指令说明维护者信息。后面则是镜像操作指令，例如RUN指令将对镜像执行跟随的命令。
+
+每运行一条RUN指令，镜像添加新的一层，并提交。最后是CMD指令，来指定运行容器时的操作命令。
+
+```dockerfile
+# escape=\ (backslash) 
+# This dockerfile uses the ubuntu:xeniel image 
+# VERSION 2 - EDITION 1 
+# Author: docker_user 
+# Command format: Instruction [arguments / command] 
+# Base image to use, this must be set as the first line 
+FROM ubuntu:xeniel 
+
+# Maintainer: docker_user <docker_user at email.com> (@docker_user) 
+LABEL maintainer docker_user<docker_user@email.com> 
+
+# Commands to update the image 
+RUN echo "deb http://archive.ubuntu.com/ubuntu/ xeniel main universe" >> /etc/apt/sources.list
+RUN apt-get update && apt-get install -y nginx 
+RUN echo "\ndaemon off;">> /etc/nginx/nginx.conf
+# Commands when creating a new container
+CMD /usr/sbin/nginx
+```
+
+## 指令说明
+
+| 分类     | 指令        | 说明                               |
+| -------- | ----------- | ---------------------------------- |
+|          | ARG         | 定义创建镜像过程中使用的变橇       |
+|          | FROM        | 指定所创建镜像的基础镜像           |
+|          | LABEL       | 为生成的镜像添加元数据标签信息     |
+|          | EXPOSE      | 声明镜像内服务监听的端口           |
+|          | ENV         | 指定环境变量                       |
+|          | ENTRYPOINT  | 指定镜像的默认入口命令             |
+| 配置指令 | VOLUME      | 创建一个数据卷挂载点               |
+|          | USER        | 指定运行容器时的用户名或 UID       |
+|          | WORKDIR     | 配置工作目录                       |
+|          | ONBUILD     | 创建子镜像时指定自动执行的操作指令 |
+|          | STOPSIGNAL  | 指定退出的信号值                   |
+|          | HEALTHCHECK | 配置所启动容器如何进行健康检查     |
+|          | SHELL       | 指定默认shell类型                  |
+
+| 分类     | 指令 | 说明                         |
+| -------- | ---- | ---------------------------- |
+|          | RUN  | 运行指定命令                 |
+|          | CMD  | 启动容器时指定默认执行的命令 |
+| 操作指令 | ADD  | 添加内容到镜像               |
+|          | COPY | 复制内容到镜像               |
+
+### 配置指令
+
+- ARG
+
+定义创建镜像过程中使用的变量。
+
+格式为ARG  <name>   [=<default value>]
+
+Docker内置了一些镜像创建变量，用户可以直接使用而无需声明，包括HTTP_PROXY, HTTPS_PROXY ,  FTP_PROXY , NO_PROXY
+
+- FROM
+
+指定所创建镜像的基础镜像
+
+格式为FFROM <image> [AS <name> ］或 FROM <image>:<tag> [AS <name>] 
+
+FROM <image>@<digest> [AS <name>]
+
+任何Dockerfile中第一条指令必须为FROM指令。并且，如果在同一个Dockerfile中创建多个镜像时，可以使用多个FROM指令（每个镜像一次）
+
+ARG VERSION=9.3 
+
+FROM debian:${VERSION} 
+
+- 
+
