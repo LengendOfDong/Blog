@@ -887,5 +887,331 @@ ARG VERSION=9.3
 
 FROM debian:${VERSION} 
 
-- 
+- LABEL
+
+LABEL指令可以为生成的镜像添加元数据标签信息。这些信息可以用来辅助过滤出特定镜像。
+
+相当于给镜像打上标记，可以通过这个标记进行过滤识别
+
+格式为LABEL  <KEY>=<VALUE>   <KEY>=<VALUE>    <KEY>=<VALUE>  ...
+
+例如：
+
+LABEL    version  ="1.0.0-rc3"
+
+- EXPOSE
+
+声明镜像内服务监听的端口。
+
+格式为EXPOSE  <port>  [<port>/<protocol>...]
+
+例如：  EXPOSE     22    80     8443
+
+该指令只是起到声明作用，并不会自动完成端口映射。
+
+如果要映射端口出来，在启动容器时可以使用-P参数（Docker主机会自动分配一个宿主机的临时端口）或-p  HOST_PORT:CONTAINER_PORT(具体指定所映射的本地端口)
+
+- ENV
+
+指定环境变量，在镜像生成过程中会被后续RUN指令使用，在镜像启动的容器中也会存在。
+
+格式为ENV  <key>  <value> 或者 ENV  <key>=<value>...
+
+例如：
+
+ENV  APP_VERSION = 1.0.0
+
+指令指定的环境变量在运行时可以被覆盖掉，如 docker   run  --env   <key>=<value>  built_image
+
+- ENTRYPOINT
+
+指定镜像的默认入口命令，该入口命令会在启动容器时作为根命令执行，所有传入值作为该命令的参数。
+
+支持两种格式：
+
+1. ENTRYPOINT   ["executable","param1","param2"]: exec调用执行
+2. ENTRYPOINT   command   param1   param2:  shell   中执行。
+
+此时，CMD指令指定值将作为根命令的参数。
+
+每个Dockerfile中只能有一个ENTRYPOINT，当指定多个时，只有最后一个生效。
+
+在运行时，可以被--entrypoint参数覆盖掉，如 docker  run --entrypoint.
+
+- VOLUME
+
+创建一个数据卷挂载点
+
+格式为VOLUME  ["/data"]
+
+运行容器时可以从本地主机或者其他容器挂载数据卷，一般用来存放数据库和需要保持的数据等。
+
+- USER
+
+指定运行容器时的用户名或UID，后续的RUN等指令也会使用指定的用户身份。
+
+格式为 USER  daemon
+
+当服务不需要管理员权限时，可以通过该命令指定运行用户，并且可以在Dockerfile中创建所需要的用户。
+
+RUN   groupadd -r  postgres  &&  useradd  --no-log-init  -r -g  postgres  postgres
+
+要临时获取管理员权限可以使用 gosu  命令。
+
+- WORKDIR
+
+为后续的RUN/CMD/ENTRYPOINT 指令配置工作目录
+
+格式为 WORKDIR  /  path /  to  / workdir
+
+可以使用多个WORKDIR指令，后续命令如果参数是相对路径，则会基于之前命令指定的路径。
+
+例如：WORKDIR   /a  ;  WORKDIR   b ;  WORKDIR   c;  RUN  pwd
+
+最终路径为 /a/b/c
+
+可以看出WORKDIR类似于cd，推荐WORKDIR指令中只使用绝对路径，避免出错。
+
+- ONBUILD
+
+指定当基于所生成镜像创建子镜像时，自动执行的操作指令。
+
+格式为ONBUILD  [INSTRUCTION]
+
+这个就类似于JAVA中的super操作进行子类初始化，会先去调用父类的初始化
+
+父镜像中指定ONBUILD指令，在创建子镜像时会先执行父镜像中配置的ONBUILD指令。
+
+由于ONBUILD指令是隐式执行的，推荐在使用它的镜像标签中进行标注，例如：ruby:2.1-onbuild
+
+ONBUILD指令在创建专门用于自动编译/检查等操作的基础镜像时，十分有用。
+
+- STOPSIGNAL
+
+指定所创建镜像启动的容器接收退出的信号值：
+
+STOPSIGNAL  signal
+
+- HEALTHCHECK
+
+配置所启动容器如何进行健康检查（如何判断健康与否）
+
+格式有两种：
+
+1. HEALTHCHECK  [OPTIONS]  CMD  command: 根据所执行命令返回值是否为0来判断
+2. HEALTHCHECK   NONE:禁止基础镜像中的健康检查。
+
+OPTIONS支持如下参数：
+
+1）- interval=DURATION (default = 30s) : 过多久检查一次
+
+2） - timeout = DURATION (default = 30s): 每次检查等待结果的超时
+
+3）- retries = N (default = 3) ：如果失败了，重试几次才最终确定失败
+
+- SHELL
+
+指定其他命令使用shell 时的默认shell类型：
+
+SHELL ["executable","parameters"]
+
+默认值为["/bin/sh","-c"]
+
+<font color=red>对于Windows系统，Shell路径使用了“\”作为分隔符，建议在Dockerfile开头添加# escape='来指定转义符‘</font>
+
+### 操作指令
+
+- RUN 
+
+运行指定命令
+
+格式为RUN   <command>  或者 RUN  ["executable","param1","param2"]
+
+后者指令会被解析成JSON数组，因此必须用双引号。前者默认将在shell终端中运行命令，即/bash/sh -c;
+
+后者使用exec 执行，不会启动shell环境。
+
+指定使用其他终端类型可以通过第二种方式实现，例如RUN   ["/bin/bash", "-c", "echo hello"]
+
+每条RUN指令将在当前镜像基础上执行指定指令，并提交为新的镜像层。
+
+- CMD
+
+CMD指令用来指定启动容器时默认执行的命令。
+
+支持三种格式：
+
+1. CMD  ["executable","param1","param2"]：相当于执行executable  param1  param2, 推荐方式；
+2. CMD   command   param1   param2:在默认的shell中执行，提供给需要交互的应用
+3. CMD   ["param1","param2"]: 提供给ENTRYPOINT 的默认参数
+
+每个Dockerfile只能有一条CMD命令，如果指定了多条命令，只有最后一条会被执行
+
+如果用户启动容器时手动指定了运行的命令（作为run命令的参数），则会覆盖CMD指定的命令。
+
+docker   run   -d    ubuntu:latest   -c  "while true; do  echo  hello wold; sleep 1; done"
+
+- ADD
+
+添加内容到镜像
+
+格式为ADD <src>  <dest>
+
+该命令将复制指定的<src> 路径下内容到容器中的<dest>路径下
+
+其中src可以是Dockerfile所在目录的一个相对路径；也可以是一个URL，还可以是一个tar文件
+
+dest可以是镜像内绝对路径，或者相对于工作目录（WORKDIR）的相对路径。
+
+路径支持正则表达式，例如：
+
+ADD  *.c    /code/
+
+- COPY
+
+复制内容到镜像
+
+格式为COPY  <src>   <dest>
+
+复制本地主机<src>  下的内容到镜像的<dest>,目标路径不存在的话，会自动创建
+
+路径同样支持正则表达式
+
+COPY  与  ADD指令功能类似，当使用本地目录为源目录时，推荐使用COPY
+
+
+
+## 创建镜像
+
+编写完Dockerfile之后，可以通过docker  build  命令来创建镜像
+
+基本的格式为docker  build   [OPTIONS] PATH | URL |  -
+
+该命令将读取指定路径下（包括子目录）的Dockerfile，并将该路径下所有数据作为上下文发送给Docker服务端。
+
+Docker服务端在校验Dockerfile格式通过后，逐条执行其中定义的指令，碰到ADD /COPY/ RUN指令会生成一层新的镜像。最终如果创建镜像成功，会返回最终镜像的ID。
+
+要指定生成镜像的标签信息，可以通过-t选项，该选项可以重复使用多次为镜像一次添加多个名称。
+
+例如：上下文路径为/tmp/docker_builder/ ,并且希望生成镜像标签为builder/first_image:1.0.0, 可以使用如下命令：
+
+```dockerfile
+docker   build  -t   builder/first_image:1.0.0  /tmp/docker_builder/
+```
+
+### 选择父镜像
+
+用户可以选择两种镜像作为父镜像，一种是所谓的基础镜像，另外一种是普通的镜像。
+
+基础镜像比较特殊，其dockerfile中往往不存在FROM指令，或者基于scratch镜像，这意味着其在整个镜像树中处于根的位置。 
+
+![镜像的继承关系](../../img/镜像的继承关系.png)
+
+### 使用.dockerignore文件
+
+这个文件类似于.gitignore，让Docker忽略匹配路径或文件，在创建镜像时候不将无关数据发送到服务端。
+
+.dockerignore文件中模式语法支持正则表达式匹配：
+
+- “*” 表示任意多个字符
+- “？”表示单个字符
+- “！”表示不匹配，即不忽略指定的路径或文件
+
+### 多步骤创建
+
+创建main.go文件
+
+```go
+//main.go will output "Hello,Docker"
+package main
+import (
+        "fmt"
+)
+
+func main() {
+        fmt.Println("Hello,Docker")
+}
+```
+
+接着创建Dockerfile，使用golang:1.9镜像编译应用二进制文件为app,使用精简的镜像alpine:latest 作为运行环境。
+
+```dockerfile
+# 第一阶段：golang:1.9作为编译器
+FROM  golang:1.9 as builder
+# 创建文件夹
+RUN  mkdir  -p  /go/src/test
+# 进入文件夹
+WORKDIR  /go/src/test
+# 拷贝main.go文件到/go/src/test
+COPY  main.go  .
+# 运行 CGO_ENABLED用于交叉编译，此处禁用
+# 当CGO_ENABLED=1， 进行编译时， 会将文件中引用libc的库（比如常用的net包），以动态链接的方式生成目标文件。
+# 当CGO_ENABLED=0， 进行编译时， 则会把在目标文件中未定义的符号（外部函数）一起链接到可执行文件中。
+# GOOS：目标平台的操作系统(darwin、freebsd、linux、windows)
+# 编译到当前文件夹下，输出为app
+RUN   CGO_ENABLED=0  GOOS=linux go build -o app .
+
+# 第二阶段：使用alpine linux作为运行环境
+FROM  alpine:latest
+# 我们在构建 docker 镜像时一般使用的是 alpine linux 系统，默认是不带 ca-certificates 根证书的，导致无法识别外部 https 携带的数字证书，执行此命令可以识别来自外部https的数字证书
+RUN  apk --no-cache  add  ca-certificates
+WORKDIR  /root
+# 将从 from 指定的构建阶段中寻找源文件
+COPY   --from=builder   /go/src/test/app  .
+# 运行app
+CMD  ["./app"]
+```
+
+当前dockerfile所在文件夹的内容很多，导致上下文中的很多无用数据都上传了，其实应该找一个干净的文件夹再执行build操作。
+
+执行docker build命令，-t表示指定生成的tag标签：
+
+```dockerfile
+docker build -t  yeasy/test-multistage:latest .
+```
+
+![构建镜像](../../img/构建镜像.png)
+
+最后运行构建出的镜像,执行main.go的效果如下：
+
+```dockerfile
+zhengdong@ubuntu:~$ docker run --rm yeasy/test-multistage:latest
+Hello,Docker
+```
+
+## 最佳实践
+
+总结实践经验，完善所生成的镜像：
+
+- 精简镜像用途：尽量让每个镜像的用途都比较集中单一，避免构造大而复杂、多功能的镜像
+- 选用合适的基础镜像：容器的核心是应用。选择过大的父镜像（如Ubuntu系统镜像），会造成最终生成应用镜像的臃肿，推荐选用瘦身过的应用镜像（如：node:slim),或者较为小巧的系统镜像（如alpine/busybox/debian),上例中我们就使用的是alpine linux，最后生成的镜像大小只有9.5m左右
+- 提供注释和维护者信息：Dockerfile也是一种代码，需要考虑方便后续的扩展和他人的使用
+- 正确使用版本号：使用明确的版本号信息，如1.0，2.0，而非依赖于默认的latest,通过版本号可以避免环境不一致导致的问题（如golang:1.9）
+- 减少镜像层数：如果希望所生成镜像层数尽量少，则要尽量合并 RUN、 ADD、 COPY 指令。通常情况下，多个 RUN 指令可以合并为一条 RUN 指令；
+
+- 恰当使用多步骤创建 (17.05 ＋版本支持）：通过多步骤创建，可以将编译和运行等过程分开，保证最终生成的镜像只包括运行应用所需要的最小化环境。当然，用户也可以通过分别构造编译镜像和运行镜像来达到类似的结果，但这种方式需要维护多个Dockerfile
+
+- 使用.dockerignore文件：使用它可以标记在执行docker  build时忽略的路径和文件，避免发送不必要的数据内容，从而加快整个镜像创建过程。
+
+  在加入.dockerignore文件之前，需要上传1.0g文件
+
+  加入.dockerignore文件之后，只需要上传80m文件，只需要编写.dockerignore文件并将其放在上下文路径中即可。
+
+- 及时删除临时文件和缓存文件：特别是在执行apt-get指令后，/var/cache/apt下面会缓存了一些安装包
+
+- 提高生成速度：如合理使用cache，减少内容目录下的文件，或使用.dockerignore文件指定等
+
+- 调整合理的指令顺序：在开启cache的情况下，内容不变的指令尽量放在前面，这样可以尽量复用
+
+- 减少外部源的干扰：如果确实需要从外部引入数据，需要指定持久的地址，并带版本信息等，让他人可以复用而不出错。也就是说引入的外部数据需要稳定持久不变，这样执行的时候才没问题。
+
+
+
+
+
+
+
+
+
+
 
