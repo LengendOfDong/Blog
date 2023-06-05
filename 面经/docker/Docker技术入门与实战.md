@@ -1205,6 +1205,153 @@ Hello,Docker
 
 - 减少外部源的干扰：如果确实需要从外部引入数据，需要指定持久的地址，并带版本信息等，让他人可以复用而不出错。也就是说引入的外部数据需要稳定持久不变，这样执行的时候才没问题。
 
+# 九、操作系统
+
+## BusyBox
+
+BusyBox是一个集成了一百多个最常用Linux命令的精简工具箱，它只有不到2MB大小，被誉为“Linux系统的瑞士军刀”。
+
+## Alpine
+
+Alpine操作系统是一个面向安全的轻型Linux发行版，关注安全，性能和资源效能。不同与其他发行版，Alpine采用了mus1 libc和BusyBox以减小系统的体积和运行时资源消耗，比BusyBox功能上更加完善。
+
+在保持瘦身的同时，Alpine还提供了包管理工具apk查询和安装软件包。
+
+![操作系统大小](../../img/操作系统大小.png)
+
+如果使用Alpine镜像，安装软件包时可以使用apk工具，例如：
+
+```dockerfile
+apk   add   --no-cache   <package>
+```
+
+## Debian/Ubuntu
+
+Debian和Ubuntu都是目前较为流行的Debian系的服务器操作系统，十分适合研发场景。
+
+Debian是基于GPL授权的开源操作系统，是目前个人电脑与服务器中最受欢迎的开源操作系统之一。
+
+Ubuntu是以桌面应用为主的GNU/Linux开源操作系统，
+
+## Centos/Fedora
+
+CentOS和Fedora都基于Redhat的Linux发行版。CentOS是目前企业级服务器的常用操作系统，Fedora则主要面向个人桌面用户。
+
+CentOS(Community Enterprise Operating System, 社区企业操作系统) 基于Red  Hat  Enterprise Linux源代码编译而成。由于CentOS与RedHat Linux源于相同的代码基础，所以很多成本敏感且需要高稳定性的公司就使用CentOS来替代商业版Red Hat Enterprise Linux。CentOS自身不包含闭源软件。
+
+Fedora是由Fedora  Project 社区开发，Red  Hat公司赞助的Linux发行版。它的目标是创建一套新颖、多功能并且自由和开源的操作系统。
+
+# 十、为镜像添加SSH服务
+
+## 基于commit命令创建
+
+### 准备工作
+
+准备工作：拉取ubuntu镜像，并启动容器，使用apt-get  update更新软件源信息
+
+![准备工作](../../img/准备工作.png)
+
+### 安装和配置SSH服务
+
+apt-get  install   openssh-server
+
+创建/var/run/sshd目录，并启动SSH服务，使用netstat -tunlp命令查看22端口，可见此端口已经处于监听状态：
+
+![启动SSH服务](../../img/启动ssh服务.png)
+
+修改SSH服务的安全登录配置，取消pam登录限制：
+
+```shell
+sed -ri 's/session  required  pam_loginuid.so/#session required pam_loginuid.so/g'  /etc/pam.d/sshd
+```
+
+或者安装vim（apt-get install  vim），自行编辑/etc/pam.d/sshd，注释掉**session required pam_loginuid.so**
+
+![取消pam限制](../../img/取消pam限制.png)
+
+使用ssh-keygen -t rsa命令生成公钥信息。
+
+![生成ssh密钥](../../img/生成ssh密钥.png)
+
+创建自动启动ssh服务的可执行文件run.sh,并添加可执行权限：
+
+```shell
+vi  /run.sh
+chmod +x  /run.sh
+```
+
+run.sh的内容为：
+
+```shell
+#!/bin/bash
+/usr/sbin/sshd -D
+```
+
+### 保存镜像
+
+退出容器，并将该容器用docker commit命令保存为一个新的sshd:ubuntu镜像
+
+![导出容器](../../img/导出容器.png)
+
+### 使用镜像
+
+启动容器，并添加端口映射10022 --> 22， 其中10022是宿主机的端口，22是容器的SSH服务监听端口。
+
+docker  run  -p  10022:22  -d  sshd:ubuntu  /run.sh
+
+![使用镜像](../../img/使用镜像.png)
+
+在宿主主机上可以通过SSH访问10022端口来登录容器：
+
+```dockerfile
+ssh  192.168.140.128 -p  10022
+```
+
+# 十一、核心实现技术
+
+## 核心实现技术
+
+Docker目前采用了标准的C/S架构，包括客户端、服务端两大核心组件，同时通过镜像仓库来存储镜像。
+
+客户端和服务端既可以运行在一个机器上，也可以通过socket或者RESTful API进行通信。
+
+### 服务端
+
+Docker服务端一般在宿主主机后台运行，dockerd作为服务端接受来自客户的请求，并通过containerd具体处理与容器相关的请求，包括创建/运行/删除容器等。服务端主要包括四个组件：
+
+- dockerd:为客户端提供RESTful API，响应来自客户端的请求，采用模块化的架构，通过专门的Engine模块来分发管理各个来自客户端的任务。可以单独升级。
+- docker proxy: 是dockerd的子进程，当需要进行容器端口映射时，docker-proxy完成网络映射配置。
+- containerd：是dockerd的子进程，提供gRPC接口响应来自dockerd的请求，对下管理runC镜像和容器环境。可以单独升级；
+- containerd-shim:是containerd的子进程，为runC容器提供支持，同时作为容器内进程的根进程。
+
+### 客户端
+
+Docker客户端为用户提供一系列可执行命令，使用这些命令可实现与Docker服务端交互。
+
+用户使用的Docker可执行命令即为客户端程序。与Docker服务端保持运行方式不同，客户端发送命令后，等待服务端返回；一旦收到返回后，客户端立刻执行结束并退出。
+
+客户端默认通过本地的unix://var/run/docker.sock套接字向服务端发送命令。
+
+### 镜像仓库
+
+镜像仓库提供了对不同存储后端的支持，存放镜像文件，并且支持RESTful API，接收来自docked的命令，包括拉取、上传镜像等。
+
+## 命名空间
+
+命名空间是Linux内核的一个强大特性，为容器虚拟化的实现带来极大便利。利用这一特性，每个容器都可以拥有自己单独的命名空间，运行在其中的应用就像是在独立的操作系统环境中一样。命名空间机制保证了容器之间彼此互不影响。
+
+要想实现虚拟化，除了要实现对内存/cpu/网络ID/硬盘/存储空间等的限制外，还要实现文件系统、网络、PID、UID、IPC等相互隔离。前者相对容器实现一些，后者需要宿主主机系统的深入支持。
+
+### 进程命名空间
+
+Linux通过进程命名空间管理进程号，对于同一进程，在不同的命名空间中，看到的进程号不相同。
+
+每个进程命名空间有一套自己的进程号管理方法。进程命名空间是一个父子关系的结构，子空间中的进程对于父空间是可见的。新fork出的一个进程，在父命名空间和子命名空间将分别对应不同的进程号。
+
+在容器内的进程空间中，则把docker-containerd-shim进程作为0号根进程（类似宿主系统中0号根进程idle)，while进程的进程号则变为1（类似宿主系统中1号初始化进程/sbin/init)。容器内只能看到docker-containerd-shim进程往下的子进程空间，而无法获知宿主机上的进程信息。
+
+
+
 
 
 
