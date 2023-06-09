@@ -16,10 +16,10 @@ public int getMultiplier(int m, int n) {
         //对n进行移位，直到n的当前值为0
         while (n != 0) {
             //通过与0001相与得到最后一位，判断最后一位的值是否为1
-            if ((n &amp; 1) == 1) {
+            if ((n & 1) == 1) {
                 sum = sum * tmp;
             }
-            n = n &gt;&gt; 1;
+            n = n >> 1;
             //tmp不断相乘，相当于给每一位进行加权（8,4,2,1）
             tmp *= tmp;
         }
