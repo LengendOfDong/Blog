@@ -69,16 +69,8 @@ public class AtomicMarkableReference<V> {
     }
 
     /**
-     * Atomically sets the value of both the reference and mark
-     * to the given update values if the
-     * current reference is {@code ==} to the expected reference
-     * and the current mark is equal to the expected mark.
-     *
-     * @param expectedReference the expected value of the reference
-     * @param newReference the new value for the reference
-     * @param expectedMark the expected value of the mark
-     * @param newMark the new value for the mark
-     * @return {@code true} if successful
+     * 如果当前引用等于期望的引用，当前的标记等于期望的标记，那么会原子地设置当前引用
+     * 和标记位为给定的值
      */
     public boolean compareAndSet(V       expectedReference,
                                  V       newReference,
@@ -86,18 +78,18 @@ public class AtomicMarkableReference<V> {
                                  boolean newMark) {
         Pair<V> current = pair;
         return
+            //当前引用等于期望引用
             expectedReference == current.reference &&
+            //当前标记等于期望标记
             expectedMark == current.mark &&
+            //当前引用已经等于设置的新引用或者替换为新引用成功
             ((newReference == current.reference &&
               newMark == current.mark) ||
              casPair(current, Pair.of(newReference, newMark)));
     }
 
     /**
-     * Unconditionally sets the value of both the reference and mark.
-     *
-     * @param newReference the new value for the reference
-     * @param newMark the new value for the mark
+     * 不管当前值是多少，直接替换成新的引用和标记
      */
     public void set(V newReference, boolean newMark) {
         Pair<V> current = pair;
@@ -106,17 +98,10 @@ public class AtomicMarkableReference<V> {
     }
 
     /**
-     * Atomically sets the value of the mark to the given update value
-     * if the current reference is {@code ==} to the expected
-     * reference.  Any given invocation of this operation may fail
-     * (return {@code false}) spuriously, but repeated invocation
-     * when the current value holds the expected value and no other
-     * thread is also attempting to set the value will eventually
-     * succeed.
+     * 在给定的预期引用与当前引用相等的情况下，将标记的值设置为给定的更新值。这个操作可能无意义
+     * 地失败（返回false），但是当当前值持有预期值并且没有其他线程试图设置值时，重复的调用将最
+     * 终成功。
      *
-     * @param expectedReference the expected value of the reference
-     * @param newMark the new value for the mark
-     * @return {@code true} if successful
      */
     public boolean attemptMark(V expectedReference, boolean newMark) {
         Pair<V> current = pair;
@@ -126,22 +111,20 @@ public class AtomicMarkableReference<V> {
              casPair(current, Pair.of(expectedReference, newMark)));
     }
 
-    // Unsafe mechanics
-
     private static final sun.misc.Unsafe UNSAFE = sun.misc.Unsafe.getUnsafe();
+    //获取pair域的内存中的偏移量
     private static final long pairOffset =
         objectFieldOffset(UNSAFE, "pair", AtomicMarkableReference.class);
-
+	//找到Pair对象的地址后，利用CAS交换值
     private boolean casPair(Pair<V> cmp, Pair<V> val) {
         return UNSAFE.compareAndSwapObject(this, pairOffset, cmp, val);
     }
-
+	//先反射获取某个对象，再利用UNSAFE的方法来获取这个对象的内存中的位置
     static long objectFieldOffset(sun.misc.Unsafe UNSAFE,
                                   String field, Class<?> klazz) {
         try {
             return UNSAFE.objectFieldOffset(klazz.getDeclaredField(field));
         } catch (NoSuchFieldException e) {
-            // Convert Exception to corresponding Error
             NoSuchFieldError error = new NoSuchFieldError(field);
             error.initCause(e);
             throw error;
@@ -151,3 +134,4 @@ public class AtomicMarkableReference<V> {
 
 ```
 
+应用举例：
