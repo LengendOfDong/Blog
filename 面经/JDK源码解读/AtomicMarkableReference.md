@@ -134,4 +134,80 @@ public class AtomicMarkableReference<V> {
 
 ```
 
-应用举例：
+
+
+### AtomicMarkableReference多线程应用举例
+
+```java
+import java.util.concurrent.atomic.AtomicMarkableReference;
+
+public class AtomicMarkableReferenceExample {
+
+    public static void main(String[] args) throws InterruptedException {
+        // 初始化一个AtomicMarkableReference对象，包含一个字符串引用和一个标记位
+        AtomicMarkableReference<String> atomicReference = new AtomicMarkableReference<>("initial", false);
+
+        // 启动一个线程来尝试更新引用
+        Thread updaterThread = new Thread(() -> {
+            for(int i = 0; i <10;i++) {
+                // 尝试原子地更新引用和标记位
+                String prev = atomicReference.getReference();
+                boolean wasMarked = atomicReference.isMarked();
+
+                // 只有当标记位为false时，才尝试更新
+                if (!wasMarked && "initial".equals(prev)) {
+                    // 尝试设置新的引用和标记位
+                    if (atomicReference.compareAndSet(prev, "updated", wasMarked, true)) {
+                        System.out.println("Updated successfully!");
+                        break; // 更新成功，退出循环
+                    }
+                }
+
+                // 短暂休眠，避免忙等待
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+
+        // 启动一个线程来标记引用
+        Thread markerThread = new Thread(() -> {
+            for(int i = 0; i <10;i++) {
+                // 尝试原子地设置标记位
+                String prev = atomicReference.getReference();
+                boolean wasMarked = atomicReference.isMarked();
+
+                // 如果引用是"initial"，则标记它
+                if ("initial".equals(prev) && !wasMarked) {
+                    if (atomicReference.compareAndSet(prev, "marked", wasMarked, true)) {
+                        System.out.println("Marked successfully!");
+                        break; // 标记成功，退出循环
+                    }
+                }
+
+                // 短暂休眠，避免忙等待
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+
+        // 启动线程
+        updaterThread.start();
+        markerThread.start();
+
+        // 等待两个线程执行完成
+        updaterThread.join();
+        markerThread.join();
+
+        // 打印最终的引用和标记位状态
+        System.out.println("Final Reference: " + atomicReference.getReference());
+        System.out.println("Final Mark: " + atomicReference.isMarked());
+    }
+}
+```
+

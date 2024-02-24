@@ -62,6 +62,3 @@ public abstract class AtomicLongFieldUpdater<T> {
 ```
 
 LockedUpdater中的CompareAndSet方法和Set方法都使用了putLong来进行设置值，而不是像CASUpdater中那样使用putLongVolatile来设置值，主要是因为前者已经在锁的范围内，当解锁时就会保证数据写入到内存中，效果和putLongVolatile一样，但使用putLongVolatile反而会多此一举了。
-
-
-

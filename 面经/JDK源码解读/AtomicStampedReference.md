@@ -124,3 +124,58 @@ public class AtomicStampedReference<V> {
 
 ```
 
+应用举例：
+
+```java
+package juc;
+
+import java.util.concurrent.atomic.AtomicStampedReference;
+
+public class AtomicStampedRefExample {
+
+    public static void main(String[] args) {
+        // 创建一个AtomicStampedReference对象，初始值为(100, 0)
+        AtomicStampedReference<Integer> atomicStampedRef = new AtomicStampedReference<>(100, 0);
+
+        // 模拟一个线程尝试更新值
+        Thread thread1 = new Thread(() -> {
+            int stamp = atomicStampedRef.getStamp(); // 获取当前戳记
+            System.out.println("Thread 1: Current value = " + atomicStampedRef.getReference() + ", stamp = " + stamp);
+
+            // 尝试更新值
+            boolean wasUpdated = atomicStampedRef.compareAndSet(100, 120, stamp, stamp + 1);
+            System.out.println("Thread 1: Was value updated? " + wasUpdated);
+        });
+
+        // 模拟另一个线程尝试更新值
+        Thread thread2 = new Thread(() -> {
+            int stamp = atomicStampedRef.getStamp(); // 获取当前戳记
+            System.out.println("Thread 2: Current value = " + atomicStampedRef.getReference() + ", stamp = " + stamp);
+
+            // 暂停一段时间，以确保thread1有机会执行
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // 将值从100改为150，并增加戳记
+            boolean wasUpdated = atomicStampedRef.compareAndSet(100, 150, stamp, stamp + 1);
+            System.out.println("Thread 2: Was value updated? " + wasUpdated);
+        });
+
+        // 启动线程
+        thread1.start();
+        thread2.start();
+    }
+}
+```
+
+输出：
+
+```java
+Thread 1: Current value = 100, stamp = 0
+Thread 2: Current value = 100, stamp = 0
+Thread 1: Was value updated? true
+Thread 2: Was value updated? false
+```
+

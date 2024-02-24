@@ -104,14 +104,75 @@ public abstract class AtomicIntegerFieldUpdater<T> {
 可以看到Reflection类的代码中也有这个注解：
 
 ```java
-@CallerSensitive
-public static native Class<?> getCallerClass();
+    @CallerSensitive
+    public static native Class<?> getCallerClass();
 ```
 
 Reflection.getCallerClass()方法规定，调用它的对象，必须有 @CallerSensitive 注解，否则 报异常 Exception in thread "main" java.lang.InternalError: CallerSensitive annotation expected at frame 1
 
 @CallerSensitive 有个特殊之处，必须由 启动类classloader加载（如rt.jar ），才可以被识别。 所以rt.jar下面的注解可以正常使用。
 
+### ArrayIntegerFieldUpdater多线程应用举例 
 
+下面是一个使用 `AtomicIntegerFieldUpdater` 在多线程环境中安全更新对象的例子：
 
-ArrayIntegerFieldUpdater的应用：
+命名一个Person对象，`AtomicIntegerFieldUpdater` 是用于更新对象的某个 `volatile int` 字段的，所以将Person对象的age用volatile修饰，另外访问控制符也不能使用private，其他三种访问权限都可以使用。
+
+```java
+import lombok.Data;
+
+@Data
+public class Person {
+
+    public volatile int age;
+
+    public String name;
+}
+```
+
+使用AtomicIntegerFieldUpdater更新Person对象的age参数
+
+```java
+public class AtomicIntegerFieldUpdaterExample2 {
+
+    // 创建一个针对数组中特定索引位置的AtomicIntegerFieldUpdater
+    private static final AtomicIntegerFieldUpdater<Person> updater =
+            AtomicIntegerFieldUpdater.newUpdater(Person.class, "age");
+
+    public static void main(String[] args) throws InterruptedException {
+        Person person = new Person();
+        person.setAge(20);
+        person.setName("hong");
+
+        // 启动两个线程来更新数组中的第三个元素
+        Thread thread1 = new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                updater.incrementAndGet(person);
+            }
+        });
+
+        Thread thread2 = new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                updater.incrementAndGet(person);
+            }
+        });
+
+        // 启动线程
+        thread1.start();
+        thread2.start();
+
+        // 等待两个线程执行完成
+        thread1.join();
+        thread2.join();
+
+        System.out.println(person);
+    }
+}
+```
+
+输出打印结果：
+
+```java
+Person(age=40, name=hong)
+```
+

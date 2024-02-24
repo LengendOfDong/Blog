@@ -318,3 +318,58 @@ array[4]的内存地址：123456793
 ```
 
 对于数组来说，实际的数据内容存储在堆内存中。而数组变量（引用）本身存储在栈内存中。当我们执行赋值操作时，实际上是将一个引用复制给另一个引用，这使得两个引用指向了相同的堆内存位置。
+
+
+
+### AtomicIntegerArray多线程应用
+
+```java
+public class AtomicIntegerArrayExample {
+
+    public static void main(String[] args) throws InterruptedException {
+        // 初始化一个包含5个元素的AtomicIntegerArray
+        final AtomicIntegerArray atomicArray = new AtomicIntegerArray(5);
+        for (int i = 0; i < atomicArray.length(); i++) {
+            atomicArray.set(i, i);
+        }
+
+        // 启动两个线程来更新数组中的第三个元素
+        Thread thread1 = new Thread(() -> {
+            for (int i = 0; i < 10000; i++) {
+                atomicArray.incrementAndGet(2); // 增加索引为2的元素
+            }
+        });
+
+        Thread thread2 = new Thread(() -> {
+            for (int i = 0; i < 10000; i++) {
+                atomicArray.incrementAndGet(2); // 增加索引为2的元素
+            }
+        });
+
+        // 启动线程
+        thread1.start();
+        thread2.start();
+
+        // 等待两个线程执行完成
+        thread1.join();
+        thread2.join();
+
+        // 打印数组中所有元素的值
+        for (int i = 0; i < atomicArray.length(); i++) {
+            System.out.print(atomicArray.get(i) + " ");
+        }
+
+        // 预期输出中，索引2的元素值应该是20002（初始值为2，每个线程增加10000次）
+        // 其他元素的值应该保持不变
+    }
+}
+```
+
+输出结果为：
+
+```java
+0 1 20002 3 4
+```
+
+
+
